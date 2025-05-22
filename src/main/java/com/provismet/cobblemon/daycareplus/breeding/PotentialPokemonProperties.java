@@ -51,9 +51,9 @@ public class PotentialPokemonProperties {
     }
 
     public PokemonProperties createPokemonProperties () {
-        PokemonProperties properties = new PokemonProperties();
-        properties.setSpecies(this.form.getSpecies().getName());
-        properties.setForm(this.form.getName());
+        PokemonProperties properties = PokemonProperties.Companion.parse(String.join(" ", this.form.getAspects()), " ");
+        properties.setSpecies(this.form.getSpecies().showdownId());
+        properties.setForm(this.form.formOnlyShowdownId()); // This is borderline cosmetic but do it to get the form listed in the properties.
 
         this.setAbility(properties);
         this.setIVs(properties);
@@ -63,6 +63,7 @@ public class PotentialPokemonProperties {
         properties.setTeraType(this.form.getPrimaryType().getName());
         properties.setLevel(1);
         properties.setFriendship(120);
+        properties.updateAspects();
 
         // TODO: Egg moves
 
