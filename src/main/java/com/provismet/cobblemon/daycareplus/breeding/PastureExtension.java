@@ -2,7 +2,6 @@ package com.provismet.cobblemon.daycareplus.breeding;
 
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.minecraft.entity.player.PlayerEntity;
@@ -49,7 +48,6 @@ public class PastureExtension {
             }
 
             long ticksToProcess = Math.max(0, world.getTime() - prevTime);
-            DaycarePlusServer.LOGGER.info("Pasture ticks to process: {}", ticksToProcess);
             this.prevTime = world.getTime();
             long eggAttempts = ticksToProcess / Options.getTicksPerEggAttempt();
 
@@ -59,7 +57,6 @@ public class PastureExtension {
                 if (world.getRandom().nextDouble() > Options.getSuccessRatePerEggAttempt()) continue;
 
                 this.predictEgg().ifPresent(potentialEgg -> {
-                    DaycarePlusServer.LOGGER.info("Egg created.");
                     if (this.blockEntity.getOwnerId() != null) {
                         PlayerEntity owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
                         if (owner != null) owner.sendMessage(Text.literal("egg is here"));
