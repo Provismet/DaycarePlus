@@ -10,6 +10,7 @@ public class DaycarePlusDatagen implements DataGeneratorEntrypoint {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(LanguageGenerator::new);
         pack.addProvider(ModelGenerator::new);
+        pack.addProvider(ItemTagGenerator::new);
     }
 
     @Override
