@@ -1,5 +1,6 @@
 package com.provismet.cobblemon.daycareplus.imixin;
 
+import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import com.provismet.cobblemon.daycareplus.breeding.PastureContainer;
 import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
 
@@ -15,4 +16,6 @@ public interface IMixinPastureBlockEntity extends PastureContainer {
 
     void setShouldSkipDaycareGUI (boolean skipGUI);
     boolean shouldSkipDaycareGUI ();
+
+    ButtonBase getEggCounterButton ();
 }

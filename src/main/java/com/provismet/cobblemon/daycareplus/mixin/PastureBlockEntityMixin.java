@@ -1,18 +1,22 @@
 package com.provismet.cobblemon.daycareplus.mixin;
 
+import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
-import com.provismet.cobblemon.daycareplus.breeding.PastureContainer;
 import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
 import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.gui.DaycareGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(PokemonPastureBlockEntity.class)
 public abstract class PastureBlockEntityMixin extends BlockEntity implements IMixinPastureBlockEntity {
@@ -34,6 +40,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Unique private boolean skipDaycareGUI = false;
     @Unique private PastureExtension extension;
     @Unique private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(Options.getPastureInventorySize(), ItemStack.EMPTY);
+    @Unique private ButtonBase eggCounter = DaycareGUI.createEggButton(this);
 
     @Override
     public PastureExtension getExtension () {
@@ -76,11 +83,17 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     }
 
     @Override
+    public ButtonBase getEggCounterButton () {
+        return eggCounter;
+    }
+
+    @Override
     public void add (ItemStack stack) {
         for (int i = 0; i < this.inventory.size(); ++i) {
             if (this.inventory.get(i).isEmpty()) {
                 this.inventory.set(i, stack.copyAndEmpty());
                 this.markDirty();
+                this.updateEggCounter();
                 break;
             }
         }
@@ -116,7 +129,10 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Override
     public ItemStack removeStack (int slot, int amount) {
         ItemStack stack = Inventories.splitStack(this.inventory, slot, amount);
-        if (!stack.isEmpty()) this.markDirty();
+        if (!stack.isEmpty()) {
+            this.markDirty();
+            this.updateEggCounter();
+        }
 
         return stack;
     }
@@ -125,7 +141,10 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     public ItemStack removeStack (int slot) {
         ItemStack stack = this.inventory.get(slot);
         this.inventory.set(slot, ItemStack.EMPTY);
-        if (!stack.isEmpty()) this.markDirty();
+        if (!stack.isEmpty()) {
+            this.markDirty();
+            this.updateEggCounter();
+        }
 
         return stack;
     }
@@ -134,6 +153,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     public void setStack (int slot, ItemStack stack) {
         this.inventory.set(slot, stack);
         this.markDirty();
+        this.updateEggCounter();
     }
 
     @Override
@@ -145,6 +165,13 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     public void clear () {
         this.inventory.clear();
         this.markDirty();
+        this.updateEggCounter();
+    }
+
+    @Unique
+    private void updateEggCounter () {
+        this.eggCounter.getDisplay().set(DataComponentTypes.LORE, new LoreComponent(List.of(Text.literal(this.count() + "/" + this.size() + " eggs held"))));
+        this.eggCounter.update();
     }
 
     @Inject(method = "TICKER$lambda$14", at = @At("HEAD"))

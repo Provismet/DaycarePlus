@@ -1,9 +1,9 @@
 package com.provismet.cobblemon.daycareplus.gui;
 
-import ca.landonjw.gooeylibs2.api.UIManager;
+import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import ca.landonjw.gooeylibs2.api.button.GooeyButton;
 import ca.landonjw.gooeylibs2.api.page.GooeyPage;
-import ca.landonjw.gooeylibs2.api.page.Page;
+import ca.landonjw.gooeylibs2.api.page.PageBase;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.abilities.AbilityTemplate;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface DaycareGUI {
-    static Page create (PokemonPastureBlockEntity pastureBlockEntity, IMixinPastureBlockEntity mixinPasture, ServerPlayerEntity player, BlockState state, BlockHitResult hit) {
+    static PageBase create (PokemonPastureBlockEntity pastureBlockEntity, IMixinPastureBlockEntity mixinPasture, ServerPlayerEntity player, BlockState state, BlockHitResult hit) {
         GooeyButton infoButton = GooeyButton.builder()
             .display(Items.FEATHER.getDefaultStack())
             .with(DataComponentTypes.CUSTOM_NAME, Text.literal("Info"))
@@ -48,11 +48,7 @@ public interface DaycareGUI {
             })
             .build();
 
-        GooeyButton eggCounter = GooeyButton.builder()
-            .display(Items.EGG.getDefaultStack())
-            .with(DataComponentTypes.CUSTOM_NAME, Text.literal("Egg Collection"))
-            .with(DataComponentTypes.LORE, new LoreComponent(List.of(Text.literal(mixinPasture.count() + "/" + mixinPasture.size() + " eggs held"))))
-            .build();
+        ButtonBase eggCounter = mixinPasture.getEggCounterButton();
 
         Pokemon parent1 = null;
         Pokemon parent2 = null;
@@ -129,6 +125,14 @@ public interface DaycareGUI {
         return GooeyPage.builder()
             .title("Daycare")
             .template(template)
+            .build();
+    }
+
+    static ButtonBase createEggButton (IMixinPastureBlockEntity mixinPasture) {
+        return GooeyButton.builder()
+            .display(Items.EGG.getDefaultStack())
+            .with(DataComponentTypes.CUSTOM_NAME, Text.literal("Egg Collection"))
+            .with(DataComponentTypes.LORE, new LoreComponent(List.of(Text.literal(mixinPasture.count() + "/" + mixinPasture.size() + " eggs held"))))
             .build();
     }
 }
