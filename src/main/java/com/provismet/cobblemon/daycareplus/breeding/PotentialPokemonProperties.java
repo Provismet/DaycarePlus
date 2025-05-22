@@ -1,0 +1,326 @@
+package com.provismet.cobblemon.daycareplus.breeding;
+
+import com.cobblemon.mod.common.Cobblemon;
+import com.cobblemon.mod.common.CobblemonItems;
+import com.cobblemon.mod.common.api.Priority;
+import com.cobblemon.mod.common.api.abilities.Abilities;
+import com.cobblemon.mod.common.api.abilities.Ability;
+import com.cobblemon.mod.common.api.abilities.AbilityTemplate;
+import com.cobblemon.mod.common.api.abilities.CommonAbilityType;
+import com.cobblemon.mod.common.api.abilities.PotentialAbility;
+import com.cobblemon.mod.common.api.pokeball.PokeBalls;
+import com.cobblemon.mod.common.api.pokemon.Natures;
+import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
+import com.cobblemon.mod.common.api.pokemon.stats.Stat;
+import com.cobblemon.mod.common.api.pokemon.stats.Stats;
+import com.cobblemon.mod.common.pokeball.PokeBall;
+import com.cobblemon.mod.common.pokemon.FormData;
+import com.cobblemon.mod.common.pokemon.IVs;
+import com.cobblemon.mod.common.pokemon.Nature;
+import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.Species;
+import com.cobblemon.mod.common.pokemon.abilities.HiddenAbilityType;
+import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.util.MathExtras;
+import kotlin.Pair;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.MathHelper;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+public class PotentialPokemonProperties {
+    private final Pokemon primary;
+    private final Pokemon secondary;
+
+    private final FormData form;
+
+    /**
+     * @param primary The mother or non-ditto parent.
+     * @param secondary The father or ditto parent.
+     */
+    public PotentialPokemonProperties (Pokemon primary, Pokemon secondary) {
+        this.primary = primary;
+        this.secondary = secondary;
+        this.form = BreedingUtils.getBabyForm(this.primary);
+    }
+
+    public PokemonProperties createPokemonProperties () {
+        PokemonProperties properties = new PokemonProperties();
+        properties.setSpecies(this.form.getSpecies().getName());
+        properties.setForm(this.form.getName());
+
+        this.setAbility(properties);
+        this.setIVs(properties);
+        this.setNature(properties);
+        this.setPokeBall(properties);
+        this.setShiny(properties);
+        properties.setTeraType(this.form.getPrimaryType().getName());
+        properties.setLevel(1);
+        properties.setFriendship(120);
+
+        // TODO: Egg moves
+
+        return properties;
+    }
+
+    public Species getSpecies () {
+        return this.form.getSpecies();
+    }
+
+    public FormData getForm () {
+        return this.form;
+    }
+
+    /**
+     * @return Possible natures for the offspring, an empty list denotes all natures are valid.
+     */
+    public List<Nature> getPossibleNatures () {
+        List<Nature> natures = new ArrayList<>();
+        if (this.primary.getHeldItem$common().isOf(CobblemonItems.EVERSTONE)) natures.add(this.primary.getNature());
+        if (this.secondary.getHeldItem$common().isOf(CobblemonItems.EVERSTONE)) natures.add(this.secondary.getNature());
+
+        return natures;
+    }
+
+    public List<PokeBall> getPossiblePokeBalls () {
+        List<PokeBall> balls = new ArrayList<>();
+        Set<PokeBall> illegal = Set.of(PokeBalls.INSTANCE.getMASTER_BALL(), PokeBalls.INSTANCE.getCHERISH_BALL());
+
+        // Species match, 50/50 chance
+        if (this.primary.getSpecies().getName().equalsIgnoreCase(this.secondary.getSpecies().getName())) {
+            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.primary.getCaughtBall());
+            balls.add(illegal.contains(this.secondary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.secondary.getCaughtBall());
+        }
+        // Take from primary parent
+        else {
+            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.primary.getCaughtBall());
+        }
+
+        return balls;
+    }
+
+    public List<AbilityTemplate> getPossibleAbilities () {
+        Ability parentAbility = this.primary.getAbility();
+        Pair<Priority, Integer> parentAbilityData;
+
+        if (parentAbility.getIndex() >= 0) {
+            parentAbilityData = new Pair<>(parentAbility.getPriority(), parentAbility.getIndex());
+        }
+        else {
+            Optional<Map.Entry<Priority, List<PotentialAbility>>> abilities = this.primary.getForm().getAbilities().getMapping().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue()
+                    .stream()
+                    .map(PotentialAbility::getTemplate)
+                    .anyMatch(template -> template == parentAbility.getTemplate()))
+                .findFirst();
+
+            parentAbilityData = abilities.map(priorityListEntry -> new Pair<>(
+                priorityListEntry.getKey(),
+                priorityListEntry.getValue().stream().map(PotentialAbility::getTemplate).toList().indexOf(parentAbility.getTemplate())
+            )).orElseGet(
+                () -> new Pair<>(Priority.LOWEST, 0)
+            );
+        }
+
+        AbilityTemplate inheritedAbility = null;
+        // An ability with this priority does exist.
+        if (this.form.getAbilities().getMapping().containsKey(parentAbilityData.getFirst())) {
+            List<PotentialAbility> abilities = this.form.getAbilities().getMapping().get(parentAbilityData.getFirst());
+
+            if (!abilities.isEmpty()) {
+                if (abilities.size() > parentAbilityData.getSecond()) inheritedAbility = abilities.get(parentAbilityData.getSecond()).getTemplate();
+                else inheritedAbility = abilities.getFirst().getTemplate();
+            }
+        }
+
+        if (inheritedAbility == null) {
+            List<PotentialAbility> abilities = this.form.getAbilities().getMapping().get(Priority.LOWEST);
+            if (abilities == null || abilities.isEmpty()) inheritedAbility = Abilities.INSTANCE.getDUMMY();
+            else inheritedAbility = abilities.getFirst().getTemplate();
+        }
+
+        AbilityTemplate finalAbility = inheritedAbility; // Done purely so the stream plays nice
+        List<AbilityTemplate> otherPossibleAbilities = this.form.getAbilities().getMapping().values().stream()
+            .flatMap(Collection::stream)
+            .filter(other -> other.getType() instanceof CommonAbilityType || (other.getType() instanceof HiddenAbilityType && parentAbility.getPriority() == Priority.LOW))
+            .map(PotentialAbility::getTemplate)
+            .filter(other -> other != finalAbility)
+            .toList();
+
+        List<AbilityTemplate> potentials = new ArrayList<>();
+        potentials.add(inheritedAbility);
+        potentials.addAll(otherPossibleAbilities);
+
+        return potentials;
+    }
+
+    public Map<Stat, PotentialIV> getPossibleIVs () {
+        return Map.of(
+            Stats.HP, PotentialIV.fromParents(this.primary, this.secondary, Stats.HP),
+            Stats.ATTACK, PotentialIV.fromParents(this.primary, this.secondary, Stats.ATTACK),
+            Stats.DEFENCE, PotentialIV.fromParents(this.primary, this.secondary, Stats.DEFENCE),
+            Stats.SPECIAL_ATTACK, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPECIAL_ATTACK),
+            Stats.SPECIAL_DEFENCE, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPECIAL_DEFENCE),
+            Stats.SPEED, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPEED)
+        );
+    }
+
+    public double getShinyRate () {
+        float shinyRate = 1 / Cobblemon.config.getShinyRate();
+        shinyRate *= Options.getShinyChanceMultiplier();
+
+        if (this.primary.getOriginalTrainer() != null && this.secondary.getOriginalTrainer() != null && this.primary.getOriginalTrainer().equals(this.secondary.getOriginalTrainer())) {
+            shinyRate *= Options.getMasudaMultiplier();
+        }
+        if (this.primary.getShiny()) shinyRate *= Options.getCrystalMultiplier();
+        if (this.secondary.getShiny()) shinyRate *= Options.getCrystalMultiplier();
+
+        return shinyRate;
+    }
+
+    private void setPokeBall (PokemonProperties properties) {
+        List<PokeBall> balls = this.getPossiblePokeBalls();
+        if (Math.random() < 0.5) properties.setPokeball(balls.getFirst().getName().toString());
+        else properties.setPokeball(balls.getLast().getName().toString());
+    }
+
+    private void setAbility (PokemonProperties properties) {
+        Ability parentAbility = this.primary.getAbility();
+        Pair<Priority, Integer> parentAbilityData;
+
+        if (parentAbility.getIndex() >= 0) { // Should pass under normal circumstances (valid ability)
+            parentAbilityData = new Pair<>(parentAbility.getPriority(), parentAbility.getIndex());
+        }
+        else { // Into the weird territory we go...
+            Optional<Map.Entry<Priority, List<PotentialAbility>>> abilities = this.primary.getForm().getAbilities().getMapping().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue()
+                    .stream()
+                    .map(PotentialAbility::getTemplate)
+                    .anyMatch(template -> template == parentAbility.getTemplate()))
+                .findFirst();
+
+            parentAbilityData = abilities.map(priorityListEntry -> new Pair<>(
+                priorityListEntry.getKey(),
+                priorityListEntry.getValue().stream().map(PotentialAbility::getTemplate).toList().indexOf(parentAbility.getTemplate())
+            )).orElseGet(
+                () -> new Pair<>(Priority.LOWEST, 0) // Nothing matched, just go with a default value.
+            );
+        }
+
+        // The inherited ability will always the first index of this list
+        List<AbilityTemplate> potentials = this.getPossibleAbilities();
+
+        double keepCurrentAbility = parentAbilityData.getFirst() == Priority.LOW ? 0.6 : 0.8;
+        if (potentials.size() == 1 || Math.random() < keepCurrentAbility) {
+            properties.setAbility(potentials.getFirst().getName());
+        }
+        else if (!potentials.isEmpty()) {
+            potentials.removeFirst();
+            int randomIndex = Math.clamp((int)(Math.random() * potentials.size()), 0, potentials.size() - 1);
+            properties.setAbility(potentials.get(randomIndex).getName());
+        }
+    }
+
+    private void setNature (PokemonProperties properties) {
+        List<Nature> natures = this.getPossibleNatures();
+        if (!natures.isEmpty()) {
+            // Technically there can be 2 possible natures if both parents hold an everstone.
+            if (Math.random() < 0.5) properties.setNature(natures.getFirst().getName().toString());
+            else properties.setNature(natures.getLast().getName().toString());
+        }
+        else {
+            properties.setNature(MathExtras.randomChoice(Natures.INSTANCE.all().stream().toList()).getName().toString());
+        }
+    }
+
+    private void setShiny (PokemonProperties properties) {
+        properties.setShiny(Math.random() < this.getShinyRate());
+    }
+
+    private void setIVs (PokemonProperties properties) {
+        int forcedIVs = 3;
+        if (this.primary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT)) {
+            forcedIVs = 5;
+        }
+
+        Map<Stat, PotentialIV> potentials = this.getPossibleIVs();
+        List<Stat> remaining = new ArrayList<>();
+        remaining.add(Stats.HP);
+        remaining.add(Stats.ATTACK);
+        remaining.add(Stats.DEFENCE);
+        remaining.add(Stats.SPECIAL_ATTACK);
+        remaining.add(Stats.SPECIAL_DEFENCE);
+        remaining.add(Stats.SPEED);
+
+        IVs iv = new IVs();
+        for (Map.Entry<Stat, PotentialIV> potent : potentials.entrySet()) {
+            if (potent.getValue().isForced()) {
+                --forcedIVs;
+                iv.set(potent.getKey(), MathExtras.randomChoice(potent.getValue().values().stream().toList()));
+                remaining.remove(potent.getKey());
+            }
+        }
+
+        for (int i = 0; i < forcedIVs && !remaining.isEmpty(); ++i) {
+            Stat inheritThis = MathExtras.randomChoice(remaining);
+            iv.set(inheritThis, MathExtras.randomChoice(potentials.get(inheritThis).values().stream().toList()));
+            remaining.remove(inheritThis);
+        }
+
+        for (Stat stat : remaining) {
+            iv.set(stat, MathHelper.clamp((int)(Math.random() * 32), 0, 31));
+        }
+
+        properties.setIvs(iv);
+    }
+
+    public record PotentialIV (boolean isForced, Set<Integer> values) {
+        public static final int WILDCARD = -1;
+
+        public static PotentialIV fromParents (Pokemon parent1, Pokemon parent2, Stat stat) {
+            Item powerItem = switch (stat) {
+                case Stats.HP -> CobblemonItems.POWER_WEIGHT;
+                case Stats.ATTACK -> CobblemonItems.POWER_BRACER;
+                case Stats.DEFENCE -> CobblemonItems.POWER_BELT;
+                case Stats.SPECIAL_ATTACK -> CobblemonItems.POWER_LENS;
+                case Stats.SPECIAL_DEFENCE -> CobblemonItems.POWER_BAND;
+                case Stats.SPEED -> CobblemonItems.POWER_ANKLET;
+                default -> null;
+            };
+
+            Set<Integer> possibleIVs = new HashSet<>();
+            boolean forced = false;
+            if (powerItem != null) {
+                if (parent1.getHeldItem$common().isOf(powerItem)) {
+                    forced = true;
+                    possibleIVs.add(parent1.getIvs().getOrDefault(stat));
+                }
+                if (parent2.getHeldItem$common().isOf(powerItem)) {
+                    forced = true;
+                    possibleIVs.add(parent2.getIvs().getOrDefault(stat));
+                }
+
+                if (!forced) {
+                    possibleIVs.add(WILDCARD);
+                    possibleIVs.add(parent1.getIvs().getOrDefault(stat));
+                    possibleIVs.add(parent2.getIvs().getOrDefault(stat));
+                }
+            }
+
+            return new PotentialIV(forced, possibleIVs);
+        }
+
+        @Override
+        public String toString () {
+            return String.join(" | ", this.values.stream().map(val -> val == WILDCARD ? "?" : String.valueOf(val) ).toList());
+        }
+    }
+}
