@@ -43,7 +43,7 @@ public abstract class BreedingUtils {
         return Optional.of(new PotentialPokemonProperties(primary, secondary));
     }
 
-    // TODO: Check if this actually works.
+    // TODO: Works for normal species, but breaks for forms.
     public static FormData getBabyForm (Pokemon parent) {
         PreEvolution preevo = parent.getPreEvolution();
         if (preevo == null) return parent.getForm();
