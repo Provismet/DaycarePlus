@@ -7,6 +7,7 @@ import ca.landonjw.gooeylibs2.api.page.PageBase;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.abilities.AbilityTemplate;
+import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
@@ -83,13 +84,16 @@ public interface DaycareGUI {
         Optional<PotentialPokemonProperties> offspring = BreedingUtils.getOffspring(parent1, parent2);
         if (offspring.isPresent()) {
             Map<Stat, PotentialPokemonProperties.PotentialIV> ivs = offspring.get().getPossibleIVs();
+            PokemonProperties props = offspring.get().createPokemonProperties();
+            props.setShiny(false);
+            Pokemon tile = props.create(); // TODO: Test if it's still necessary to create the full pokemon.
 
             offspringInfo = GooeyButton.builder()
-                .display(PokemonItem.from(offspring.get().createPokemonProperties()))
+                .display(PokemonItem.from(tile))
                 .with(DataComponentTypes.CUSTOM_NAME, Text.literal("Offspring"))
                 .with(DataComponentTypes.LORE, new LoreComponent(List.of(
-                    Text.literal("Species: " + offspring.get().getSpecies().getName()),
-                    Text.literal("Form: " + offspring.get().getForm().getName()),
+                    Text.literal("Species: " + tile.getSpecies()),
+                    Text.literal("Form: " + tile.getForm().getName()),
                     Text.literal("Abilities: " + String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).toList())),
                     Text.literal("Nature: " + (offspring.get().getPossibleNatures().isEmpty() ? "?" : String.join(", ", offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).toList()))),
                     Text.empty(),
@@ -101,6 +105,7 @@ public interface DaycareGUI {
                     Text.literal("Sp.Def: " + ivs.get(Stats.SPECIAL_DEFENCE).toString()),
                     Text.literal("Speed: " + ivs.get(Stats.SPEED).toString()),
                     Text.empty(),
+                    Text.literal("Aspects: " + String.join(", ", tile.getAspects())),
                     Text.literal("Shiny Rate: 1/" + (int)(1 / offspring.get().getShinyRate()))
                 )))
                 .build();
