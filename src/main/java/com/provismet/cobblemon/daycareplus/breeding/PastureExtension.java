@@ -38,9 +38,9 @@ public class PastureExtension {
             if (world.getTime() % 20 == 0) {
                 world.spawnParticles(
                     ParticleTypes.HEART,
-                    this.blockEntity.getPos().getX(),
-                    this.blockEntity.getPos().getY() + 1,
-                    this.blockEntity.getPos().getZ(),
+                    this.blockEntity.getPos().getX() + 0.5,
+                    this.blockEntity.getPos().getY() + 1.5,
+                    this.blockEntity.getPos().getZ() + 0.5,
                     1,
                     0, 0, 0,
                     0
