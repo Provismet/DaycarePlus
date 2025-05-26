@@ -17,6 +17,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
 import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
+import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
@@ -56,28 +57,44 @@ public interface DaycareGUI {
         if (!pastureBlockEntity.getTetheredPokemon().isEmpty()) parent1 = pastureBlockEntity.getTetheredPokemon().getFirst().getPokemon();
         if (pastureBlockEntity.getTetheredPokemon().size() == 2) parent2 = pastureBlockEntity.getTetheredPokemon().getLast().getPokemon();
 
+        GooeyButton missingParent = GooeyButton.builder()
+            .display(Items.BARRIER.getDefaultStack())
+            .with(DataComponentTypes.CUSTOM_NAME, Text.literal("No parent selected."))
+            .with(DataComponentTypes.LORE, new LoreComponent(List.of(Text.literal("Add a Pokemon to the pasture."))))
+            .build();
+
         GooeyButton parent1Info;
+        GooeyButton parent1Item = null;
         if (parent1 != null) {
             parent1Info = GooeyButton.builder()
                 .display(PokemonItem.from(parent1))
                 .build();
+
+            if (parent1.heldItem().isIn(DPItemTags.BREEDING_ITEM)) {
+                parent1Item = GooeyButton.builder()
+                    .display(parent1.heldItem())
+                    .build();
+            }
         }
         else {
-            parent1Info = GooeyButton.builder()
-                .display(Items.BARRIER.getDefaultStack())
-                .build();
+            parent1Info = missingParent;
         }
 
         GooeyButton parent2Info;
+        GooeyButton parent2Item = null;
         if (parent2 != null) {
             parent2Info = GooeyButton.builder()
                 .display(PokemonItem.from(parent2))
                 .build();
+
+            if (parent2.heldItem().isIn(DPItemTags.BREEDING_ITEM)) {
+                parent2Item = GooeyButton.builder()
+                    .display(parent2.heldItem())
+                    .build();
+            }
         }
         else {
-            parent2Info = GooeyButton.builder()
-                .display(Items.BARRIER.getDefaultStack())
-                .build();
+            parent2Info = missingParent;
         }
 
         GooeyButton offspringInfo;
@@ -89,11 +106,11 @@ public interface DaycareGUI {
             Pokemon tile = props.create(); // TODO: Test if it's still necessary to create the full pokemon.
 
             offspringInfo = GooeyButton.builder()
-                .display(PokemonItem.from(tile))
+                .display(PokemonItem.from(props))
                 .with(DataComponentTypes.CUSTOM_NAME, Text.literal("Offspring"))
                 .with(DataComponentTypes.LORE, new LoreComponent(List.of(
-                    Text.literal("Species: " + tile.getSpecies()),
-                    Text.literal("Form: " + tile.getForm().getName()),
+                    Text.literal("Species: " + props.getSpecies()),
+                    Text.literal("Form: " + props.getForm()),
                     Text.literal("Abilities: " + String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).toList())),
                     Text.literal("Nature: " + (offspring.get().getPossibleNatures().isEmpty() ? "?" : String.join(", ", offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).toList()))),
                     Text.empty(),
@@ -123,8 +140,10 @@ public interface DaycareGUI {
             .set(0, 7, openPasture)
             .set(0, 6, eggCounter)
             .set(2, 2, parent1Info)
+            .set(3, 2, parent1Item)
             .set(2, 4, offspringInfo)
             .set(2, 6, parent2Info)
+            .set(3, 6, parent2Item)
             .build();
 
         return GooeyPage.builder()
