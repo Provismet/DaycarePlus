@@ -37,8 +37,8 @@ public interface IntroGUI {
             .build();
 
         ChestTemplate template = ChestTemplate.builder(3)
-            .set(2, 2, activateBreeding)
-            .set(2, 6, noBreeding)
+            .set(1, 2, activateBreeding)
+            .set(1, 6, noBreeding)
             .build();
 
         return GooeyPage.builder()
