@@ -1,0 +1,89 @@
+package com.provismet.cobblemon.daycareplus.item.component;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.provismet.cobblemon.daycareplus.registries.DPItems;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.util.dynamic.Codecs;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
+    public static final EggBagDataComponent DEFAULT = new EggBagDataComponent(List.of(), 0);
+
+    public static final Codec<EggBagDataComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        ItemStack.CODEC.listOf().fieldOf("items").forGetter(component -> component.contents),
+        Codecs.POSITIVE_INT.fieldOf("capacity").forGetter(component -> component.capacity)
+    ).apply(instance, EggBagDataComponent::new));
+
+    public EggBagDataComponent (int capacity) {
+        this(List.of(), capacity);
+    }
+
+    public static final PacketCodec<RegistryByteBuf, EggBagDataComponent> PACKET_CODEC = PacketCodec.tuple(
+        ItemStack.PACKET_CODEC.collect(PacketCodecs.toList(1024)),
+        EggBagDataComponent::contents,
+        PacketCodecs.INTEGER,
+        EggBagDataComponent::capacity,
+        EggBagDataComponent::new
+    );
+
+    public EggBagDataComponent add (ItemStack stack) {
+        Builder builder = new Builder(this);
+        builder.add(stack);
+        return builder.build();
+    }
+
+    public EggBagDataComponent addAll (List<ItemStack> stacks) {
+        Builder builder = new Builder(this);
+        for (ItemStack stack : stacks) {
+            builder.add(stack.copyAndEmpty());
+        }
+        return builder.build();
+    }
+
+    public EggBagDataComponent validate () {
+        Builder builder = new Builder(this);
+        builder.validate();
+        return builder.build();
+    }
+
+    public Optional<ItemStack> get (int index) {
+        if (index < 0 || index >= this.contents.size()) {
+            return Optional.empty();
+        }
+        return Optional.of(this.contents.get(index));
+    }
+
+    public static class Builder {
+        private final List<ItemStack> mutableContents;
+        private final int capacity;
+
+        public Builder (EggBagDataComponent component) {
+            this.mutableContents = new LinkedList<>();
+            this.mutableContents.addAll(component.contents);
+            this.capacity = component.capacity;
+        }
+
+        public boolean add (ItemStack stack) {
+            if (stack != null && stack.isOf(DPItems.POKEMON_EGG) && this.mutableContents.size() < this.capacity) {
+                this.mutableContents.addLast(stack);
+                return true;
+            }
+            return false;
+        }
+
+        public void validate () {
+            this.mutableContents.removeIf(ItemStack::isEmpty);
+        }
+
+        public EggBagDataComponent build () {
+            return new EggBagDataComponent(this.mutableContents.stream().toList(), this.capacity);
+        }
+    }
+}

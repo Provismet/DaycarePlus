@@ -20,5 +20,6 @@ public class ModelGenerator extends FabricModelProvider {
     @Override
     public void generateItemModels (ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(DPItems.POKEMON_EGG, Models.GENERATED);
+        itemModelGenerator.register(DPItems.LEATHER_EGG_BAG, Models.GENERATED);
     }
 }

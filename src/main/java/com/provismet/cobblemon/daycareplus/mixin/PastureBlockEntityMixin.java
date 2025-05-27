@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(PokemonPastureBlockEntity.class)
@@ -97,6 +98,21 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
                 break;
             }
         }
+    }
+
+    @Override
+    public List<ItemStack> withdraw (int amount) {
+        if (this.isEmpty()) return List.of();
+
+        List<ItemStack> withdrawn = new ArrayList<>();
+        for (int i = 0; i < this.inventory.size() && withdrawn.size() < amount; ++i) {
+            ItemStack egg = this.getStack(i);
+            if (!egg.isEmpty()) {
+                withdrawn.add(egg.copy());
+                this.setStack(i, ItemStack.EMPTY);
+            }
+        }
+        return withdrawn;
     }
 
     @Override

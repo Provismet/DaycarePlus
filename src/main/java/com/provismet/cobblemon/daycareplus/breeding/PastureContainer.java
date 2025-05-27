@@ -6,10 +6,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public interface PastureContainer extends SidedInventory {
     void add (ItemStack stack);
-
     int count ();
+    List<ItemStack> withdraw (int amount);
 
     @Override
     default int[] getAvailableSlots (Direction side) {

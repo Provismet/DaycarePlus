@@ -4,10 +4,10 @@ import ca.landonjw.gooeylibs2.api.UIManager;
 import com.cobblemon.mod.common.block.PastureBlock;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.gui.DaycareGUI;
 import com.provismet.cobblemon.daycareplus.gui.IntroGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
+import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,6 +34,11 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
     @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
     private void openGui (BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (player instanceof ServerPlayerEntity serverPlayer && !PlayerExtensionsKt.isInBattle(serverPlayer)) {
+            if (serverPlayer.getMainHandStack().isIn(DPItemTags.EGG_BAGS)) {
+                cir.setReturnValue(ActionResult.PASS);
+                return;
+            }
+
             BlockPos basePos = this.getBasePosition(state, pos);
             if (!(world.getBlockEntity(basePos) instanceof PokemonPastureBlockEntity pastureBlockEntity)) return;
 

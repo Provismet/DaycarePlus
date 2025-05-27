@@ -1,6 +1,7 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
 import com.cobblemon.mod.common.CobblemonItems;
+import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
@@ -24,5 +25,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(CobblemonItems.POWER_BRACER)
             .add(CobblemonItems.POWER_LENS)
             .add(CobblemonItems.POWER_WEIGHT);
+
+        this.getOrCreateTagBuilder(DPItemTags.EGG_BAGS)
+            .add(DPItems.LEATHER_EGG_BAG);
     }
 }

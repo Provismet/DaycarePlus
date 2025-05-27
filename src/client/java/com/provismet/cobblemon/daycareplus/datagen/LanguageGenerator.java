@@ -14,6 +14,9 @@ public class LanguageGenerator extends LilyLanguageProvider {
 
     @Override
     public void generateTranslations (RegistryWrapper.WrapperLookup wrapperLookup, TranslationBuilder translationBuilder) {
+        translationBuilder.add("title.daycareplus.item_group", "Daycare+");
+
         translationBuilder.add(DPItems.POKEMON_EGG, "Pokemon Egg");
+        translationBuilder.add(DPItems.LEATHER_EGG_BAG, "Leather Egg Bag");
     }
 }
