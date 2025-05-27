@@ -3,7 +3,6 @@ package com.provismet.cobblemon.daycareplus.util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 
-import java.util.Collection;
 import java.util.List;
 
 public class MathExtras {
