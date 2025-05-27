@@ -56,18 +56,26 @@ public abstract class PreEvolutionFormOverrideProvider implements DataProvider {
 
     @Override
     public String getName () {
-        return "Daycare+ Overrides";
+        return "Daycare+ Offspring Overrides";
     }
 
     public static final class PreEvolutionGenerator {
         private final Map<Identifier, PreEvoFormOverride> map = new HashMap<>();
 
-        public void add (String species, String preEvoSpecies, String preEvolutionForm) {
-            this.add(MiscUtilsKt.cobblemonResource(species), MiscUtilsKt.cobblemonResource(preEvoSpecies), preEvolutionForm);
+        public void add (String species, String preEvoSpecies, String preEvoForm) {
+            this.add(MiscUtilsKt.cobblemonResource(species), MiscUtilsKt.cobblemonResource(preEvoSpecies), preEvoForm);
         }
 
-        public void add (Identifier speciesId, Identifier preEvoId, String preEvolutionForm) {
-            this.add(speciesId, preEvoId, Map.of("normal", preEvolutionForm));
+        public void add (String species, String parentForm, String preEvoSpecies, String preEvoForm) {
+            this.add(MiscUtilsKt.cobblemonResource(species), parentForm, MiscUtilsKt.cobblemonResource(preEvoSpecies), preEvoForm);
+        }
+
+        public void add (Identifier speciesId, String parentForm, Identifier preEvoId, String preEvoForm) {
+            this.add(speciesId, preEvoId, Map.of(parentForm, preEvoForm));
+        }
+
+        public void add (Identifier speciesId, Identifier preEvoId, String preEvoForm) {
+            this.add(speciesId, "normal", preEvoId, preEvoForm);
         }
 
         public void add (Identifier speciesId, Identifier preEvoId, Map<String, String> formMapping) {
