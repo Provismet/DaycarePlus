@@ -28,6 +28,8 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class PokemonEggItem extends PolymerItem {
+    private static final int DEFAULT_STEPS = 7200;
+
     public PokemonEggItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData) {
         super(settings, baseVanillaItem, modelData);
     }
@@ -41,9 +43,11 @@ public class PokemonEggItem extends PolymerItem {
             Species species = PokemonSpecies.INSTANCE.getByIdentifier(speciesId);
             if (species != null) {
                 stack.set(DPItemDataComponents.EGG_STEPS, Options.getEggPoints(species.getEggCycles()));
+                stack.set(DPItemDataComponents.MAX_EGG_STEPS, Options.getEggPoints(species.getEggCycles()));
             }
             else {
-                stack.set(DPItemDataComponents.EGG_STEPS, 7200);
+                stack.set(DPItemDataComponents.EGG_STEPS, DEFAULT_STEPS);
+                stack.set(DPItemDataComponents.MAX_EGG_STEPS, DEFAULT_STEPS);
             }
         }
 
@@ -72,14 +76,22 @@ public class PokemonEggItem extends PolymerItem {
             IVs iv = pokemonProperties.getIvs();
             if (iv != null) {
                 tooltip.add(Text.empty());
-                tooltip.add(Text.literal("HP  : " + iv.getOrDefault(Stats.HP)));
-                tooltip.add(Text.literal("Atk : " + iv.getOrDefault(Stats.ATTACK)));
-                tooltip.add(Text.literal("Def : " + iv.getOrDefault(Stats.DEFENCE)));
-                tooltip.add(Text.literal("Sp.A: " + iv.getOrDefault(Stats.SPECIAL_ATTACK)));
-                tooltip.add(Text.literal("Sp.D: " + iv.getOrDefault(Stats.SPECIAL_DEFENCE)));
-                tooltip.add(Text.literal("Spe : " + iv.getOrDefault(Stats.SPEED)));
+                tooltip.add(Text.literal("HP: " + iv.getOrDefault(Stats.HP)));
+                tooltip.add(Text.literal("Attack: " + iv.getOrDefault(Stats.ATTACK)));
+                tooltip.add(Text.literal("Defence: " + iv.getOrDefault(Stats.DEFENCE)));
+                tooltip.add(Text.literal("Sp.Attack: " + iv.getOrDefault(Stats.SPECIAL_ATTACK)));
+                tooltip.add(Text.literal("Sp.Defence: " + iv.getOrDefault(Stats.SPECIAL_DEFENCE)));
+                tooltip.add(Text.literal("Speed: " + iv.getOrDefault(Stats.SPEED)));
             }
         }
+    }
+
+    public int getRemainingSteps (ItemStack stack) {
+        return stack.getOrDefault(DPItemDataComponents.EGG_STEPS, DEFAULT_STEPS);
+    }
+
+    public int getMaxSteps (ItemStack stack) {
+        return stack.getOrDefault(DPItemDataComponents.MAX_EGG_STEPS, DEFAULT_STEPS);
     }
 
     // TODO: Temporary until incubators implemented.
@@ -93,12 +105,11 @@ public class PokemonEggItem extends PolymerItem {
     }
 
     public void decrementEggSteps (ItemStack stack, int amount, ServerPlayerEntity player) {
-        Integer steps = stack.get(DPItemDataComponents.EGG_STEPS);
-        if (steps == null) steps = 7200;
-
+        int steps = this.getRemainingSteps(stack);
         steps = Math.max(0, steps - amount);
+        stack.setDamage(Math.clamp(steps * 100L / this.getMaxSteps(stack), 1, 100));
 
-        if (steps <= 0) {
+        if (steps == 0) {
             DaycarePlusServer.LOGGER.info("Attempt to hatch egg.");
             boolean playerPartyBusy = PlayerExtensionsKt.isPartyBusy(player) || PlayerExtensionsKt.isInBattle(player);
             boolean partyHasSpace = PlayerExtensionsKt.party(player).getFirstAvailablePosition() != null || PlayerExtensionsKt.pc(player).getFirstAvailablePosition() != null;

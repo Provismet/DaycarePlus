@@ -14,7 +14,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public abstract class DPItems {
-    public static final PokemonEggItem POKEMON_EGG = register("pokemon_egg", new Item.Settings().maxCount(1), PokemonEggItem::new);
+    public static final PokemonEggItem POKEMON_EGG = register("pokemon_egg", (settings, vanillaItem, modelData) -> new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData));
 
     public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", 1, 8);
 
