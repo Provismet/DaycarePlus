@@ -135,7 +135,7 @@ public interface DaycareGUI {
                 .build();
         }
 
-        ChestTemplate template = ChestTemplate.builder(6)
+        ChestTemplate template = ChestTemplate.builder(5)
             .set(0, 8, infoButton)
             .set(0, 7, openPasture)
             .set(0, 6, eggCounter)
