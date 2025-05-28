@@ -99,7 +99,7 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
     public void reload (ResourceManager manager) {
         PRE_EVO_OVERRIDES.clear();
 
-        Map<Identifier, Resource> overrides = manager.findResources("overrides", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusServer.MODID) && identifier.getPath().endsWith(".json"));
+        Map<Identifier, Resource> overrides = manager.findResources("overrides/preevolutions", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusServer.MODID) && identifier.getPath().endsWith(".json"));
         for (Map.Entry<Identifier, Resource> entry : overrides.entrySet()) {
             try (InputStream stream = entry.getValue().getInputStream()) {
                 String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);

@@ -43,6 +43,7 @@ public abstract class PreEvolutionFormOverrideProvider implements DataProvider {
                         .resolvePath(DataOutput.OutputType.DATA_PACK)
                         .resolve(DaycarePlusServer.MODID)
                         .resolve("overrides")
+                        .resolve("preevolutions")
                         .resolve(entry.getKey().getNamespace())
                         .resolve(entry.getKey().getPath() + ".json")
                 ));
