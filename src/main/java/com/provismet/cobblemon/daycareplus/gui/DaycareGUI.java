@@ -109,21 +109,21 @@ public interface DaycareGUI {
                 .display(PokemonItem.from(props))
                 .with(DataComponentTypes.CUSTOM_NAME, Text.literal("Offspring"))
                 .with(DataComponentTypes.LORE, new LoreComponent(List.of(
-                    Text.literal("Species: " + props.getSpecies()),
-                    Text.literal("Form: " + props.getForm()),
-                    Text.literal("Abilities: " + String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).toList())),
-                    Text.literal("Nature: " + (offspring.get().getPossibleNatures().isEmpty() ? "?" : String.join(", ", offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).toList()))),
+                    Text.translatable("property.daycareplus.species", props.getSpecies()),
+                    Text.translatable("property.daycareplus.form", props.getForm()),
+                    Text.translatable("property.daycareplus.ability", String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).toList())),
+                    Text.translatable("property.daycareplus.nature", offspring.get().getPossibleNatures().isEmpty() ? "?" : String.join(", ", offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).toList())),
                     Text.empty(),
                     Text.literal("IVs"),
-                    Text.literal("HP: " + ivs.get(Stats.HP).toString()),
-                    Text.literal("Attack: " + ivs.get(Stats.ATTACK).toString()),
-                    Text.literal("Defence: " + ivs.get(Stats.DEFENCE).toString()),
-                    Text.literal("Sp.Atk: " + ivs.get(Stats.SPECIAL_ATTACK).toString()),
-                    Text.literal("Sp.Def: " + ivs.get(Stats.SPECIAL_DEFENCE).toString()),
-                    Text.literal("Speed: " + ivs.get(Stats.SPEED).toString()),
+                    Text.translatable("property.daycareplus.hp", ivs.get(Stats.HP).toString()),
+                    Text.translatable("property.daycareplus.attack", ivs.get(Stats.ATTACK).toString()),
+                    Text.translatable("property.daycareplus.defence", ivs.get(Stats.DEFENCE).toString()),
+                    Text.translatable("property.daycareplus.special_attack", ivs.get(Stats.SPECIAL_ATTACK).toString()),
+                    Text.translatable("property.daycareplus.special_defence", ivs.get(Stats.SPECIAL_DEFENCE).toString()),
+                    Text.translatable("property.daycareplus.speed", ivs.get(Stats.SPEED).toString()),
                     Text.empty(),
-                    Text.literal("Aspects: " + String.join(", ", tile.getAspects())),
-                    Text.literal("Shiny Rate: 1/" + (int)(1 / offspring.get().getShinyRate()))
+                    Text.literal("Aspects: " + String.join(", ", tile.getAspects())), // TODO: Temporary for bug testing.
+                    Text.translatable("Shiny Rate: 1/" + (int)(1 / offspring.get().getShinyRate()))
                 )))
                 .build();
         }

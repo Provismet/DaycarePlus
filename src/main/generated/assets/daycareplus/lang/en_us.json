@@ -1,5 +1,27 @@
 {
+  "gui.button.daycareplus.info": "Info",
+  "gui.button.daycareplus.open_pasture": "Open Pasture",
+  "item.daycareplus.diamond_egg_bag": "Diamond Egg Bag",
+  "item.daycareplus.gold_egg_bag": "Gold Egg Bag",
+  "item.daycareplus.iron_egg_bag": "Iron Egg Bag",
   "item.daycareplus.leather_egg_bag": "Leather Egg Bag",
+  "item.daycareplus.netherite_egg_bag": "Netherite Egg Bag",
   "item.daycareplus.pokemon_egg": "Pokemon Egg",
-  "title.daycareplus.item_group": "Daycare+"
+  "message.chat.daycareplus.egg_produced": "Your daycare has produced an egg.",
+  "message.overlay.daycareplus.egg.hatch": "Your egg hatched.",
+  "message.overlay.daycareplus.egg_bag.collection.plural": "Collected %1$s eggs.",
+  "message.overlay.daycareplus.egg_bag.collection.singular": "Collected %1$s egg.",
+  "property.daycareplus.ability": "Ability: %1$s",
+  "property.daycareplus.attack": "Attack: %1$s",
+  "property.daycareplus.defence": "Defence: %1$s",
+  "property.daycareplus.form": "Form: %1$s",
+  "property.daycareplus.hp": "HP: %1$s",
+  "property.daycareplus.nature": "Nature: %1$s",
+  "property.daycareplus.special_attack": "Sp.Attack: %1$s",
+  "property.daycareplus.special_defence": "Sp.Defence: %1$s",
+  "property.daycareplus.species": "Species: %1$s",
+  "property.daycareplus.speed": "Speed: %1$s",
+  "title.daycareplus.item_group": "Daycare+",
+  "tooltip.daycareplus.egg.no_data": "No data found.",
+  "tooltip.daycareplus.egg_bag.eggs_held": "Eggs Held: %1$s/%2$s"
 }

@@ -59,7 +59,7 @@ public class PastureExtension {
                 this.predictEgg().ifPresent(potentialEgg -> {
                     if (this.blockEntity.getOwnerId() != null) {
                         PlayerEntity owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
-                        if (owner != null) owner.sendMessage(Text.literal("egg is here"));
+                        if (owner != null) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
                     }
 
                     ItemStack egg = DPItems.POKEMON_EGG.createEggItem(potentialEgg.createPokemonProperties());

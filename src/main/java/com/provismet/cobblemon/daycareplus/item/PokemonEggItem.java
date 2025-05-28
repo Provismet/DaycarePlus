@@ -11,11 +11,11 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
 import com.cobblemon.mod.common.util.ResourceLocationExtensionsKt;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -57,16 +57,17 @@ public class PokemonEggItem extends PolymerItem {
     @Override
     public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
+        if (stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) return;
 
         String properties = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
         if (properties == null) {
-            tooltip.add(Text.literal("No data found."));
+            tooltip.add(Text.translatable("tooltip.daycareplus.egg.no_data"));
         }
         else {
             PokemonProperties pokemonProperties = PokemonProperties.Companion.parse(properties);
-            if (pokemonProperties.getSpecies() != null) tooltip.add(Text.literal("Species: ").append(pokemonProperties.getSpecies()));
-            if (pokemonProperties.getForm() != null) tooltip.add(Text.literal("Form: ").append(pokemonProperties.getForm()));
-            if (pokemonProperties.getNature() != null) tooltip.add(Text.literal("Nature: ").append(pokemonProperties.getNature()));
+            if (pokemonProperties.getSpecies() != null) tooltip.add(Text.translatable("property.daycareplus.species", pokemonProperties.getSpecies()));
+            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form", pokemonProperties.getForm()));
+            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature", pokemonProperties.getNature()));
 
             Integer steps = stack.get(DPItemDataComponents.EGG_STEPS);
             if (steps != null) {
@@ -76,12 +77,12 @@ public class PokemonEggItem extends PolymerItem {
             IVs iv = pokemonProperties.getIvs();
             if (iv != null) {
                 tooltip.add(Text.empty());
-                tooltip.add(Text.literal("HP: " + iv.getOrDefault(Stats.HP)));
-                tooltip.add(Text.literal("Attack: " + iv.getOrDefault(Stats.ATTACK)));
-                tooltip.add(Text.literal("Defence: " + iv.getOrDefault(Stats.DEFENCE)));
-                tooltip.add(Text.literal("Sp.Attack: " + iv.getOrDefault(Stats.SPECIAL_ATTACK)));
-                tooltip.add(Text.literal("Sp.Defence: " + iv.getOrDefault(Stats.SPECIAL_DEFENCE)));
-                tooltip.add(Text.literal("Speed: " + iv.getOrDefault(Stats.SPEED)));
+                tooltip.add(Text.translatable("property.daycareplus.hp", iv.getOrDefault(Stats.HP)));
+                tooltip.add(Text.translatable("property.daycareplus.attack", iv.getOrDefault(Stats.ATTACK)));
+                tooltip.add(Text.translatable("property.daycareplus.defence", iv.getOrDefault(Stats.DEFENCE)));
+                tooltip.add(Text.translatable("property.daycareplus.special_attack", iv.getOrDefault(Stats.SPECIAL_ATTACK)));
+                tooltip.add(Text.translatable("property.daycareplus.special_defence", iv.getOrDefault(Stats.SPECIAL_DEFENCE)));
+                tooltip.add(Text.translatable("property.daycareplus.speed", iv.getOrDefault(Stats.SPEED)));
             }
         }
     }
@@ -110,7 +111,6 @@ public class PokemonEggItem extends PolymerItem {
         stack.setDamage(Math.clamp(steps * 100L / this.getMaxSteps(stack), 1, 100));
 
         if (steps == 0) {
-            DaycarePlusServer.LOGGER.info("Attempt to hatch egg.");
             boolean playerPartyBusy = PlayerExtensionsKt.isPartyBusy(player) || PlayerExtensionsKt.isInBattle(player);
             boolean partyHasSpace = PlayerExtensionsKt.party(player).getFirstAvailablePosition() != null || PlayerExtensionsKt.pc(player).getFirstAvailablePosition() != null;
 
@@ -121,16 +121,14 @@ public class PokemonEggItem extends PolymerItem {
     }
 
     public void hatch (ItemStack stack, ServerPlayerEntity player) {
-        DaycarePlusServer.LOGGER.info("Attempting to hatch egg.");
         String propertiesString = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
 
         if (propertiesString != null) {
-            DaycarePlusServer.LOGGER.info("Pokemon data found.");
             PokemonProperties properties = PokemonProperties.Companion.parse(propertiesString);
 
             CobblemonEvents.HATCH_EGG_PRE.emit(new HatchEggEvent.Pre(properties, player));
             Pokemon pokemon = properties.create(player);
-            player.sendMessage(Text.literal("Your egg hatched."), true);
+            player.sendMessage(Text.translatable("message.overlay.daycareplus.egg.hatch"), true);
             PlayerExtensionsKt.party(player).add(pokemon);
             CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(properties, player));
         }
