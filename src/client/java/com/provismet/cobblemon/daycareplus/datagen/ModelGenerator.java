@@ -21,5 +21,9 @@ public class ModelGenerator extends FabricModelProvider {
     public void generateItemModels (ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(DPItems.POKEMON_EGG, Models.GENERATED);
         itemModelGenerator.register(DPItems.LEATHER_EGG_BAG, Models.GENERATED);
+        itemModelGenerator.register(DPItems.IRON_EGG_BAG, Models.GENERATED);
+        itemModelGenerator.register(DPItems.GOLD_EGG_BAG, Models.GENERATED);
+        itemModelGenerator.register(DPItems.DIAMOND_EGG_BAG, Models.GENERATED);
+        itemModelGenerator.register(DPItems.NETHERITE_EGG_BAG, Models.GENERATED);
     }
 }

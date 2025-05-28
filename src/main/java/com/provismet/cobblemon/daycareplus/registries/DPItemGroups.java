@@ -11,6 +11,10 @@ public abstract class DPItemGroups {
         .displayName(Text.translatable("title.daycareplus.item_group"))
         .entries((displayContext, entries) -> {
             entries.add(DPItems.LEATHER_EGG_BAG);
+            entries.add(DPItems.IRON_EGG_BAG);
+            entries.add(DPItems.GOLD_EGG_BAG);
+            entries.add(DPItems.DIAMOND_EGG_BAG);
+            entries.add(DPItems.NETHERITE_EGG_BAG);
         })
         .build();
 

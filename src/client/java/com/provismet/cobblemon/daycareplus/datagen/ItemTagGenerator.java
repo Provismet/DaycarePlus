@@ -27,6 +27,10 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(CobblemonItems.POWER_WEIGHT);
 
         this.getOrCreateTagBuilder(DPItemTags.EGG_BAGS)
-            .add(DPItems.LEATHER_EGG_BAG);
+            .add(DPItems.LEATHER_EGG_BAG)
+            .add(DPItems.IRON_EGG_BAG)
+            .add(DPItems.GOLD_EGG_BAG)
+            .add(DPItems.DIAMOND_EGG_BAG)
+            .add(DPItems.NETHERITE_EGG_BAG);
     }
 }

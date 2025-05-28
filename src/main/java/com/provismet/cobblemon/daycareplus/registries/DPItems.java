@@ -14,18 +14,22 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public abstract class DPItems {
-    public static final PokemonEggItem POKEMON_EGG = register("pokemon_egg", (settings, vanillaItem, modelData) -> new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData));
+    public static final PokemonEggItem POKEMON_EGG = register("pokemon_egg", Items.IRON_NUGGET, (settings, vanillaItem, modelData) -> new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData));
 
     public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", 1, 8);
+    public static final EggBagItem IRON_EGG_BAG = registerBag("iron_egg_bag", 2, 64);
+    public static final EggBagItem GOLD_EGG_BAG = registerBag("gold_egg_bag", 8, 32);
+    public static final EggBagItem DIAMOND_EGG_BAG = registerBag("diamond_egg_bag", 8, 128);
+    public static final EggBagItem NETHERITE_EGG_BAG = registerBag("netherite_egg_bag", 12, 256);
 
-    private static <T extends PolymerItem> T register (String name, ItemConstructor<T> constructor) {
+    private static <T extends PolymerItem> T register (String name, Item vanillaItem, ItemConstructor<T> constructor) {
         Identifier itemId = DaycarePlusServer.identifier(name);
-        PolymerModelData model = PolymerResourcePackUtils.requestModel(Items.IRON_NUGGET, itemId.withPrefixedPath("item/"));
-        return Registry.register(Registries.ITEM, itemId, constructor.apply(new Item.Settings(), Items.IRON_NUGGET, model));
+        PolymerModelData model = PolymerResourcePackUtils.requestModel(vanillaItem, itemId.withPrefixedPath("item/"));
+        return Registry.register(Registries.ITEM, itemId, constructor.apply(new Item.Settings(), vanillaItem, model));
     }
 
     private static EggBagItem registerBag (String name, int eggsToTick, int carryingCapacity) {
-        return register(name, (settings, vanillaItem, modelData) -> new EggBagItem(
+        return register(name, Items.IRON_NUGGET, (settings, vanillaItem, modelData) -> new EggBagItem(
             settings
                 .maxCount(1)
                 .component(DPItemDataComponents.ACTIVE_BAG, false)

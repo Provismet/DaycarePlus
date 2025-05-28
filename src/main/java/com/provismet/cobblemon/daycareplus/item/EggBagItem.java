@@ -5,11 +5,14 @@ import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.tooltip.BundleTooltipData;
+import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,11 +21,9 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ClickType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EggBagItem extends PolymerItem {
     private final int eggsToTick;
@@ -32,41 +33,24 @@ public class EggBagItem extends PolymerItem {
         this.eggsToTick = eggsToTick;
     }
 
-    public boolean isActive (ItemStack stack) {
-        return true;
-        // TODO: Implement active states
-        //return stack.getOrDefault(DPItemDataComponents.ACTIVE_BAG, false);
-    }
-
-    public void setActive (ItemStack stack, boolean activeState) {
-        stack.set(DPItemDataComponents.ACTIVE_BAG, activeState);
-    }
-
     @Override
     public ActionResult useOnBlock (ItemUsageContext context) {
-        DaycarePlusServer.LOGGER.info("Used egg bag on block.");
         if (context.getWorld().getBlockEntity(context.getBlockPos()) instanceof IMixinPastureBlockEntity daycare) {
-            DaycarePlusServer.LOGGER.info("Block is daycare");
             EggBagDataComponent component = context.getStack().get(DPItemDataComponents.HELD_EGGS);
             if (component != null) {
-                DaycarePlusServer.LOGGER.info("Bag has component");
                 int remainingSlots = component.capacity() - component.contents().size();
                 List<ItemStack> eggs = daycare.withdraw(remainingSlots);
+                int size = eggs.size();
                 context.getStack().set(DPItemDataComponents.HELD_EGGS, component.addAll(eggs));
-
-                if (context.getPlayer() != null) this.playInsertSound(context.getPlayer());
-
-                DaycarePlusServer.LOGGER.info("Should work");
+                if (context.getPlayer() != null) {
+                    this.playInsertSound(context.getPlayer());
+                    if (size == 0) context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
+                    else context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.plural", size), true);
+                }
                 return ActionResult.SUCCESS;
             }
         }
-        DaycarePlusServer.LOGGER.info("Did not work.");
         return super.useOnBlock(context);
-    }
-
-    @Override
-    public TypedActionResult<ItemStack> use (World world, PlayerEntity user, Hand hand) {
-        return super.use(world, user, hand); // TODO: Open an inventory window.
     }
 
     // Inserts into the bag
@@ -76,29 +60,43 @@ public class EggBagItem extends PolymerItem {
     }
 
     @Override
-    public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        EggBagDataComponent component = stack.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
-        tooltip.add(Text.literal("Eggs held: " + component.contents().size() + "/" + component.capacity()));
+    public Optional<TooltipData> getTooltipData (ItemStack stack) {
+        DaycarePlusServer.LOGGER.info("tried to get tooltip data");
+
+        return !stack.contains(DataComponentTypes.HIDE_TOOLTIP) && !stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)
+            ? Optional.ofNullable(stack.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT)).map(EggBagDataComponent::asBundle).map(BundleTooltipData::new)
+            : Optional.empty();
     }
 
     @Override
-    public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (!(entity instanceof ServerPlayerEntity player) || player.age % 20 != 0) return;
-
-        if (this.isActive(stack)) {
-            EggBagDataComponent component = stack.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
-            if (component.contents().isEmpty()) return;
-
-            for (int i = 0; i < this.eggsToTick; ++i) {
-                component.get(i).ifPresent(eggStack -> {
-                    if (eggStack.getItem() instanceof PokemonEggItem egg) {
-                        egg.decrementEggSteps(eggStack, 20, player); // TODO: Make this number variable.
-                    }
-                });
-            }
-            stack.set(DPItemDataComponents.HELD_EGGS, component.validate());
-        }
+    public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        EggBagDataComponent component = stack.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
+        tooltip.add(Text.translatable("tooltip.daycareplus.egg_bag.eggs_held", component.contents().size(), component.capacity()));
     }
+
+    public void tickEggs (ItemStack stack, ServerPlayerEntity player, int amount) {
+        EggBagDataComponent component = stack.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
+        if (component.contents().isEmpty()) return;
+
+        for (int i = 0; i < this.eggsToTick; ++i) {
+            component.get(i).ifPresent(eggStack -> {
+                if (eggStack.getItem() instanceof PokemonEggItem egg) {
+                    egg.decrementEggSteps(eggStack, amount, player);
+                }
+            });
+        }
+        stack.set(DPItemDataComponents.HELD_EGGS, component.validate());
+    }
+
+//    @Override
+//    public ItemStack getPolymerItemStack (ItemStack itemStack, TooltipType tooltipType, RegistryWrapper.WrapperLookup lookup, @Nullable ServerPlayerEntity player) {
+//        ItemStack output = super.getPolymerItemStack(itemStack, tooltipType, lookup, player);
+//
+//        if (player != null && PolymerServerNetworking.getSupportedVersion(player.networkHandler, null) > 0) {
+//            return itemStack;
+//        }
+//        return output;
+//    }
 
     private void playRemoveOneSound (Entity entity) {
         entity.getWorld().playSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_BUNDLE_REMOVE_ONE, SoundCategory.PLAYERS, 0.8f, 0.8f + entity.getWorld().getRandom().nextFloat() * 0.4f, true);

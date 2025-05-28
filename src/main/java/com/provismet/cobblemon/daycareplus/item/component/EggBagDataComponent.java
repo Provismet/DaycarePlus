@@ -1,8 +1,10 @@
 package com.provismet.cobblemon.daycareplus.item.component;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -58,6 +60,10 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
             return Optional.empty();
         }
         return Optional.of(this.contents.get(index));
+    }
+
+    public BundleContentsComponent asBundle () {
+        return new BundleContentsComponent(Lists.transform(this.contents, ItemStack::copy));
     }
 
     public static class Builder {

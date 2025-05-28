@@ -1,5 +1,9 @@
 {
   "values": [
-    "daycareplus:leather_egg_bag"
+    "daycareplus:leather_egg_bag",
+    "daycareplus:iron_egg_bag",
+    "daycareplus:gold_egg_bag",
+    "daycareplus:diamond_egg_bag",
+    "daycareplus:netherite_egg_bag"
   ]
 }
