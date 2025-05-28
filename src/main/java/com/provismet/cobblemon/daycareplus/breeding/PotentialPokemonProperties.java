@@ -47,13 +47,13 @@ public class PotentialPokemonProperties {
     public PotentialPokemonProperties (Pokemon primary, Pokemon secondary) {
         this.primary = primary;
         this.secondary = secondary;
-        this.form = BreedingUtils.getBabyForm(this.primary);
+        this.form = BreedingUtils.getBabyForm(this.primary); // TODO: Nidorans are dumb
     }
 
     public PokemonProperties createPokemonProperties () {
-        PokemonProperties properties = PokemonProperties.Companion.parse(String.join(" ", this.form.getAspects()), " ");
+        PokemonProperties properties = PokemonProperties.Companion.parse(BreedingUtils.getFormProperties(this.form), " ", "=");
         properties.setSpecies(this.form.getSpecies().showdownId());
-        properties.setForm(this.form.formOnlyShowdownId()); // This is borderline cosmetic but do it to get the form listed in the properties.
+        properties.setForm(this.form.formOnlyShowdownId()); // This is borderline cosmetic because the form gets overridden by aspects anyway but do it to get the form listed in the properties.
 
         this.setAbility(properties);
         this.setIVs(properties);

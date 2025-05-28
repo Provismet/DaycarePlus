@@ -28,6 +28,7 @@ import java.util.Set;
 public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
     private static final String DITTO = "Ditto";
     private static final Map<Identifier, PreEvoFormOverride> PRE_EVO_OVERRIDES = new HashMap<>();
+    private static final Map<String, FormPropertiesOverride> FORM_PROPERTY_OVERRIDES = new HashMap<>();
 
     public static boolean canBreed (Pokemon parent1, Pokemon parent2) {
         Set<EggGroup> eggGroups1 = parent1.getSpecies().getEggGroups();
@@ -68,6 +69,14 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
             DaycarePlusServer.LOGGER.info("PreEvo iterated to: {}, {}", preevo.getSpecies().getName(), preevo.getForm().getName());
         }
         return preevo.getForm();
+    }
+
+    // Necessary because for some reason the "region-bias-{{choice}}" aspects don't parse directly.
+    public static String getFormProperties (FormData form) {
+        if (FORM_PROPERTY_OVERRIDES.containsKey(form.formOnlyShowdownId())) {
+            return FORM_PROPERTY_OVERRIDES.get(form.formOnlyShowdownId()).toString();
+        }
+        return String.join(" ", form.getAspects());
     }
 
     @Nullable
@@ -111,6 +120,22 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
             }
             catch (Throwable e) {
                 DaycarePlusServer.LOGGER.error("DaycarePlus encountered an error whilst parsing override file {}: ", entry.getKey(), e);
+            }
+        }
+
+        Map<Identifier, Resource> forms = manager.findResources("overrides/forms", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusServer.MODID) && identifier.getPath().endsWith(".json"));
+        for (Map.Entry<Identifier, Resource> entry : forms.entrySet()) {
+            try (InputStream stream = entry.getValue().getInputStream()) {
+                String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+                DataResult<Pair<FormPropertiesOverride, JsonElement>> dataResult = FormPropertiesOverride.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseString(text));
+                FormPropertiesOverride resolved = dataResult.getOrThrow().getFirst();
+
+                String formId = entry.getKey().getPath().replace("overrides/forms", "").replace("/", "").replace(".json", "");
+                FORM_PROPERTY_OVERRIDES.put(formId, resolved);
+                DaycarePlusServer.LOGGER.info("Registered form property override: {} -> {}", formId, resolved);
+            }
+            catch (Throwable e) {
+                DaycarePlusServer.LOGGER.error("DaycarePlus encountered an error whilst parsing form property file file {}: ", entry.getKey(), e);
             }
         }
     }
