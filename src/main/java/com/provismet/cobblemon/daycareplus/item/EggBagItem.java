@@ -1,13 +1,14 @@
 package com.provismet.cobblemon.daycareplus.item;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
+import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
@@ -53,16 +54,61 @@ public class EggBagItem extends PolymerItem {
         return super.useOnBlock(context);
     }
 
-    // Inserts into the bag
+    // Bag is on the cursor, hover over another item to collect it.
     @Override
-    public boolean onStackClicked (ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
-        return super.onStackClicked(stack, slot, clickType, player);
+    public boolean onStackClicked (ItemStack eggBag, Slot slot, ClickType clickType, PlayerEntity player) {
+        if (clickType != ClickType.RIGHT) return false;
+
+        EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
+        if (component == null) return false;
+
+        ItemStack otherItem = slot.getStack();
+        if (!otherItem.isEmpty() && !otherItem.isOf(DPItems.POKEMON_EGG)) return true;
+
+        EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
+        if (otherItem.isEmpty()) { // Place egg in inventory.
+            this.playRemoveOneSound(player);
+            ItemStack stackFromBag = builder.remove();
+            ItemStack itemStack3 = slot.insertStack(stackFromBag);
+            builder.add(itemStack3);
+        }
+        else if (!component.isFull()) { // Put egg in bag.
+            builder.add(otherItem.copyAndEmpty());
+            this.playInsertSound(player);
+        }
+
+        eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
+        return true;
     }
 
+    // Bag is in the inventory, withdraw an egg or put one in.
+    @Override
+    public boolean onClicked (ItemStack eggBag, ItemStack cursorStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
+        if (clickType == ClickType.RIGHT && slot.canTakePartial(player)) {
+            EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
+            if (component == null) return false;
+            else {
+                EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
+
+                if (cursorStack.isEmpty() && !component.isEmpty()) {
+                    ItemStack itemStack = builder.remove();
+                    this.playRemoveOneSound(player);
+                    cursorStackReference.set(itemStack);
+                }
+                else if (cursorStack.isOf(DPItems.POKEMON_EGG) && !component.isFull()) {
+                    builder.add(cursorStack.copyAndEmpty());
+                }
+
+                eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // TODO: Only exists clientside, future goal is to make this work on compatible clients. Don't know how to check that yet though.
     @Override
     public Optional<TooltipData> getTooltipData (ItemStack stack) {
-        DaycarePlusServer.LOGGER.info("tried to get tooltip data");
-
         return !stack.contains(DataComponentTypes.HIDE_TOOLTIP) && !stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)
             ? Optional.ofNullable(stack.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT)).map(EggBagDataComponent::asBundle).map(BundleTooltipData::new)
             : Optional.empty();
@@ -87,16 +133,6 @@ public class EggBagItem extends PolymerItem {
         }
         stack.set(DPItemDataComponents.HELD_EGGS, component.validate());
     }
-
-//    @Override
-//    public ItemStack getPolymerItemStack (ItemStack itemStack, TooltipType tooltipType, RegistryWrapper.WrapperLookup lookup, @Nullable ServerPlayerEntity player) {
-//        ItemStack output = super.getPolymerItemStack(itemStack, tooltipType, lookup, player);
-//
-//        if (player != null && PolymerServerNetworking.getSupportedVersion(player.networkHandler, null) > 0) {
-//            return itemStack;
-//        }
-//        return output;
-//    }
 
     private void playRemoveOneSound (Entity entity) {
         entity.getWorld().playSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_BUNDLE_REMOVE_ONE, SoundCategory.PLAYERS, 0.8f, 0.8f + entity.getWorld().getRandom().nextFloat() * 0.4f, true);
