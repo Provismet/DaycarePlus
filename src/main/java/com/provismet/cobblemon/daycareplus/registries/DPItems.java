@@ -33,7 +33,6 @@ public abstract class DPItems {
         return register(name, Items.IRON_NUGGET, (settings, vanillaItem, modelData) -> new EggBagItem(
             settings
                 .maxCount(1)
-                .component(DPItemDataComponents.ACTIVE_BAG, false)
                 .component(DPItemDataComponents.HELD_EGGS, new EggBagDataComponent(eggBagSettings.capacity())),
             vanillaItem,
             modelData,
