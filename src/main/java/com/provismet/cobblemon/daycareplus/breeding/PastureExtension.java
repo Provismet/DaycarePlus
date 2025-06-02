@@ -53,19 +53,30 @@ public class PastureExtension {
 
             if (world.getTime() % Options.getTicksPerEggAttempt() == 0) ++eggAttempts;
 
+            int successfulEggs = 0;
+            PlayerEntity owner = null;
+            if (this.blockEntity.getOwnerId() != null) {
+                owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
+            }
+
             for (int i = 0; i < eggAttempts; ++i) {
                 if (world.getRandom().nextDouble() > Options.getSuccessRatePerEggAttempt()) continue;
 
-                this.predictEgg().ifPresent(potentialEgg -> {
-                    if (this.blockEntity.getOwnerId() != null) {
-                        PlayerEntity owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
-                        if (owner != null) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
+                Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();
+                if (optionalEgg.isPresent()) {
+                    PotentialPokemonProperties potentialEgg = optionalEgg.get();
+                    if (owner != null) {
+                        if (eggAttempts == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
+                        else ++successfulEggs;
                     }
 
                     ItemStack egg = DPItems.POKEMON_EGG.createEggItem(potentialEgg.createPokemonProperties());
                     ((PastureContainer)(Object)this.blockEntity).add(egg);
-                });
+                }
+            }
 
+            if (successfulEggs > 0) {
+                owner.sendMessage(Text.translatable("message.chat.daycareplus.multiple_egg_produced", successfulEggs));
             }
         }
     }
