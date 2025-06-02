@@ -87,21 +87,20 @@ public class EggBagItem extends PolymerItem {
         if (clickType == ClickType.RIGHT && slot.canTakePartial(player)) {
             EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
             if (component == null) return false;
-            else {
-                EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
 
-                if (cursorStack.isEmpty() && !component.isEmpty()) {
-                    ItemStack itemStack = builder.remove();
-                    this.playRemoveOneSound(player);
-                    cursorStackReference.set(itemStack);
-                }
-                else if (cursorStack.isOf(DPItems.POKEMON_EGG) && !component.isFull()) {
-                    builder.add(cursorStack.copyAndEmpty());
-                }
+            EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
 
-                eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
-                return true;
+            if (cursorStack.isEmpty() && !component.isEmpty()) {
+                ItemStack itemStack = builder.remove();
+                this.playRemoveOneSound(player);
+                cursorStackReference.set(itemStack);
             }
+            else if (cursorStack.isOf(DPItems.POKEMON_EGG) && !component.isFull()) {
+                builder.add(cursorStack.copyAndEmpty());
+            }
+
+            eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
+            return true;
         }
         return false;
     }
