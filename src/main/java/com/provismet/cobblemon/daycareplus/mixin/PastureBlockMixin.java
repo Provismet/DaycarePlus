@@ -53,7 +53,7 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
             if (mixinPasture.shouldBreed()) {
                 if (!isOwner) {
                     player.sendMessage(Text.translatable("message.overlay.daycareplus.not_owner").formatted(Formatting.RED), true);
-                    cir.setReturnValue(ActionResult.FAIL);
+                    cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
                     return;
                 }
 
