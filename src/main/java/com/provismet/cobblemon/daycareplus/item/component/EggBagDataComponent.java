@@ -62,6 +62,14 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
         return Optional.of(this.contents.get(index));
     }
 
+    public boolean isEmpty () {
+        return this.contents.isEmpty();
+    }
+
+    public boolean isFull () {
+        return this.contents.size() >= this.capacity;
+    }
+
     public BundleContentsComponent asBundle () {
         return new BundleContentsComponent(Lists.transform(this.contents, ItemStack::copy));
     }
@@ -82,6 +90,11 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
                 return true;
             }
             return false;
+        }
+
+        public ItemStack remove () {
+            if (this.mutableContents.isEmpty()) return ItemStack.EMPTY;
+            return this.mutableContents.removeFirst();
         }
 
         public void validate () {

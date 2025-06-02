@@ -31,22 +31,41 @@ public class LanguageGenerator extends LilyLanguageProvider {
         // Egg Item
         translationBuilder.add("message.overlay.daycareplus.egg.hatch", "Your egg hatched.");
         translationBuilder.add("tooltip.daycareplus.egg.no_data", "No data found.");
+        translationBuilder.add("tooltip.daycareplus.egg.ticks", "Time: %1$s");
 
         // Daycare
         translationBuilder.add("message.chat.daycareplus.egg_produced", "Your daycare has produced an egg.");
+        translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");
+        translationBuilder.add("message.overlay.daycareplus.not_owner", "This is not your daycare.");
         translationBuilder.add("gui.button.daycareplus.open_pasture", "Open Pasture");
         translationBuilder.add("gui.button.daycareplus.info", "Info");
+        translationBuilder.add("gui.button.daycareplus.info.tooltip.1", "The daycare attempt to produce an egg periodically.");
+        translationBuilder.add("gui.button.daycareplus.info.tooltip.2", "Eggs will still be produced when the pasture is unloaded or the owner is offline.");
+        translationBuilder.add("gui.button.daycareplus.offspring", "Offspring");
+        translationBuilder.add("gui.button.daycareplus.eggs_held", "%1$s/%2$s eggs held");
+        translationBuilder.add("gui.button.daycareplus.no_parent", "No parent selected.");
+        translationBuilder.add("gui.button.daycareplus.no_parent.tooltip", "Add a pokemon to the pasture.");
+        translationBuilder.add("gui.button.daycareplus.offspring.empty", "No preview available.");
+        translationBuilder.add("gui.button.daycareplus.offspring.empty.tooltip", "Select two compatible Pokemon to view the preview.");
+
+        // Intro GUI
+        translationBuilder.add("gui.button.daycareplus.intro.daycare", "Daycare");
+        translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip", "Use this pasture to breed Pokemon.");
+        translationBuilder.add("gui.button.daycareplus.intro.pasture", "Pasture");
+        translationBuilder.add("gui.button.daycareplus.intro.pasture.tooltip", "Use this pasture cosmetically without breeding.");
 
         // Properties
-        translationBuilder.add("property.daycareplus.species", "Species: %1$s");
-        translationBuilder.add("property.daycareplus.form", "Form: %1$s");
-        translationBuilder.add("property.daycareplus.ability", "Ability: %1$s");
-        translationBuilder.add("property.daycareplus.nature", "Nature: %1$s");
-        translationBuilder.add("property.daycareplus.hp", "HP: %1$s");
-        translationBuilder.add("property.daycareplus.attack", "Attack: %1$s");
-        translationBuilder.add("property.daycareplus.defence", "Defence: %1$s");
-        translationBuilder.add("property.daycareplus.special_attack", "Sp.Attack: %1$s");
-        translationBuilder.add("property.daycareplus.special_defence", "Sp.Defence: %1$s");
-        translationBuilder.add("property.daycareplus.speed", "Speed: %1$s");
+        translationBuilder.add("property.daycareplus.species", "Species: ");
+        translationBuilder.add("property.daycareplus.form", "Form: ");
+        translationBuilder.add("property.daycareplus.ability", "Ability: ");
+        translationBuilder.add("property.daycareplus.nature", "Nature: ");
+        translationBuilder.add("property.daycareplus.ivs", "IVs ");
+        translationBuilder.add("property.daycareplus.hp", "HP: ");
+        translationBuilder.add("property.daycareplus.attack", "Attack: ");
+        translationBuilder.add("property.daycareplus.defence", "Defence: ");
+        translationBuilder.add("property.daycareplus.special_attack", "Sp.Attack: ");
+        translationBuilder.add("property.daycareplus.special_defence", "Sp.Defence: ");
+        translationBuilder.add("property.daycareplus.speed", "Speed: ");
+        translationBuilder.add("property.daycareplus.shiny", "Shiny Chance: ");
     }
 }

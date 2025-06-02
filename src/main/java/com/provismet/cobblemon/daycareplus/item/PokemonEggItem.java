@@ -14,20 +14,21 @@ import com.cobblemon.mod.common.util.ResourceLocationExtensionsKt;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
+import com.provismet.cobblemon.daycareplus.util.StringFormatting;
+import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 
 import java.util.List;
 
 public class PokemonEggItem extends PolymerItem {
+    private static final int TICKS_PER_MINUTE = 60 * 20;
     private static final int DEFAULT_STEPS = 7200;
 
     public PokemonEggItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData) {
@@ -65,24 +66,36 @@ public class PokemonEggItem extends PolymerItem {
         }
         else {
             PokemonProperties pokemonProperties = PokemonProperties.Companion.parse(properties);
-            if (pokemonProperties.getSpecies() != null) tooltip.add(Text.translatable("property.daycareplus.species", pokemonProperties.getSpecies()));
-            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form", pokemonProperties.getForm()));
-            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature", pokemonProperties.getNature()));
+            if (pokemonProperties.getSpecies() != null) tooltip.add(Text.translatable("property.daycareplus.species").append(StringFormatting.titleCase(pokemonProperties.getSpecies())));
+            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").append(StringFormatting.titleCase(pokemonProperties.getForm())));
+            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").append(StringFormatting.titleCase(Identifier.of(pokemonProperties.getNature()).getPath())));
 
             Integer steps = stack.get(DPItemDataComponents.EGG_STEPS);
             if (steps != null) {
-                tooltip.add(Text.literal("Steps: " + steps));
+                String minutes = "" + (steps / TICKS_PER_MINUTE);
+                String seconds = "" + ((steps % TICKS_PER_MINUTE) / 20);
+
+                if (minutes.length() < 2) minutes = "0" + minutes;
+                if (seconds.length() < 2) seconds = "0" + seconds;
+
+                tooltip.add(Text.translatable("tooltip.daycareplus.egg.ticks", minutes + ":" + seconds));
             }
 
             IVs iv = pokemonProperties.getIvs();
             if (iv != null) {
                 tooltip.add(Text.empty());
-                tooltip.add(Text.translatable("property.daycareplus.hp", iv.getOrDefault(Stats.HP)));
-                tooltip.add(Text.translatable("property.daycareplus.attack", iv.getOrDefault(Stats.ATTACK)));
-                tooltip.add(Text.translatable("property.daycareplus.defence", iv.getOrDefault(Stats.DEFENCE)));
-                tooltip.add(Text.translatable("property.daycareplus.special_attack", iv.getOrDefault(Stats.SPECIAL_ATTACK)));
-                tooltip.add(Text.translatable("property.daycareplus.special_defence", iv.getOrDefault(Stats.SPECIAL_DEFENCE)));
-                tooltip.add(Text.translatable("property.daycareplus.speed", iv.getOrDefault(Stats.SPEED)));
+                tooltip.add(Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP))
+                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.HP))).styled(Styles.WHITE_NO_ITALICS)));
+                tooltip.add(Text.translatable("property.daycareplus.attack").styled(Styles.colouredNoItalics(Styles.ATTACK))
+                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.ATTACK))).styled(Styles.WHITE_NO_ITALICS)));
+                tooltip.add(Text.translatable("property.daycareplus.defence").styled(Styles.colouredNoItalics(Styles.DEFENCE))
+                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.DEFENCE))).styled(Styles.WHITE_NO_ITALICS)));
+                tooltip.add(Text.translatable("property.daycareplus.special_attack").styled(Styles.colouredNoItalics(Styles.SPECIAL_ATTACK))
+                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.SPECIAL_ATTACK))).styled(Styles.WHITE_NO_ITALICS)));
+                tooltip.add(Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE))
+                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.SPECIAL_DEFENCE))).styled(Styles.WHITE_NO_ITALICS)));
+                tooltip.add(Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED))
+                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.SPEED))).styled(Styles.WHITE_NO_ITALICS)));
             }
         }
     }
@@ -93,16 +106,6 @@ public class PokemonEggItem extends PolymerItem {
 
     public int getMaxSteps (ItemStack stack) {
         return stack.getOrDefault(DPItemDataComponents.MAX_EGG_STEPS, DEFAULT_STEPS);
-    }
-
-    // TODO: Temporary until incubators implemented.
-    @Override
-    public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        super.inventoryTick(stack, world, entity, slot, selected);
-
-        if (entity instanceof ServerPlayerEntity player) {
-            this.decrementEggSteps(stack, 1, player);
-        }
     }
 
     public void decrementEggSteps (ItemStack stack, int amount, ServerPlayerEntity player) {

@@ -6,6 +6,7 @@ import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.gui.DaycareGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
+import com.provismet.cobblemon.daycareplus.util.Styles;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -186,7 +187,8 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
     @Unique
     private void updateEggCounter () {
-        this.eggCounter.getDisplay().set(DataComponentTypes.LORE, new LoreComponent(List.of(Text.literal(this.count() + "/" + this.size() + " eggs held"))));
+        this.eggCounter.getDisplay().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.eggs_held", this.count(), this.size())
+            .styled(Styles.WHITE_NO_ITALICS));
         this.eggCounter.update();
     }
 
