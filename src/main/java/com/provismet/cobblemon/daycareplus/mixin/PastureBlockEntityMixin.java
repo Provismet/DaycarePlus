@@ -229,6 +229,15 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
         }
     }
 
+    @Inject(method = "onBroken", at = @At("HEAD"), remap = false)
+    private void spillInventory (CallbackInfo info) {
+        if (this.world == null) return;
+
+        for (ItemStack stack : this.inventory) {
+            Block.dropStack(this.world, this.pos, stack.copyAndEmpty());
+        }
+    }
+
     @Inject(method = "getMaxTethered", at = @At("HEAD"), cancellable = true, remap = false)
     private void restrictDaycare (CallbackInfoReturnable<Integer> cir) {
         if (this.isBreeder) cir.setReturnValue(2);
