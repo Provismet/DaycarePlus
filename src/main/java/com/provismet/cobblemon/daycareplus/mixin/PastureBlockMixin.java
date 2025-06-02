@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -34,13 +35,14 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
     @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
     private void openGui (BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (player instanceof ServerPlayerEntity serverPlayer && !PlayerExtensionsKt.isInBattle(serverPlayer)) {
-            if (serverPlayer.getMainHandStack().isIn(DPItemTags.EGG_BAGS)) {
+            BlockPos basePos = this.getBasePosition(state, pos);
+            if (!(world.getBlockEntity(basePos) instanceof PokemonPastureBlockEntity pastureBlockEntity)) return;
+
+            boolean isOwner = pastureBlockEntity.getOwnerId() != null && pastureBlockEntity.getOwnerId().toString().equals(player.getUuid().toString());
+            if (serverPlayer.getMainHandStack().isIn(DPItemTags.EGG_BAGS) && isOwner) {
                 cir.setReturnValue(ActionResult.PASS);
                 return;
             }
-
-            BlockPos basePos = this.getBasePosition(state, pos);
-            if (!(world.getBlockEntity(basePos) instanceof PokemonPastureBlockEntity pastureBlockEntity)) return;
 
             IMixinPastureBlockEntity mixinPasture = (IMixinPastureBlockEntity)(Object)pastureBlockEntity;
             if (mixinPasture.shouldSkipDaycareGUI()) {
@@ -49,8 +51,8 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
             }
 
             if (mixinPasture.shouldBreed()) {
-                if (pastureBlockEntity.getOwnerId() == null || !pastureBlockEntity.getOwnerId().toString().equals(player.getUuid().toString())) {
-                    player.sendMessage(Text.literal("This is not your daycare."), true);
+                if (!isOwner) {
+                    player.sendMessage(Text.translatable("message.overlay.daycareplus.not_owner").formatted(Formatting.RED), true);
                     cir.setReturnValue(ActionResult.FAIL);
                     return;
                 }
