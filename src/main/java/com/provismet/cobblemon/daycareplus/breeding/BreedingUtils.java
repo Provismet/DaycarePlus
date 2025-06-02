@@ -47,7 +47,6 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         if (parent2.getGender() == Gender.FEMALE || parent1.getSpecies().getName().equalsIgnoreCase(DITTO)) return parent2;
 
         // Fallback value, this should not be reached.
-        DaycarePlusServer.LOGGER.info("Fallback parent value reached for [{}] and [{}]", parent1.getDisplayName().getString(), parent2.getDisplayName().getString());
         return parent1;
     }
 
@@ -59,14 +58,11 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         return Optional.of(new PotentialPokemonProperties(primary, secondary));
     }
 
-    // TODO: Works for normal species, but breaks for forms.
     public static FormData getBabyForm (Pokemon parent) {
-        DaycarePlusServer.LOGGER.info("Getting baby form for parent: {}, {}", parent.getSpecies().getName(), parent.getForm().getName());
         PreEvolution preevo = PreEvolution.Companion.of(parent.getSpecies(), parent.getForm());
         PreEvolution temp;
         while ((temp = getPreEvolution(preevo)) != null) {
             preevo = temp;
-            DaycarePlusServer.LOGGER.info("PreEvo iterated to: {}, {}", preevo.getSpecies().getName(), preevo.getForm().getName());
         }
         return preevo.getForm();
     }
