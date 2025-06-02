@@ -8,6 +8,7 @@ import com.cobblemon.mod.common.api.abilities.Ability;
 import com.cobblemon.mod.common.api.abilities.AbilityTemplate;
 import com.cobblemon.mod.common.api.abilities.CommonAbilityType;
 import com.cobblemon.mod.common.api.abilities.PotentialAbility;
+import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.pokeball.PokeBalls;
 import com.cobblemon.mod.common.api.pokemon.Natures;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
@@ -58,14 +59,13 @@ public class PotentialPokemonProperties {
         this.setAbility(properties);
         this.setIVs(properties);
         this.setNature(properties);
+        this.setEggMoves(properties);
         this.setPokeBall(properties);
         this.setShiny(properties);
         properties.setTeraType(this.form.getPrimaryType().getName());
         properties.setLevel(1);
         properties.setFriendship(120);
         properties.updateAspects();
-
-        // TODO: Egg moves
 
         return properties;
     }
@@ -177,7 +177,7 @@ public class PotentialPokemonProperties {
         float shinyRate = 1 / Cobblemon.config.getShinyRate();
         shinyRate *= Options.getShinyChanceMultiplier();
 
-        if (this.primary.getOriginalTrainer() != null && this.secondary.getOriginalTrainer() != null && this.primary.getOriginalTrainer().equals(this.secondary.getOriginalTrainer())) {
+        if (this.primary.getOriginalTrainer() != null && this.secondary.getOriginalTrainer() != null && !this.primary.getOriginalTrainer().equals(this.secondary.getOriginalTrainer())) {
             shinyRate *= Options.getMasudaMultiplier();
         }
         if (this.primary.getShiny()) shinyRate *= Options.getCrystalMultiplier();
@@ -244,6 +244,41 @@ public class PotentialPokemonProperties {
 
     private void setShiny (PokemonProperties properties) {
         properties.setShiny(Math.random() < this.getShinyRate());
+    }
+
+    private void setEggMoves (PokemonProperties properties) {
+        List<MoveTemplate> validEggMoves = this.form.getMoves().getEggMoves();
+        List<String> eggMoves = new ArrayList<>();
+
+        this.secondary.getRelearnableMoves().forEach(moveTemplate -> {
+            if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(moveTemplate.getName()))) {
+                eggMoves.add(moveTemplate.getName());
+            }
+        });
+
+        this.secondary.getMoveSet().forEach(move -> {
+            if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(move.getName()))) {
+                eggMoves.add(move.getName());
+            }
+        });
+
+        if (Options.doGen6EggMoves()) {
+            this.primary.getRelearnableMoves().forEach(moveTemplate -> {
+                if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(moveTemplate.getName()))) {
+                    eggMoves.add(moveTemplate.getName());
+                }
+            });
+
+            this.primary.getMoveSet().forEach(move -> {
+                if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(move.getName()))) {
+                    eggMoves.add(move.getName());
+                }
+            });
+        }
+
+        if (properties.getMoves() != null) eggMoves.addAll(properties.getMoves());
+
+        properties.setMoves(eggMoves.stream().distinct().toList());
     }
 
     private void setIVs (PokemonProperties properties) {
