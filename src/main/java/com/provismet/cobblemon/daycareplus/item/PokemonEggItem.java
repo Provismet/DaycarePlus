@@ -24,6 +24,7 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 
@@ -111,7 +112,7 @@ public class PokemonEggItem extends PolymerItem {
     public void decrementEggSteps (ItemStack stack, int amount, ServerPlayerEntity player) {
         int steps = this.getRemainingSteps(stack);
         steps = Math.max(0, steps - amount);
-        stack.setDamage(Math.clamp(steps * 100L / this.getMaxSteps(stack), 1, 100));
+        stack.setDamage(MathHelper.lerp(1f - ((float)steps / this.getMaxSteps(stack)), 1, 100));
 
         if (steps == 0) {
             boolean playerPartyBusy = PlayerExtensionsKt.isPartyBusy(player) || PlayerExtensionsKt.isInBattle(player);
