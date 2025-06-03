@@ -61,7 +61,7 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
                 cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
             }
             else if (!mixinPasture.shouldSkipIntro() && pastureBlockEntity.getTetheredPokemon().isEmpty() && pastureBlockEntity.getOwnerId() == player.getUuid()) {
-                UIManager.openUIForcefully(serverPlayer, IntroGUI.create(mixinPasture));
+                UIManager.openUIForcefully(serverPlayer, IntroGUI.create(mixinPasture, serverPlayer));
                 cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
             }
         }

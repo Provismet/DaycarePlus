@@ -4,6 +4,8 @@ import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import com.provismet.cobblemon.daycareplus.breeding.PastureContainer;
 import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
 
+import java.util.UUID;
+
 public interface IMixinPastureBlockEntity extends PastureContainer {
     PastureExtension getExtension ();
     void setExtension (PastureExtension extension);
@@ -16,6 +18,9 @@ public interface IMixinPastureBlockEntity extends PastureContainer {
 
     void setShouldSkipDaycareGUI (boolean skipGUI);
     boolean shouldSkipDaycareGUI ();
+
+    UUID getBreederUUID ();
+    void setBreederUUID (UUID uuid);
 
     ButtonBase getEggCounterButton ();
 }

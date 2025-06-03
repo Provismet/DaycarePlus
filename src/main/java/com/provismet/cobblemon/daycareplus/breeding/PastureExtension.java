@@ -11,14 +11,17 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class PastureExtension {
+    private final UUID uuid;
     private final PokemonPastureBlockEntity blockEntity;
     private long prevTime;
 
-    public PastureExtension (PokemonPastureBlockEntity blockEntity, long prevTime) {
+    public PastureExtension (PokemonPastureBlockEntity blockEntity, long prevTime, UUID uuid) {
         this.blockEntity = blockEntity;
         this.prevTime = prevTime;
+        this.uuid = uuid;
     }
 
     public long getPrevTime () {

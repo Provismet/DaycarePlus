@@ -16,13 +16,13 @@ public class Options {
     private static final String FILE = "./config/daycareplus.json";
 
     // Egg Production
-    private static long ticksPerEggAttempt = 400;
+    private static long ticksPerEggAttempt = 12000;
     private static double successRatePerEggAttempt = 0.75;
-    private static int pastureInventorySize = 32;
+    private static int pastureInventorySize = 128;
     private static int maxPasturesPerPlayer = 3;
 
     // Egg Hatching
-    private static double pointsPerEggCycle = 10;
+    private static double pointsPerEggCycle = 200;
 
     // Shiny Chance
     private static float shinyChanceMultiplier = 1;
@@ -49,6 +49,10 @@ public class Options {
 
     public static int getPastureInventorySize () {
         return pastureInventorySize;
+    }
+
+    public static int getMaxPasturesPerPlayer () {
+        return maxPasturesPerPlayer;
     }
 
     public static int getEggPoints (int eggCycles) {
@@ -109,6 +113,7 @@ public class Options {
 
         JsonObject breedingRules = new JsonObject();
         breedingRules.addProperty("inheritMovesFromBothParents", inheritEggMovesFromBothParents);
+        breedingRules.addProperty("ticksPerEggCycle", pointsPerEggCycle);
         json.add("breedingRules", breedingRules);
 
         JsonObject eggBags = new JsonObject();
@@ -152,6 +157,7 @@ public class Options {
                 }
                 if (config.get("breedingRules") instanceof JsonObject breedingRules) {
                     inheritEggMovesFromBothParents = breedingRules.getAsJsonPrimitive("inheritMovesFromBothParents").getAsBoolean();
+                    pointsPerEggCycle = breedingRules.getAsJsonPrimitive("ticksPerEggCycle").getAsInt();
                 }
                 if (config.get("eggBags") instanceof JsonObject eggBags) {
                     leather = EggBagSettings.fromJson(eggBags.getAsJsonObject("leather"));

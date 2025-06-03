@@ -2,16 +2,17 @@ package com.provismet.cobblemon.daycareplus.mixin;
 
 import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
+import com.provismet.cobblemon.daycareplus.breeding.BreedingLink;
 import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.gui.DaycareGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.util.Styles;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
@@ -22,6 +23,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,6 +32,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Mixin(PokemonPastureBlockEntity.class)
 public abstract class PastureBlockEntityMixin extends BlockEntity implements IMixinPastureBlockEntity {
@@ -37,7 +41,10 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
         super(type, pos, state);
     }
 
+    @Shadow public abstract UUID getOwnerId ();
+
     @Unique private boolean isBreeder = false;
+    @Unique private UUID breederUuid = null;
     @Unique private boolean skipIntroDialogue = false;
     @Unique private boolean skipDaycareGUI = false;
     @Unique private PastureExtension extension;
@@ -87,6 +94,16 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Override
     public ButtonBase getEggCounterButton () {
         return eggCounter;
+    }
+
+    @Override
+    public UUID getBreederUUID () {
+        return this.breederUuid;
+    }
+
+    @Override
+    public void setBreederUUID (UUID uuid) {
+        this.breederUuid = uuid;
     }
 
     @Override
@@ -196,7 +213,28 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     private static void tick (World world, BlockPos pos, BlockState blockState, PokemonPastureBlockEntity pasture, CallbackInfo info) {
         IMixinPastureBlockEntity imixin = (IMixinPastureBlockEntity)(Object)pasture;
         if (imixin.shouldBreed()) {
-            if (imixin.getExtension() == null) imixin.setExtension(new PastureExtension(pasture, Long.MAX_VALUE));
+            if (imixin.getBreederUUID() == null) {
+                imixin.setBreederUUID(UUID.randomUUID());
+            }
+
+            if (pasture.getOwnerId() != null && !BreedingLink.has(pasture.getOwnerId(), imixin.getBreederUUID())) {
+                if (!BreedingLink.add(pasture.getOwnerId(), imixin.getBreederUUID())) {
+                    imixin.setShouldBreed(false);
+                    imixin.setExtension(null);
+                    return;
+                }
+            }
+
+            if (pasture.getOwnerId() != null && BreedingLink.count(pasture.getOwnerId()) > Options.getMaxPasturesPerPlayer()) {
+                imixin.setShouldBreed(false);
+                imixin.setExtension(null);
+                BreedingLink.remove(pasture.getOwnerId(), imixin.getBreederUUID());
+                return;
+            }
+
+            if (imixin.getExtension() == null) {
+                imixin.setExtension(new PastureExtension(pasture, Long.MAX_VALUE, imixin.getBreederUUID()));
+            }
             imixin.getExtension().tick();
         }
         else {
@@ -208,6 +246,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     private void addNbt (NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup, CallbackInfo info) {
         NbtCompound breederNbt = new NbtCompound();
         breederNbt.putBoolean("isBreeder", this.isBreeder);
+        breederNbt.putUuid("uuid", Objects.requireNonNullElseGet(this.breederUuid, UUID::randomUUID));
 
         if (this.extension != null) breederNbt.putLong("prevTick", this.extension.getPrevTime());
         else if (this.world != null) breederNbt.putLong("prevTick", this.world.getTime());
@@ -221,9 +260,16 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     private void getNbt (NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup, CallbackInfo info) {
         if (nbt.contains("daycarePlus") && nbt.get("daycarePlus") instanceof NbtCompound daycareNbt) {
             if (daycareNbt.contains("isBreeder")) this.isBreeder = daycareNbt.getBoolean("isBreeder");
-            if (daycareNbt.contains("prevTick") && this.isBreeder) {
-                this.extension = new PastureExtension((PokemonPastureBlockEntity)(Object)this, daycareNbt.getLong("prevTick"));
+            if (daycareNbt.contains("uuid")) this.breederUuid = daycareNbt.getUuid("uuid");
+            else this.breederUuid = UUID.randomUUID();
+
+            if (this.isBreeder) {
+                long prevTick = Long.MAX_VALUE;
+                if (daycareNbt.contains("prevTick")) prevTick = daycareNbt.getLong("prevTick");
+
+                this.extension = new PastureExtension((PokemonPastureBlockEntity)(Object)this, prevTick, this.breederUuid);
             }
+
             this.inventory = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
             Inventories.readNbt(daycareNbt, this.inventory, registryLookup);
         }
@@ -235,6 +281,10 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
         for (ItemStack stack : this.inventory) {
             Block.dropStack(this.world, this.pos, stack.copyAndEmpty());
+        }
+
+        if (this.getOwnerId() != null && this.breederUuid != null) {
+            BreedingLink.remove(this.getOwnerId(), this.breederUuid);
         }
     }
 
