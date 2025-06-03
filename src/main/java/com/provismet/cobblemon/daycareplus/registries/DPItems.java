@@ -40,10 +40,12 @@ public abstract class DPItems {
         ));
     }
 
-    public static void init () {}
+    public static void init () {
+        DPIconItems.init();
+    }
 
     @FunctionalInterface
-    private interface ItemConstructor<T extends PolymerItem> {
+    public interface ItemConstructor<T extends PolymerItem> {
         T apply (Item.Settings settings, Item vanillaItem, PolymerModelData modelData);
     }
 }

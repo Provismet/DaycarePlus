@@ -49,6 +49,14 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
         return builder.build();
     }
 
+    public EggBagDataComponent remove (int index) {
+        if (this.get(index).isEmpty()) return this;
+
+        Builder builder = new Builder(this);
+        builder.remove(index);
+        return builder.build();
+    }
+
     public EggBagDataComponent validate () {
         Builder builder = new Builder(this);
         builder.validate();
@@ -95,6 +103,11 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
         public ItemStack remove () {
             if (this.mutableContents.isEmpty()) return ItemStack.EMPTY;
             return this.mutableContents.removeFirst();
+        }
+
+        public ItemStack remove (int index) {
+            if (index >= this.mutableContents.size()) return ItemStack.EMPTY;
+            return this.mutableContents.remove(index);
         }
 
         public void validate () {

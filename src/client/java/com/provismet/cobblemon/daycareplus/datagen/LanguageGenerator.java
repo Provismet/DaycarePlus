@@ -1,5 +1,7 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
+import com.cobblemon.mod.common.CobblemonItems;
+import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.lilylib.datagen.provider.LilyLanguageProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -23,10 +25,16 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPItems.DIAMOND_EGG_BAG, "Diamond Egg Bag");
         translationBuilder.add(DPItems.NETHERITE_EGG_BAG, "Netherite Egg Bag");
 
+        translationBuilder.add(DPIconItems.INFO, "Info");
+        translationBuilder.add(DPIconItems.LEFT, "Left");
+        translationBuilder.add(DPIconItems.RIGHT, "Right");
+
         // Egg Bag
         translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.singular", "Collected %1$s egg.");
         translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.plural", "Collected %1$s eggs.");
         translationBuilder.add("tooltip.daycareplus.egg_bag.eggs_held", "Eggs Held: %1$s/%2$s");
+        translationBuilder.add("gui.button.daycareplus.prev", "Previous");
+        translationBuilder.add("gui.button.daycareplus.next", "Next");
 
         // Egg Item
         translationBuilder.add("message.overlay.daycareplus.egg.hatch", "Your egg hatched.");
@@ -47,12 +55,23 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("gui.button.daycareplus.no_parent.tooltip", "Add a pokemon to the pasture.");
         translationBuilder.add("gui.button.daycareplus.offspring.empty", "No preview available.");
         translationBuilder.add("gui.button.daycareplus.offspring.empty.tooltip", "Select two compatible Pokemon to view the preview.");
+        translationBuilder.add("gui.button.daycareplus.parent", "Parent");
+        translationBuilder.add(CobblemonItems.EVERSTONE.getTranslationKey() + ".breeding", "Ensures this parent passes on its nature to the child.");
+        translationBuilder.add(CobblemonItems.DESTINY_KNOT.getTranslationKey() + ".breeding", "5 IVs are passed down from either parent instead of 3.");
+        translationBuilder.add(CobblemonItems.POWER_LENS.getTranslationKey() + ".breeding", "Ensures this parent passes on its Sp.Attack IV to the child.");
+        translationBuilder.add(CobblemonItems.POWER_ANKLET.getTranslationKey() + ".breeding", "Ensures this parent passes on its Speed IV to the child.");
+        translationBuilder.add(CobblemonItems.POWER_BELT.getTranslationKey() + ".breeding", "Ensures this parent passes on its Defence IV to the child.");
+        translationBuilder.add(CobblemonItems.POWER_WEIGHT.getTranslationKey() + ".breeding", "Ensures this parent passes on its HP IV to the child.");
+        translationBuilder.add(CobblemonItems.POWER_BRACER.getTranslationKey() + ".breeding", "Ensures this parent passes on its Attack IV to the child.");
+        translationBuilder.add(CobblemonItems.POWER_BAND.getTranslationKey() + ".breeding", "Ensures this parent passes on its Sp.Defence IV to the child.");
 
         // Intro GUI
         translationBuilder.add("gui.button.daycareplus.intro.daycare", "Daycare");
-        translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip", "Use this pasture to breed Pokemon.");
+        translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.1", "Use this pasture to breed Pokemon.");
+        translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.2", "Daycares Active: %1$s/%2$s");
         translationBuilder.add("gui.button.daycareplus.intro.pasture", "Pasture");
         translationBuilder.add("gui.button.daycareplus.intro.pasture.tooltip", "Use this pasture cosmetically without breeding.");
+        translationBuilder.add("message.overlay.daycareplus.limit_reached", "You cannot activate anymore daycares, limit reached.");
 
         // Properties
         translationBuilder.add("property.daycareplus.species", "Species: ");

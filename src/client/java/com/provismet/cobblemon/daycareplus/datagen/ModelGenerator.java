@@ -1,11 +1,15 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
+import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
 import net.minecraft.data.client.Models;
+import net.minecraft.item.Item;
+
+import java.util.function.Consumer;
 
 public class ModelGenerator extends FabricModelProvider {
     public ModelGenerator (FabricDataOutput output) {
@@ -19,11 +23,17 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateItemModels (ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(DPItems.POKEMON_EGG, Models.GENERATED);
-        itemModelGenerator.register(DPItems.LEATHER_EGG_BAG, Models.GENERATED);
-        itemModelGenerator.register(DPItems.IRON_EGG_BAG, Models.GENERATED);
-        itemModelGenerator.register(DPItems.GOLD_EGG_BAG, Models.GENERATED);
-        itemModelGenerator.register(DPItems.DIAMOND_EGG_BAG, Models.GENERATED);
-        itemModelGenerator.register(DPItems.NETHERITE_EGG_BAG, Models.GENERATED);
+        Consumer<Item> generated = item -> itemModelGenerator.register(item, Models.GENERATED);
+
+        generated.accept(DPItems.POKEMON_EGG);
+        generated.accept(DPItems.LEATHER_EGG_BAG);
+        generated.accept(DPItems.IRON_EGG_BAG);
+        generated.accept(DPItems.GOLD_EGG_BAG);
+        generated.accept(DPItems.DIAMOND_EGG_BAG);
+        generated.accept(DPItems.NETHERITE_EGG_BAG);
+
+        generated.accept(DPIconItems.INFO);
+        generated.accept(DPIconItems.LEFT);
+        generated.accept(DPIconItems.RIGHT);
     }
 }

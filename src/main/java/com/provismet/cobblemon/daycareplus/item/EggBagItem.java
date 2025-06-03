@@ -1,5 +1,7 @@
 package com.provismet.cobblemon.daycareplus.item;
 
+import ca.landonjw.gooeylibs2.api.UIManager;
+import com.provismet.cobblemon.daycareplus.gui.EggBagGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
@@ -22,6 +24,9 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ClickType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +37,14 @@ public class EggBagItem extends PolymerItem {
     public EggBagItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData, int eggsToTick) {
         super(settings, baseVanillaItem, modelData);
         this.eggsToTick = eggsToTick;
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use (World world, PlayerEntity user, Hand hand) {
+        if (user instanceof ServerPlayerEntity serverPlayer) {
+            UIManager.openUIForcefully(serverPlayer, EggBagGUI.createFrom(user.getStackInHand(hand)));
+        }
+        return TypedActionResult.success(user.getStackInHand(hand));
     }
 
     @Override
