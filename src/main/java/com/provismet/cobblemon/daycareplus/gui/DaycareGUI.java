@@ -17,6 +17,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
 import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
+import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
@@ -49,17 +50,17 @@ public interface DaycareGUI {
             .build();
 
         GooeyButton infoButton = GooeyButton.builder()
-            .display(Items.FEATHER.getDefaultStack())
-            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.info").styled(style -> style.withItalic(false)))
+            .display(DPIconItems.INFO.getDefaultStack())
+            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.info").styled(Styles.WHITE_NO_ITALICS))
             .with(DataComponentTypes.LORE, new LoreComponent(List.of(
-                Text.translatable("gui.button.daycareplus.info.tooltip.1").styled(style -> style.withItalic(false).withColor(Formatting.GRAY)),
-                Text.translatable("gui.button.daycareplus.info.tooltip.2").styled(style -> style.withItalic(false).withColor(Formatting.GRAY))
+                Text.translatable("gui.button.daycareplus.info.tooltip.1").styled(Styles.GRAY_NO_ITALICS),
+                Text.translatable("gui.button.daycareplus.info.tooltip.2").styled(Styles.GRAY_NO_ITALICS)
             )))
             .build();
 
         GooeyButton openPasture = GooeyButton.builder()
             .display(CobblemonItems.PASTURE.getDefaultStack())
-            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.open_pasture").styled(style -> style.withItalic(false)))
+            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.open_pasture").styled(Styles.WHITE_NO_ITALICS))
             .onClick(action -> {
                 mixinPasture.setShouldSkipDaycareGUI(true);
                 state.onUse(player.getWorld(), player, hit);
@@ -75,8 +76,8 @@ public interface DaycareGUI {
 
         GooeyButton missingParent = GooeyButton.builder()
             .display(Items.BARRIER.getDefaultStack())
-            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.no_parent").styled(style -> style.withItalic(false).withColor(Formatting.WHITE)))
-            .with(DataComponentTypes.LORE, new LoreComponent(List.of(Text.translatable("gui.button.daycareplus.no_parent.tooltip").styled(style -> style.withItalic(false).withColor(Formatting.GRAY)))))
+            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.no_parent").styled(Styles.WHITE_NO_ITALICS))
+            .with(DataComponentTypes.LORE, new LoreComponent(List.of(Text.translatable("gui.button.daycareplus.no_parent.tooltip").styled(Styles.GRAY_NO_ITALICS))))
             .build();
 
         ButtonBase parent1Info;
@@ -87,6 +88,10 @@ public interface DaycareGUI {
             if (parent1.heldItem().isIn(DPItemTags.BREEDING_ITEM)) {
                 parent1Item = GooeyButton.builder()
                     .display(parent1.heldItem())
+                    .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
+                    .with(DataComponentTypes.LORE, new LoreComponent(List.of(
+                        Text.translatable(parent1.heldItem().getTranslationKey() + ".breeding").styled(Styles.GRAY_NO_ITALICS)
+                    )))
                     .build();
             }
         }
@@ -102,6 +107,10 @@ public interface DaycareGUI {
             if (parent2.heldItem().isIn(DPItemTags.BREEDING_ITEM)) {
                 parent2Item = GooeyButton.builder()
                     .display(parent2.heldItem())
+                    .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
+                    .with(DataComponentTypes.LORE, new LoreComponent(List.of(
+                        Text.translatable(parent2.heldItem().getTranslationKey() + ".breeding").styled(Styles.GRAY_NO_ITALICS)
+                    )))
                     .build();
             }
         }
@@ -115,7 +124,7 @@ public interface DaycareGUI {
             Map<Stat, PotentialPokemonProperties.PotentialIV> ivs = offspring.get().getPossibleIVs();
             PokemonProperties props = offspring.get().createPokemonProperties();
             props.setShiny(false);
-            Pokemon tile = props.create(); // TODO: Test if it's still necessary to create the full pokemon.
+            Pokemon tile = props.create();
 
             offspringInfo = GooeyButton.builder()
                 .display(PokemonItem.from(props))
@@ -123,8 +132,8 @@ public interface DaycareGUI {
                 .with(DataComponentTypes.LORE, new LoreComponent(List.of(
                     Text.translatable("property.daycareplus.species").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(tile.getSpecies().getTranslatedName().styled(Styles.WHITE_NO_ITALICS)),
                     Text.translatable("property.daycareplus.form").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(tile.getForm().getName()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getDisplayName).toList())).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(offspring.get().getPossibleNatures().isEmpty() ? "?" : String.join(", ", offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).toList())).styled(Styles.WHITE_NO_ITALICS)),
+                    Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).map(StringFormatting::titleCase).toList())).styled(Styles.WHITE_NO_ITALICS)),
+                    Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append((offspring.get().getPossibleNatures().isEmpty() ? Text.literal("?") : offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).map(Text::translatable).reduce(Text.literal(""), (nature1, nature2) -> nature1.getString().isEmpty() ? nature2 : nature1.append(", ").append(nature2))).styled(Styles.WHITE_NO_ITALICS)),
                     Text.empty(),
                     Text.translatable("property.daycareplus.ivs").styled(Styles.WHITE_NO_ITALICS),
                     Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP)).append(Text.literal(ivs.get(Stats.HP).toString()).styled(Styles.WHITE_NO_ITALICS)),
@@ -135,7 +144,7 @@ public interface DaycareGUI {
                     Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(ivs.get(Stats.SPEED).toString()).styled(Styles.WHITE_NO_ITALICS)),
                     Text.empty(),
                     Text.translatable("property.daycareplus.shiny").styled(Styles.formattedNoItalics(Formatting.GOLD)).append(Text.literal("1/" + (int)(1 / offspring.get().getShinyRate())).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.literal("Debug Aspects: " + String.join(", ", tile.getAspects())) // TODO: Temporary for bug testing.
+                    Text.literal("(Debug) Aspects: " + String.join(", ", tile.getAspects())) // TODO: Temporary for bug testing.
                 )))
                 .build();
         }
@@ -178,11 +187,12 @@ public interface DaycareGUI {
     static ButtonBase createButtonForPokemon (Pokemon pokemon) {
         return GooeyButton.builder()
             .display(PokemonItem.from(pokemon))
+            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.parent").styled(Styles.WHITE_NO_ITALICS))
             .with(DataComponentTypes.LORE, new LoreComponent(List.of(
                 Text.translatable("property.daycareplus.species").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(pokemon.getSpecies().getTranslatedName().styled(Styles.WHITE_NO_ITALICS)),
                 Text.translatable("property.daycareplus.form").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(pokemon.getForm().getName()).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(pokemon.getAbility().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(pokemon.getNature().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.translatable(pokemon.getAbility().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.translatable(pokemon.getNature().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
                 Text.empty(),
                 Text.translatable("property.daycareplus.ivs").styled(Styles.WHITE_NO_ITALICS),
                 Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.HP))).styled(Styles.WHITE_NO_ITALICS)),
