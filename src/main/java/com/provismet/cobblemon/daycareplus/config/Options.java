@@ -22,7 +22,7 @@ public class Options {
     private static int maxPasturesPerPlayer = 3;
 
     // Egg Hatching
-    private static double pointsPerEggCycle = 200;
+    private static int pointsPerEggCycle = 200;
 
     // Shiny Chance
     private static float shinyChanceMultiplier = 1;
@@ -56,7 +56,7 @@ public class Options {
     }
 
     public static int getEggPoints (int eggCycles) {
-        return (int)(pointsPerEggCycle * eggCycles);
+        return pointsPerEggCycle * eggCycles;
     }
 
     public static float getShinyChanceMultiplier () {
