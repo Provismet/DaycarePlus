@@ -70,7 +70,7 @@ public class EggBagItem extends PolymerItem {
     // Bag is on the cursor, hover over another item to collect it.
     @Override
     public boolean onStackClicked (ItemStack eggBag, Slot slot, ClickType clickType, PlayerEntity player) {
-        if (clickType != ClickType.RIGHT) return false;
+        if (clickType != ClickType.RIGHT || player.isCreative()) return false;
 
         EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
         if (component == null) return false;
@@ -97,7 +97,7 @@ public class EggBagItem extends PolymerItem {
     // Bag is in the inventory, withdraw an egg or put one in.
     @Override
     public boolean onClicked (ItemStack eggBag, ItemStack cursorStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
-        if (clickType == ClickType.RIGHT && slot.canTakePartial(player)) {
+        if (clickType == ClickType.RIGHT && slot.canTakePartial(player) && !player.isCreative()) {
             EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
             if (component == null) return false;
 
