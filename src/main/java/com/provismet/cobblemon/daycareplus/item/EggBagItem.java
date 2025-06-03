@@ -58,7 +58,7 @@ public class EggBagItem extends PolymerItem {
                 context.getStack().set(DPItemDataComponents.HELD_EGGS, component.addAll(eggs));
                 if (context.getPlayer() != null) {
                     this.playInsertSound(context.getPlayer());
-                    if (size == 0) context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
+                    if (size == 1) context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
                     else context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.plural", size), true);
                 }
                 return ActionResult.SUCCESS;
