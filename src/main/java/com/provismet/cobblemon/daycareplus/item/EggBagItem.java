@@ -41,6 +41,11 @@ public class EggBagItem extends PolymerItem {
 
     @Override
     public TypedActionResult<ItemStack> use (World world, PlayerEntity user, Hand hand) {
+        if (user.isCreative()) {
+            user.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.creative").formatted(Formatting.RED), true);
+            return TypedActionResult.fail(user.getStackInHand(hand));
+        }
+
         if (user instanceof ServerPlayerEntity serverPlayer) {
             UIManager.openUIForcefully(serverPlayer, EggBagGUI.createFrom(user.getStackInHand(hand)));
         }
