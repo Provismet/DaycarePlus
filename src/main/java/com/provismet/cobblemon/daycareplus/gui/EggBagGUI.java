@@ -4,7 +4,6 @@ import ca.landonjw.gooeylibs2.api.button.Button;
 import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import ca.landonjw.gooeylibs2.api.button.GooeyButton;
 import ca.landonjw.gooeylibs2.api.button.InventoryListenerButton;
-import ca.landonjw.gooeylibs2.api.button.PlaceholderButton;
 import ca.landonjw.gooeylibs2.api.page.GooeyPage;
 import ca.landonjw.gooeylibs2.api.page.PageAction;
 import ca.landonjw.gooeylibs2.api.template.Template;
@@ -28,11 +27,10 @@ import java.util.function.Consumer;
 
 public class EggBagGUI extends GooeyPage {
     private static final int ITEMS_PER_ROW = 9;
-    private static final int ROWS_PER_PAGE = 6;
+    private static final int ROWS_PER_PAGE = 5;
     private static final int ITEMS_PER_PAGE = ITEMS_PER_ROW * ROWS_PER_PAGE;
 
     private final ItemStack bag;
-    private boolean open;
     private int minSlotDisplayed;
 
     public EggBagGUI (@NotNull Template template, @Nullable InventoryTemplate inventoryTemplate, @Nullable Text title, ItemStack bag) {
@@ -42,33 +40,19 @@ public class EggBagGUI extends GooeyPage {
     public EggBagGUI (@NotNull Template template, @Nullable InventoryTemplate inventoryTemplate, @Nullable Text title, @Nullable Consumer<PageAction> onOpen, @Nullable Consumer<PageAction> onClose, ItemStack bag) {
         super(template, inventoryTemplate, title, onOpen, onClose);
         this.bag = bag;
-        this.open = false;
         this.minSlotDisplayed = 0;
     }
 
-
     public static EggBagGUI createFrom (ItemStack bag) {
         Template template = EggBagGUI.createTemplate();
-        InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(bag);
-        EggBagGUI gui = new EggBagGUI(template, inventoryTemplate, Text.translatable(bag.getTranslationKey()), bag);
+        //InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(bag);
+        EggBagGUI gui = new EggBagGUI(template, null, Text.translatable(bag.getTranslationKey()), bag);
         gui.reset();
         return gui;
     }
 
-    public boolean isOpen () {
-        return this.open;
-    }
-
-    @Override
-    public void onOpen (@NotNull PageAction action) {
-        this.open = true;
-        super.onOpen(action);
-    }
-
-    @Override
-    public void onClose (@NotNull PageAction action) {
-        this.open = false;
-        super.onClose(action);
+    public ItemStack getBag () {
+        return this.bag;
     }
 
     public void reset () {
@@ -78,7 +62,7 @@ public class EggBagGUI extends GooeyPage {
         for (int i = 0; i + 9 < template.getSize() && i + this.minSlotDisplayed < component.contents().size(); ++i) {
             int slotToTake = i + this.minSlotDisplayed;
             template.getSlot(i + 9).setButton(
-                EggButton.builder()
+                GooeyButton.builder()
                     .display(component.contents().get(slotToTake))
                     .onClick(buttonAction -> {
                         Optional<ItemStack> stack = component.get(slotToTake);
@@ -141,14 +125,11 @@ public class EggBagGUI extends GooeyPage {
             })
             .build();
 
-        PlaceholderButton placeholderButton = new PlaceholderButton();
-
         return ChestTemplate.builder(ROWS_PER_PAGE + 1)
             .fill(filler)
             .row(0, borderFiller)
             .set(0, previous)
             .set(8, next)
-            .rectangle(1, 0, ROWS_PER_PAGE, ITEMS_PER_ROW, placeholderButton)
             .build();
     }
 
@@ -167,7 +148,7 @@ public class EggBagGUI extends GooeyPage {
         });
 
         return InventoryTemplate.builder()
-            .set(0, button)
+            .fill(button)
             .build();
     }
 }
