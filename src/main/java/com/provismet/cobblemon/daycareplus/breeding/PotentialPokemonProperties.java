@@ -72,6 +72,14 @@ public class PotentialPokemonProperties {
         return properties;
     }
 
+    public Pokemon getPrimary () {
+        return this.primary;
+    }
+
+    public Pokemon getSecondary () {
+        return this.secondary;
+    }
+
     public Species getSpecies () {
         return this.form.getSpecies();
     }

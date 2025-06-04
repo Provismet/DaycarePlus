@@ -1,14 +1,20 @@
 package com.provismet.cobblemon.daycareplus.breeding;
 
+import com.cobblemon.mod.common.api.events.CobblemonEvents;
+import com.cobblemon.mod.common.api.events.pokemon.CollectEggEvent;
+import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -73,13 +79,23 @@ public class PastureExtension {
                         else ++successfulEggs;
                     }
 
-                    ItemStack egg = DPItems.POKEMON_EGG.createEggItem(potentialEgg.createPokemonProperties());
+                    PokemonProperties properties = potentialEgg.createPokemonProperties();
+                    if (owner instanceof ServerPlayerEntity serverPlayer) {
+                        CobblemonEvents.COLLECT_EGG.emit(new CollectEggEvent(properties, potentialEgg.getPrimary(), potentialEgg.getSecondary(), serverPlayer));
+                    }
+                    DaycarePlusEvents.PRE_EGG_PRODUCED.invoker().beforeItemCreated(properties);
+
+                    ItemStack egg = DPItems.POKEMON_EGG.createEggItem(properties);
+                    DaycarePlusEvents.POST_EGG_PRODUCED.invoker().afterItemCreated(egg);
+
                     ((PastureContainer)(Object)this.blockEntity).add(egg);
                 }
             }
 
+            successfulEggs = MathHelper.clamp(successfulEggs, 0, Options.getPastureInventorySize());
             if (successfulEggs > 0) {
-                owner.sendMessage(Text.translatable("message.chat.daycareplus.multiple_egg_produced", successfulEggs));
+                if (successfulEggs == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.single_egg_produced", successfulEggs));
+                else owner.sendMessage(Text.translatable("message.chat.daycareplus.multiple_egg_produced", successfulEggs));
             }
         }
     }

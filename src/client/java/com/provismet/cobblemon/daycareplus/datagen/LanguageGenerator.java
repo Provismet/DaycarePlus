@@ -44,6 +44,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
 
         // Daycare
         translationBuilder.add("message.chat.daycareplus.egg_produced", "Your daycare has produced an egg.");
+        translationBuilder.add("message.chat.daycareplus.single_egg_produced", "Your daycare produced %1$s egg while you were away.");
         translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");
         translationBuilder.add("message.overlay.daycareplus.not_owner", "This is not your daycare.");
         translationBuilder.add("gui.button.daycareplus.open_pasture", "Open Pasture");
@@ -89,5 +90,9 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("property.daycareplus.special_defence", "Sp.Defence: ");
         translationBuilder.add("property.daycareplus.speed", "Speed: ");
         translationBuilder.add("property.daycareplus.shiny", "Shiny Chance: ");
+
+        // Stats
+        translationBuilder.add("stat.daycareplus.eggs_hatched", "Pokémon Eggs Hatched");
+        translationBuilder.add("stat.daycareplus.eggs_collected", "Pokémon Eggs Produced");
     }
 }
