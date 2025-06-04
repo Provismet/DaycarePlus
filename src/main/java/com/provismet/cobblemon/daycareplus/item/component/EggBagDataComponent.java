@@ -23,17 +23,17 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
         Codecs.POSITIVE_INT.fieldOf("capacity").forGetter(component -> component.capacity)
     ).apply(instance, EggBagDataComponent::new));
 
-    public EggBagDataComponent (int capacity) {
-        this(List.of(), capacity);
-    }
-
     public static final PacketCodec<RegistryByteBuf, EggBagDataComponent> PACKET_CODEC = PacketCodec.tuple(
-        ItemStack.PACKET_CODEC.collect(PacketCodecs.toList(1024)),
+        ItemStack.PACKET_CODEC.collect(PacketCodecs.toList()),
         EggBagDataComponent::contents,
         PacketCodecs.INTEGER,
         EggBagDataComponent::capacity,
         EggBagDataComponent::new
     );
+
+    public EggBagDataComponent (int capacity) {
+        this(List.of(), capacity);
+    }
 
     public EggBagDataComponent add (ItemStack stack) {
         Builder builder = new Builder(this);
