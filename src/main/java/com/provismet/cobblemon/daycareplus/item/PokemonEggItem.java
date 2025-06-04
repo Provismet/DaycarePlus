@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -30,6 +31,7 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PokemonEggItem extends PolymerItem {
     private static final int TICKS_PER_MINUTE = 60 * 20;
@@ -73,7 +75,13 @@ public class PokemonEggItem extends PolymerItem {
         }
         else {
             PokemonProperties pokemonProperties = PokemonProperties.Companion.parse(properties);
-            if (pokemonProperties.getSpecies() != null) tooltip.add(Text.translatable("property.daycareplus.species").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getSpecies())).styled(Styles.WHITE_NO_ITALICS)));
+            if (pokemonProperties.getSpecies() != null) {
+                MutableText species = Text.translatable("property.daycareplus.species").formatted(Formatting.YELLOW)
+                    .append(Text.literal(StringFormatting.titleCase(pokemonProperties.getSpecies())).styled(Styles.WHITE_NO_ITALICS));
+
+                if (Objects.requireNonNullElse(pokemonProperties.getShiny(), false)) species = species.append(Text.literal(" ★").formatted(Formatting.GOLD));
+                tooltip.add(species);
+            }
             if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getForm())).styled(Styles.WHITE_NO_ITALICS)));
             if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(Identifier.of(pokemonProperties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS)));
             if (pokemonProperties.getGender() != null && pokemonProperties.getGender() != Gender.GENDERLESS) {
@@ -156,7 +164,7 @@ public class PokemonEggItem extends PolymerItem {
 
     @Override
     public int getPolymerCustomModelData (ItemStack stack, @Nullable ServerPlayerEntity player) {
-        if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=yes")) return this.shiny.value();
+        if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=true")) return this.shiny.value();
         return super.getPolymerCustomModelData(stack, player);
     }
 }

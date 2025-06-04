@@ -15,7 +15,10 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public abstract class DPItems {
-    public static final PokemonEggItem POKEMON_EGG = register("pokemon_egg", Items.IRON_NUGGET, (settings, vanillaItem, modelData) -> new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData));
+    public static final PokemonEggItem POKEMON_EGG = register("pokemon_egg", Items.IRON_NUGGET,
+        (settings, vanillaItem, modelData) ->
+            new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData, PolymerResourcePackUtils.requestModel(vanillaItem, DaycarePlusServer.identifier("pokemon_egg_shiny").withPrefixedPath("item/")))
+    );
 
     public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", Options.getLeather());
     public static final EggBagItem IRON_EGG_BAG = registerBag("iron_egg_bag", Options.getIron());

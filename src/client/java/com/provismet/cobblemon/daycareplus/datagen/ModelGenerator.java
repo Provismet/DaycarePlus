@@ -1,5 +1,6 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
+import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -7,6 +8,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
 import net.minecraft.data.client.Models;
+import net.minecraft.data.client.TextureMap;
 import net.minecraft.item.Item;
 
 import java.util.function.Consumer;
@@ -26,6 +28,12 @@ public class ModelGenerator extends FabricModelProvider {
         Consumer<Item> generated = item -> itemModelGenerator.register(item, Models.GENERATED);
 
         generated.accept(DPItems.POKEMON_EGG);
+        Models.GENERATED.upload(
+            DaycarePlusServer.identifier("item/pokemon_egg_shiny"),
+            TextureMap.layer0(DaycarePlusServer.identifier("item/pokemon_egg_shiny")),
+            itemModelGenerator.writer
+        );
+
         generated.accept(DPItems.LEATHER_EGG_BAG);
         generated.accept(DPItems.IRON_EGG_BAG);
         generated.accept(DPItems.GOLD_EGG_BAG);
