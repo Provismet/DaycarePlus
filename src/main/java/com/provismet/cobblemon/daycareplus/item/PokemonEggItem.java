@@ -164,6 +164,7 @@ public class PokemonEggItem extends PolymerItem {
 
     @Override
     public int getPolymerCustomModelData (ItemStack stack, @Nullable ServerPlayerEntity player) {
+        if (stack.get(DataComponentTypes.CUSTOM_MODEL_DATA) != null) return -1;
         if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=true")) return this.shiny.value();
         return super.getPolymerCustomModelData(stack, player);
     }
