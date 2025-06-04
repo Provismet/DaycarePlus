@@ -16,6 +16,7 @@ import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokeball.PokeBall;
 import com.cobblemon.mod.common.pokemon.FormData;
+import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Nature;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -48,7 +49,7 @@ public class PotentialPokemonProperties {
     public PotentialPokemonProperties (Pokemon primary, Pokemon secondary) {
         this.primary = primary;
         this.secondary = secondary;
-        this.form = BreedingUtils.getBabyForm(this.primary); // TODO: Nidorans are dumb
+        this.form = BreedingUtils.getBabyForm(this.primary);
     }
 
     public PokemonProperties createPokemonProperties () {
@@ -57,6 +58,7 @@ public class PotentialPokemonProperties {
         properties.setForm(this.form.formOnlyShowdownId()); // This is borderline cosmetic because the form gets overridden by aspects anyway but do it to get the form listed in the properties.
 
         this.setAbility(properties);
+        this.setGender(properties);
         this.setIVs(properties);
         this.setNature(properties);
         this.setEggMoves(properties);
@@ -190,6 +192,12 @@ public class PotentialPokemonProperties {
         List<PokeBall> balls = this.getPossiblePokeBalls();
         if (Math.random() < 0.5) properties.setPokeball(balls.getFirst().getName().toString());
         else properties.setPokeball(balls.getLast().getName().toString());
+    }
+
+    private void setGender (PokemonProperties properties) {
+        if (this.form.getSpecies().getMaleRatio() < 0) properties.setGender(Gender.GENDERLESS);
+        else if (Math.random() < this.form.getSpecies().getMaleRatio()) properties.setGender(Gender.MALE);
+        else properties.setGender(Gender.FEMALE);
     }
 
     private void setAbility (PokemonProperties properties) {
