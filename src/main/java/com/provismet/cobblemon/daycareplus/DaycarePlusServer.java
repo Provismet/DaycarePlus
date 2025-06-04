@@ -2,6 +2,7 @@ package com.provismet.cobblemon.daycareplus;
 
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
 import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.handler.CobblemonEventHandler;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItemGroups;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
@@ -32,6 +33,7 @@ public class DaycarePlusServer implements DedicatedServerModInitializer {
 		DPItemDataComponents.init();
 		DPItemGroups.register();
 
+		CobblemonEventHandler.register();
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BreedingUtils());
 	}
 }
