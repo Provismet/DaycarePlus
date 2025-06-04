@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "item": "minecraft:leather"
+    },
+    "r": {
+      "item": "minecraft:rabbit_hide"
+    },
+    "s": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    " s ",
+    "iri",
+    "iii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "daycareplus:leather_egg_bag"
+  }
+}
