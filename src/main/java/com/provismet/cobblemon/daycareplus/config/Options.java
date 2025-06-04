@@ -23,6 +23,7 @@ public class Options {
 
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
+    private static boolean showEggTooltip = true;
 
     // Shiny Chance
     private static float shinyChanceMultiplier = 1;
@@ -57,6 +58,10 @@ public class Options {
 
     public static int getEggPoints (int eggCycles) {
         return pointsPerEggCycle * eggCycles;
+    }
+
+    public static boolean shouldShowEggTooltip () {
+        return showEggTooltip;
     }
 
     public static float getShinyChanceMultiplier () {
@@ -114,6 +119,7 @@ public class Options {
         JsonObject breedingRules = new JsonObject();
         breedingRules.addProperty("inheritMovesFromBothParents", inheritEggMovesFromBothParents);
         breedingRules.addProperty("ticksPerEggCycle", pointsPerEggCycle);
+        breedingRules.addProperty("showEggTooltip", showEggTooltip);
         json.add("breedingRules", breedingRules);
 
         JsonObject eggBags = new JsonObject();
@@ -158,6 +164,7 @@ public class Options {
                 if (config.get("breedingRules") instanceof JsonObject breedingRules) {
                     inheritEggMovesFromBothParents = breedingRules.getAsJsonPrimitive("inheritMovesFromBothParents").getAsBoolean();
                     pointsPerEggCycle = breedingRules.getAsJsonPrimitive("ticksPerEggCycle").getAsInt();
+                    showEggTooltip = breedingRules.getAsJsonPrimitive("showEggTooltip").getAsBoolean();
                 }
                 if (config.get("eggBags") instanceof JsonObject eggBags) {
                     leather = EggBagSettings.fromJson(eggBags.getAsJsonObject("leather"));

@@ -67,7 +67,7 @@ public class PokemonEggItem extends PolymerItem {
     @Override
     public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
-        if (stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) return;
+        if (stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP) || !Options.shouldShowEggTooltip()) return;
 
         String properties = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
         if (properties == null) {
