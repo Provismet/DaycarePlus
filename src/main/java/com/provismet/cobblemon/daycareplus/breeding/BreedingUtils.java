@@ -1,10 +1,13 @@
 package com.provismet.cobblemon.daycareplus.breeding;
 
+import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.egg.EggGroup;
 import com.cobblemon.mod.common.api.pokemon.evolution.PreEvolution;
 import com.cobblemon.mod.common.pokemon.FormData;
 import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.Species;
+import com.cobblemon.mod.common.util.MiscUtilsKt;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
@@ -64,6 +67,18 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         while ((temp = getPreEvolution(preevo)) != null) {
             preevo = temp;
         }
+
+        // Special edge case for GameFreak not doing the intelligent thing and merging these back when they had the chance.
+        // This would probably be better data-driven, but honestly if you're making a gender-split species then you've already dug your own grave, mate.
+        if (preevo.getSpecies().showdownId().equals("nidoranf") || preevo.getSpecies().showdownId().equals("nidoranm")) {
+            Species species = getRandomGenderSpeciesSplit(MiscUtilsKt.cobblemonResource("nidoranm"), MiscUtilsKt.cobblemonResource("nidoranf"), 0.5);
+            if (species != null) preevo = PreEvolution.Companion.of(species, species.getFormByShowdownId(preevo.getForm().formOnlyShowdownId()));
+        }
+        else if (preevo.getSpecies().showdownId().equals("volbeat") || preevo.getSpecies().showdownId().equals("illumise")) {
+            Species species = getRandomGenderSpeciesSplit(MiscUtilsKt.cobblemonResource("volbeat"), MiscUtilsKt.cobblemonResource("illumise"), 0.5);
+            if (species != null) preevo = PreEvolution.Companion.of(species, species.getFormByShowdownId(preevo.getForm().formOnlyShowdownId()));
+        }
+
         return preevo.getForm();
     }
 
@@ -93,6 +108,15 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
         // Pre-evolution exists, try to match the forms.
         return PreEvolution.Companion.of(preEvolution.getSpecies(), preEvolution.getSpecies().getFormByShowdownId(pokemon.getForm().formOnlyShowdownId()));
+    }
+
+    @Nullable
+    private static Species getRandomGenderSpeciesSplit (Identifier male, Identifier female, double maleRatio) {
+        Species maleSpecies = PokemonSpecies.INSTANCE.getByIdentifier(male);
+        Species femaleSpecies = PokemonSpecies.INSTANCE.getByIdentifier(female);
+
+        if (Math.random() < maleRatio) return maleSpecies;
+        else return femaleSpecies;
     }
 
     @Override
