@@ -45,8 +45,7 @@ public interface DaycareGUI {
 
         GooeyButton fillerHeldItem = GooeyButton.builder()
             .display(Items.WHITE_STAINED_GLASS_PANE.getDefaultStack())
-            .with(DataComponentTypes.HIDE_TOOLTIP, Unit.INSTANCE)
-            .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
+            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.no_item").styled(Styles.WHITE_NO_ITALICS))
             .build();
 
         GooeyButton infoButton = GooeyButton.builder()
@@ -143,7 +142,7 @@ public interface DaycareGUI {
                     Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE)).append(Text.literal(ivs.get(Stats.SPECIAL_DEFENCE).toString()).styled(Styles.WHITE_NO_ITALICS)),
                     Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(ivs.get(Stats.SPEED).toString()).styled(Styles.WHITE_NO_ITALICS)),
                     Text.empty(),
-                    Text.translatable("property.daycareplus.shiny").styled(Styles.formattedNoItalics(Formatting.GOLD)).append(Text.literal("1/" + (int)(1 / offspring.get().getShinyRate())).styled(Styles.WHITE_NO_ITALICS)),
+                    Text.translatable("property.daycareplus.shiny").styled(Styles.formattedNoItalics(Formatting.GOLD)).append(Text.literal("1/" + Math.max(1, (int)(1 / offspring.get().getShinyRate()))).styled(Styles.WHITE_NO_ITALICS)),
                     Text.literal("(Debug) Aspects: " + String.join(", ", tile.getAspects())) // TODO: Temporary for bug testing.
                 )))
                 .build();

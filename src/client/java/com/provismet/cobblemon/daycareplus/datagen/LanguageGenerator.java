@@ -18,7 +18,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
     public void generateTranslations (RegistryWrapper.WrapperLookup wrapperLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add("title.daycareplus.item_group", "Daycare+");
 
-        translationBuilder.add(DPItems.POKEMON_EGG, "Pokemon Egg");
+        translationBuilder.add(DPItems.POKEMON_EGG, "Pokémon Egg");
         translationBuilder.add(DPItems.LEATHER_EGG_BAG, "Leather Egg Bag");
         translationBuilder.add(DPItems.IRON_EGG_BAG, "Iron Egg Bag");
         translationBuilder.add(DPItems.GOLD_EGG_BAG, "Gold Egg Bag");
@@ -53,10 +53,11 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("gui.button.daycareplus.offspring", "Offspring");
         translationBuilder.add("gui.button.daycareplus.eggs_held", "%1$s/%2$s eggs held");
         translationBuilder.add("gui.button.daycareplus.no_parent", "No parent selected.");
-        translationBuilder.add("gui.button.daycareplus.no_parent.tooltip", "Add a pokemon to the pasture.");
+        translationBuilder.add("gui.button.daycareplus.no_parent.tooltip", "Add a Pokémon to the pasture.");
         translationBuilder.add("gui.button.daycareplus.offspring.empty", "No preview available.");
-        translationBuilder.add("gui.button.daycareplus.offspring.empty.tooltip", "Select two compatible Pokemon to view the preview.");
+        translationBuilder.add("gui.button.daycareplus.offspring.empty.tooltip", "Select two compatible Pokémon to view the preview.");
         translationBuilder.add("gui.button.daycareplus.parent", "Parent");
+        translationBuilder.add("gui.button.daycareplus.no_item", "No breeding item held.");
         translationBuilder.add(CobblemonItems.EVERSTONE.getTranslationKey() + ".breeding", "This parent will pass on its nature to the child.");
         translationBuilder.add(CobblemonItems.DESTINY_KNOT.getTranslationKey() + ".breeding", "5 IVs are passed down from either parent instead of 3.");
         translationBuilder.add(CobblemonItems.POWER_LENS.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Attack IV to the child.");
@@ -68,7 +69,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
 
         // Intro GUI
         translationBuilder.add("gui.button.daycareplus.intro.daycare", "Daycare");
-        translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.1", "Use this pasture to breed Pokemon.");
+        translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.1", "Use this pasture to breed Pokémon.");
         translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.2", "Daycares Active: %1$s/%2$s");
         translationBuilder.add("gui.button.daycareplus.intro.pasture", "Pasture");
         translationBuilder.add("gui.button.daycareplus.intro.pasture.tooltip", "Use this pasture cosmetically without breeding.");
