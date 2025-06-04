@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.api.events.pokemon.HatchEggEvent;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
+import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
@@ -23,8 +24,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -32,8 +35,11 @@ public class PokemonEggItem extends PolymerItem {
     private static final int TICKS_PER_MINUTE = 60 * 20;
     private static final int DEFAULT_STEPS = 7200;
 
-    public PokemonEggItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData) {
+    private final PolymerModelData shiny;
+
+    public PokemonEggItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData, PolymerModelData shinyModel) {
         super(settings, baseVanillaItem, modelData);
+        this.shiny = shinyModel;
     }
 
     public ItemStack createEggItem (PokemonProperties properties) {
@@ -67,9 +73,18 @@ public class PokemonEggItem extends PolymerItem {
         }
         else {
             PokemonProperties pokemonProperties = PokemonProperties.Companion.parse(properties);
-            if (pokemonProperties.getSpecies() != null) tooltip.add(Text.translatable("property.daycareplus.species").append(StringFormatting.titleCase(pokemonProperties.getSpecies())));
-            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").append(StringFormatting.titleCase(pokemonProperties.getForm())));
-            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").append(StringFormatting.titleCase(Identifier.of(pokemonProperties.getNature()).getPath())));
+            if (pokemonProperties.getSpecies() != null) tooltip.add(Text.translatable("property.daycareplus.species").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getSpecies())).styled(Styles.WHITE_NO_ITALICS)));
+            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getForm())).styled(Styles.WHITE_NO_ITALICS)));
+            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(Identifier.of(pokemonProperties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS)));
+            if (pokemonProperties.getGender() != null && pokemonProperties.getGender() != Gender.GENDERLESS) {
+                Text gender = switch (pokemonProperties.getGender()) {
+                    case MALE -> Text.literal("M").formatted(Formatting.BLUE);
+                    case FEMALE -> Text.literal("F").formatted(Formatting.RED);
+                    default -> Text.literal("");
+                };
+
+                tooltip.add(Text.translatable("property.daycareplus.gender").formatted(Formatting.YELLOW).append(gender));
+            }
 
             Integer steps = stack.get(DPItemDataComponents.EGG_STEPS);
             if (steps != null) {
@@ -137,5 +152,11 @@ public class PokemonEggItem extends PolymerItem {
             CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(properties, player));
         }
         stack.decrement(1);
+    }
+
+    @Override
+    public int getPolymerCustomModelData (ItemStack stack, @Nullable ServerPlayerEntity player) {
+        if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=yes")) return this.shiny.value();
+        return super.getPolymerCustomModelData(stack, player);
     }
 }

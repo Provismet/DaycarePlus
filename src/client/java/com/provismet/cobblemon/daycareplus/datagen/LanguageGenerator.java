@@ -79,6 +79,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("property.daycareplus.form", "Form: ");
         translationBuilder.add("property.daycareplus.ability", "Ability: ");
         translationBuilder.add("property.daycareplus.nature", "Nature: ");
+        translationBuilder.add("property.daycareplus.gender", "Gender: ");
         translationBuilder.add("property.daycareplus.ivs", "IVs ");
         translationBuilder.add("property.daycareplus.hp", "HP: ");
         translationBuilder.add("property.daycareplus.attack", "Attack: ");
