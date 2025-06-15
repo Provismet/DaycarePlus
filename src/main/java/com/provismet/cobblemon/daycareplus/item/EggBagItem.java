@@ -74,56 +74,57 @@ public class EggBagItem extends PolymerItem {
         return super.useOnBlock(context);
     }
 
-    // Bag is on the cursor, hover over another item to collect it.
-    @Override
-    public boolean onStackClicked (ItemStack eggBag, Slot slot, ClickType clickType, PlayerEntity player) {
-        if (clickType != ClickType.RIGHT || player.isCreative()) return false;
-
-        EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
-        if (component == null) return false;
-
-        ItemStack otherItem = slot.getStack();
-        if (!otherItem.isEmpty() && !otherItem.isOf(DPItems.POKEMON_EGG)) return true;
-
-        EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
-        if (otherItem.isEmpty()) { // Place egg in inventory.
-            this.playRemoveOneSound(player);
-            ItemStack stackFromBag = builder.remove();
-            ItemStack itemStack3 = slot.insertStack(stackFromBag);
-            builder.add(itemStack3);
-        }
-        else if (!component.isFull()) { // Put egg in bag.
-            builder.add(otherItem.copyAndEmpty());
-            this.playInsertSound(player);
-        }
-
-        eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
-        return true;
-    }
-
-    // Bag is in the inventory, withdraw an egg or put one in.
-    @Override
-    public boolean onClicked (ItemStack eggBag, ItemStack cursorStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
-        if (clickType == ClickType.RIGHT && slot.canTakePartial(player) && !player.isCreative()) {
-            EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
-            if (component == null) return false;
-
-            EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
-
-            if (cursorStack.isEmpty() && !component.isEmpty()) {
-                ItemStack itemStack = builder.remove();
-                this.playRemoveOneSound(player);
-                cursorStackReference.set(itemStack);
-            }
-            else if (cursorStack.isOf(DPItems.POKEMON_EGG) && !component.isFull()) {
-                builder.add(cursorStack.copyAndEmpty());
-            }
-
-            eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
-            return true;
-        }
-        return false;
-    }
+    // TODO: Try removing egg bad click logic in favour of a GUI.
+//    // Bag is on the cursor, hover over another item to collect it.
+//    @Override
+//    public boolean onStackClicked (ItemStack eggBag, Slot slot, ClickType clickType, PlayerEntity player) {
+//        if (clickType != ClickType.RIGHT || player.isCreative()) return false;
+//
+//        EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
+//        if (component == null) return false;
+//
+//        ItemStack otherItem = slot.getStack();
+//        if (!otherItem.isEmpty() && !otherItem.isOf(DPItems.POKEMON_EGG)) return true;
+//
+//        EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
+//        if (otherItem.isEmpty()) { // Place egg in inventory.
+//            this.playRemoveOneSound(player);
+//            ItemStack stackFromBag = builder.remove();
+//            ItemStack itemStack3 = slot.insertStack(stackFromBag);
+//            builder.add(itemStack3);
+//        }
+//        else if (!component.isFull()) { // Put egg in bag.
+//            builder.add(otherItem.copyAndEmpty());
+//            this.playInsertSound(player);
+//        }
+//
+//        eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
+//        return true;
+//    }
+//
+//    // Bag is in the inventory, withdraw an egg or put one in.
+//    @Override
+//    public boolean onClicked (ItemStack eggBag, ItemStack cursorStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
+//        if (clickType == ClickType.RIGHT && slot.canTakePartial(player) && !player.isCreative()) {
+//            EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
+//            if (component == null) return false;
+//
+//            EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
+//
+//            if (cursorStack.isEmpty() && !component.isEmpty()) {
+//                ItemStack itemStack = builder.remove();
+//                this.playRemoveOneSound(player);
+//                cursorStackReference.set(itemStack);
+//            }
+//            else if (cursorStack.isOf(DPItems.POKEMON_EGG) && !component.isFull()) {
+//                builder.add(cursorStack.copyAndEmpty());
+//            }
+//
+//            eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
+//            return true;
+//        }
+//        return false;
+//    }
 
     // TODO: Only exists clientside, future goal is to make this work on compatible clients. Don't know how to check that yet though.
     @Override

@@ -111,7 +111,8 @@ public class Options {
                     .append("ticksPerEggAttempt", ticksPerEggAttempt)
                     .append("successRatePerEggAttempt", successRatePerEggAttempt)
                     .append("pastureInventorySize", pastureInventorySize)
-                    .append("maxPasturesPerPlayer", maxPasturesPerPlayer))
+                    .append("maxPasturesPerPlayer", maxPasturesPerPlayer)
+                    .append("showShinyChance", showShinyChance))
             .append(
                 "shinyChance", new JsonBuilder()
                     .append("standardMultiplier", shinyChanceMultiplier)
@@ -155,6 +156,7 @@ public class Options {
                     eggProduction.getDouble("successRatePerEggAttempt").ifPresent(val -> successRatePerEggAttempt = val);
                     eggProduction.getInteger("pastureInventorySize").ifPresent(val -> pastureInventorySize = val);
                     eggProduction.getInteger("maxPasturesPerPlayer").ifPresent(val -> maxPasturesPerPlayer = val);
+                    eggProduction.getBoolean("showShinyChance").ifPresent(val -> showShinyChance = val);
                 });
 
                 reader.getObjectAsReader("shinyChance").ifPresent(shinyChance -> {
