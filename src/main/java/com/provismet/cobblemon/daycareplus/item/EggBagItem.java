@@ -49,7 +49,7 @@ public class EggBagItem extends PolymerItem {
         }
 
         if (user instanceof ServerPlayerEntity serverPlayer) {
-            UIManager.openUIForcefully(serverPlayer, EggBagGUI.createFrom(user.getStackInHand(hand)));
+            UIManager.openUIForcefully(serverPlayer, EggBagGUI.createFrom(user.getStackInHand(hand), serverPlayer));
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }

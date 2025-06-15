@@ -43,5 +43,6 @@ public class ModelGenerator extends FabricModelProvider {
         generated.accept(DPIconItems.INFO);
         generated.accept(DPIconItems.LEFT);
         generated.accept(DPIconItems.RIGHT);
+        generated.accept(DPIconItems.TAKE_ALL);
     }
 }

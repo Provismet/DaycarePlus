@@ -15,6 +15,7 @@ public abstract class DPIconItems {
     public static final PolymerItem INFO = register("info", PolymerItem::new);
     public static final PolymerItem LEFT = register("left_arrow", PolymerItem::new);
     public static final PolymerItem RIGHT = register("right_arrow", PolymerItem::new);
+    public static final PolymerItem TAKE_ALL = register("take_all", PolymerItem::new);
 
     private static <T extends PolymerItem> T register (String name, DPItems.ItemConstructor<T> constructor) {
         Identifier itemId = DaycarePlusServer.identifier(name);

@@ -3,7 +3,6 @@ package com.provismet.cobblemon.daycareplus.gui;
 import ca.landonjw.gooeylibs2.api.button.Button;
 import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import ca.landonjw.gooeylibs2.api.button.GooeyButton;
-import ca.landonjw.gooeylibs2.api.button.InventoryListenerButton;
 import ca.landonjw.gooeylibs2.api.page.GooeyPage;
 import ca.landonjw.gooeylibs2.api.page.PageAction;
 import ca.landonjw.gooeylibs2.api.template.Template;
@@ -17,13 +16,19 @@ import com.provismet.cobblemon.daycareplus.util.Styles;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class EggBagGUI extends GooeyPage {
     private static final int ITEMS_PER_ROW = 9;
@@ -32,6 +37,8 @@ public class EggBagGUI extends GooeyPage {
 
     private final ItemStack bag;
     private int minSlotDisplayed;
+    private boolean isAtEnd;
+    private ServerPlayerEntity player;
 
     public EggBagGUI (@NotNull Template template, @Nullable InventoryTemplate inventoryTemplate, @Nullable Text title, ItemStack bag) {
         this(template, inventoryTemplate, title, null, null, bag);
@@ -41,12 +48,14 @@ public class EggBagGUI extends GooeyPage {
         super(template, inventoryTemplate, title, onOpen, onClose);
         this.bag = bag;
         this.minSlotDisplayed = 0;
+        this.isAtEnd = false;
     }
 
-    public static EggBagGUI createFrom (ItemStack bag) {
+    public static EggBagGUI createFrom (ItemStack bag, ServerPlayerEntity player) {
         Template template = EggBagGUI.createTemplate();
-        //InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(bag);
-        EggBagGUI gui = new EggBagGUI(template, null, Text.translatable(bag.getTranslationKey()), bag);
+        InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(bag, player);
+        EggBagGUI gui = new EggBagGUI(template, inventoryTemplate, Text.translatable(bag.getTranslationKey()), bag);
+        gui.player = player;
         gui.reset();
         return gui;
     }
@@ -58,6 +67,8 @@ public class EggBagGUI extends GooeyPage {
     public void reset () {
         EggBagDataComponent component = this.getComponent();
         Template template = EggBagGUI.createTemplate();
+        InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(this.bag, this.player);
+        this.isAtEnd = false;
 
         for (int i = 0; i + 9 < template.getSize() && i + this.minSlotDisplayed < component.contents().size(); ++i) {
             int slotToTake = i + this.minSlotDisplayed;
@@ -68,19 +79,25 @@ public class EggBagGUI extends GooeyPage {
                         Optional<ItemStack> stack = component.get(slotToTake);
                         if (stack.isPresent() && buttonAction.getPlayer().giveItemStack(stack.get())) {
                             this.bag.set(DPItemDataComponents.HELD_EGGS, component.remove(slotToTake));
+                            buttonAction.getPlayer().playSoundToPlayer(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, SoundCategory.PLAYERS, 1f, 1f);
                             this.reset();
                         }
                     })
                     .build()
             );
+
+            if (i + this.minSlotDisplayed == component.contents().size() - 1) this.isAtEnd = true;
         }
 
         this.setTemplate(template);
+        this.setPlayerInventoryTemplate(inventoryTemplate);
     }
 
     public void nextPage () {
-        this.minSlotDisplayed += ITEMS_PER_PAGE;
-        this.reset();
+        if (!this.isAtEnd) {
+            this.minSlotDisplayed += ITEMS_PER_PAGE;
+            this.reset();
+        }
     }
 
     public void previousPage () {
@@ -125,30 +142,54 @@ public class EggBagGUI extends GooeyPage {
             })
             .build();
 
+        Button takeAll = GooeyButton.builder()
+            .display(DPIconItems.TAKE_ALL.getDefaultStack())
+            .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.take").styled(Styles.WHITE_NO_ITALICS))
+            .onClick(buttonAction -> {
+                if (buttonAction.getPage() instanceof EggBagGUI eggBagGUI) {
+                    EggBagDataComponent component = eggBagGUI.getBag().getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
+                    component = component.addAllCopiesAndEmpty(buttonAction.getPlayer().getInventory().main);
+                    eggBagGUI.getBag().set(DPItemDataComponents.HELD_EGGS, component);
+                    buttonAction.getPlayer().playSoundToPlayer(SoundEvents.ITEM_BUNDLE_INSERT, SoundCategory.PLAYERS, 1f, 1f);
+                    eggBagGUI.reset();
+                }
+            })
+            .build();
+
         return ChestTemplate.builder(ROWS_PER_PAGE + 1)
             .fill(filler)
             .row(0, borderFiller)
             .set(0, previous)
+            .set(7, takeAll)
             .set(8, next)
             .build();
     }
 
-    private static InventoryTemplate createFromPlayer (ItemStack eggBag) {
+    private static InventoryTemplate createFromPlayer (ItemStack eggBag, ServerPlayerEntity player) {
         EggBagDataComponent component = eggBag.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
 
-        InventoryListenerButton button = new InventoryListenerButton(buttonAction -> {
-            Optional<Integer> slot = buttonAction.getInventorySlot();
-            if (slot.isPresent() && !component.isFull()) {
-                ItemStack stack = buttonAction.getPlayer().getInventory().getStack(slot.get());
+        Function<ItemStack, Button> makeButton = stack -> GooeyButton.builder()
+            .display(stack)
+            .onClick(buttonAction -> {
                 if (stack.isOf(DPItems.POKEMON_EGG)) {
-                    eggBag.set(DPItemDataComponents.HELD_EGGS, component.add(stack.copyAndEmpty()));
+                    eggBag.set(DPItemDataComponents.HELD_EGGS, component.addCopyAndEmpty(stack));
+                    buttonAction.getPlayer().playSoundToPlayer(SoundEvents.ITEM_BUNDLE_INSERT, SoundCategory.PLAYERS, 1f, 1f);
                 }
                 if (buttonAction.getPage() instanceof EggBagGUI gui) gui.reset();
-            }
-        });
+            })
+            .build();
+
+        List<Button> buttons = Stream.concat(
+            player.getInventory().main.subList(9, player.getInventory().main.size())
+                .stream()
+                .map(makeButton),
+            player.getInventory().main.subList(0, 9) // The hotbar appears first in the inventory, but we need it last in the template.
+                .stream()
+                .map(makeButton)
+        ).toList();
 
         return InventoryTemplate.builder()
-            .fill(button)
+            .fillFromList(buttons)
             .build();
     }
 }

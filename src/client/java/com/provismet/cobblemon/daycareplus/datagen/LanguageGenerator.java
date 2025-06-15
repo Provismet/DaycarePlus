@@ -28,6 +28,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPIconItems.INFO, "Info");
         translationBuilder.add(DPIconItems.LEFT, "Left");
         translationBuilder.add(DPIconItems.RIGHT, "Right");
+        translationBuilder.add(DPIconItems.TAKE_ALL, "Deposit All");
 
         // Egg Bag
         translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.singular", "Collected %1$s egg.");
@@ -36,6 +37,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("tooltip.daycareplus.egg_bag.eggs_held", "Eggs Held: %1$s/%2$s");
         translationBuilder.add("gui.button.daycareplus.prev", "Previous");
         translationBuilder.add("gui.button.daycareplus.next", "Next");
+        translationBuilder.add("gui.button.daycareplus.take", "Deposit All");
 
         // Egg Item
         translationBuilder.add("message.overlay.daycareplus.egg.hatch", "Your egg hatched.");

@@ -1,11 +1,15 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
 import com.cobblemon.mod.common.CobblemonItems;
+import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -33,5 +37,11 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(DPItems.GOLD_EGG_BAG)
             .add(DPItems.DIAMOND_EGG_BAG)
             .add(DPItems.NETHERITE_EGG_BAG);
+
+        this.getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "hidden_from_recipe_viewers")))
+            .add(DPIconItems.INFO)
+            .add(DPIconItems.LEFT)
+            .add(DPIconItems.RIGHT)
+            .add(DPIconItems.TAKE_ALL);
     }
 }

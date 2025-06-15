@@ -41,10 +41,24 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
         return builder.build();
     }
 
-    public EggBagDataComponent addAll (List<ItemStack> stacks) {
+    public EggBagDataComponent addCopyAndEmpty (ItemStack stack) {
+        Builder builder = new Builder(this);
+        if (builder.add(stack.copy())) stack.setCount(0);
+        return builder.build();
+    }
+
+    public EggBagDataComponent addAll (Iterable<ItemStack> stacks) {
         Builder builder = new Builder(this);
         for (ItemStack stack : stacks) {
             builder.add(stack.copyAndEmpty());
+        }
+        return builder.build();
+    }
+
+    public EggBagDataComponent addAllCopiesAndEmpty (Iterable<ItemStack> stacks) {
+        Builder builder = new Builder(this);
+        for (ItemStack stack : stacks) {
+            if (builder.add(stack.copy())) stack.setCount(0);
         }
         return builder.build();
     }
