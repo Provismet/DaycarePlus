@@ -70,7 +70,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(CobblemonItems.POWER_WEIGHT.getTranslationKey() + ".breeding", "This parent will pass on its HP IV to the child.");
         translationBuilder.add(CobblemonItems.POWER_BRACER.getTranslationKey() + ".breeding", "This parent will pass on its Attack IV to the child.");
         translationBuilder.add(CobblemonItems.POWER_BAND.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Defence IV to the child.");
-        translationBuilder.add(CobblemonItems.MIRROR_HERB.getTranslationKey() + ".breeding", "This Pokemon can may learn egg moves from its partner.");
+        translationBuilder.add(CobblemonItems.MIRROR_HERB.getTranslationKey() + ".breeding", "This Pokemon may learn egg moves from its partner.");
 
         // Intro GUI
         translationBuilder.add("gui.button.daycareplus.intro.daycare", "Daycare");
