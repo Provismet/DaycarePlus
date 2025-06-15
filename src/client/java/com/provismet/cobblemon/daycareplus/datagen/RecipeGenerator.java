@@ -20,22 +20,29 @@ public class RecipeGenerator extends FabricRecipeProvider {
 
     @Override
     public void generate (RecipeExporter recipeExporter) {
-        this.eggBag(DPItems.LEATHER_EGG_BAG, Items.LEATHER).offerTo(recipeExporter);
-        this.eggBag(DPItems.IRON_EGG_BAG, Items.IRON_BLOCK).offerTo(recipeExporter);
-        this.eggBag(DPItems.GOLD_EGG_BAG, Items.GOLD_BLOCK).offerTo(recipeExporter);
-        this.eggBag(DPItems.DIAMOND_EGG_BAG, Items.DIAMOND_BLOCK).offerTo(recipeExporter);
-        RecipeProvider.offerNetheriteUpgradeRecipe(recipeExporter, DPItems.DIAMOND_EGG_BAG, RecipeCategory.MISC, DPItems.NETHERITE_EGG_BAG);
-    }
-
-    private ShapedRecipeJsonBuilder eggBag (Item bag, Item inputMaterial) {
-        return ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, bag)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, DPItems.LEATHER_EGG_BAG)
             .pattern(" s ")
             .pattern("iri")
             .pattern("iii")
             .input('s', Items.STRING)
             .input('r', Items.RABBIT_HIDE)
+            .input('i', Items.LEATHER)
+            .criterion(FabricRecipeProvider.hasItem(DPItems.POKEMON_EGG), FabricRecipeProvider.conditionsFromItem(DPItems.POKEMON_EGG)); // Unlock the recipe after collecting an egg.
+
+        this.eggBag(DPItems.IRON_EGG_BAG, Items.IRON_BLOCK, DPItems.LEATHER_EGG_BAG).offerTo(recipeExporter);
+        this.eggBag(DPItems.GOLD_EGG_BAG, Items.GOLD_BLOCK, DPItems.LEATHER_EGG_BAG).offerTo(recipeExporter); // Non-linear progression.
+        this.eggBag(DPItems.DIAMOND_EGG_BAG, Items.DIAMOND_BLOCK, DPItems.IRON_EGG_BAG).offerTo(recipeExporter);
+        RecipeProvider.offerNetheriteUpgradeRecipe(recipeExporter, DPItems.DIAMOND_EGG_BAG, RecipeCategory.MISC, DPItems.NETHERITE_EGG_BAG);
+    }
+
+    private ShapedRecipeJsonBuilder eggBag (Item bag, Item inputMaterial, Item previousBag) {
+        return ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, bag)
+            .pattern(" s ")
+            .pattern("iri")
+            .pattern("iii")
+            .input('s', Items.STRING)
+            .input('r', previousBag)
             .input('i', inputMaterial)
-            .criterion(FabricRecipeProvider.hasItem(inputMaterial), FabricRecipeProvider.conditionsFromItem(inputMaterial))
-            .criterion(FabricRecipeProvider.hasItem(Items.RABBIT_HIDE), FabricRecipeProvider.conditionsFromItem(Items.RABBIT_HIDE));
+            .criterion(FabricRecipeProvider.hasItem(previousBag), FabricRecipeProvider.conditionsFromItem(previousBag));
     }
 }
