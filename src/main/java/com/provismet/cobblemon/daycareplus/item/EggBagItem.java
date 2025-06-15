@@ -5,26 +5,21 @@ import com.provismet.cobblemon.daycareplus.gui.EggBagGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
-import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.BundleTooltipData;
 import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ClickType;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -63,68 +58,16 @@ public class EggBagItem extends PolymerItem {
                 List<ItemStack> eggs = daycare.withdraw(remainingSlots);
                 int size = eggs.size();
                 context.getStack().set(DPItemDataComponents.HELD_EGGS, component.addAll(eggs));
-                if (context.getPlayer() != null) {
-                    this.playInsertSound(context.getPlayer());
-                    if (size == 1) context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
-                    else context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.plural", size), true);
+                if (context.getPlayer() instanceof ServerPlayerEntity player) {
+                    this.playInsertSound(player);
+                    if (size == 1) player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
+                    else player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.plural", size), true);
                 }
                 return ActionResult.SUCCESS;
             }
         }
         return super.useOnBlock(context);
     }
-
-    // TODO: Try removing egg bad click logic in favour of a GUI.
-//    // Bag is on the cursor, hover over another item to collect it.
-//    @Override
-//    public boolean onStackClicked (ItemStack eggBag, Slot slot, ClickType clickType, PlayerEntity player) {
-//        if (clickType != ClickType.RIGHT || player.isCreative()) return false;
-//
-//        EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
-//        if (component == null) return false;
-//
-//        ItemStack otherItem = slot.getStack();
-//        if (!otherItem.isEmpty() && !otherItem.isOf(DPItems.POKEMON_EGG)) return true;
-//
-//        EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
-//        if (otherItem.isEmpty()) { // Place egg in inventory.
-//            this.playRemoveOneSound(player);
-//            ItemStack stackFromBag = builder.remove();
-//            ItemStack itemStack3 = slot.insertStack(stackFromBag);
-//            builder.add(itemStack3);
-//        }
-//        else if (!component.isFull()) { // Put egg in bag.
-//            builder.add(otherItem.copyAndEmpty());
-//            this.playInsertSound(player);
-//        }
-//
-//        eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
-//        return true;
-//    }
-//
-//    // Bag is in the inventory, withdraw an egg or put one in.
-//    @Override
-//    public boolean onClicked (ItemStack eggBag, ItemStack cursorStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
-//        if (clickType == ClickType.RIGHT && slot.canTakePartial(player) && !player.isCreative()) {
-//            EggBagDataComponent component = eggBag.get(DPItemDataComponents.HELD_EGGS);
-//            if (component == null) return false;
-//
-//            EggBagDataComponent.Builder builder = new EggBagDataComponent.Builder(component);
-//
-//            if (cursorStack.isEmpty() && !component.isEmpty()) {
-//                ItemStack itemStack = builder.remove();
-//                this.playRemoveOneSound(player);
-//                cursorStackReference.set(itemStack);
-//            }
-//            else if (cursorStack.isOf(DPItems.POKEMON_EGG) && !component.isFull()) {
-//                builder.add(cursorStack.copyAndEmpty());
-//            }
-//
-//            eggBag.set(DPItemDataComponents.HELD_EGGS, builder.build());
-//            return true;
-//        }
-//        return false;
-//    }
 
     // TODO: Only exists clientside, future goal is to make this work on compatible clients. Don't know how to check that yet though.
     @Override
@@ -154,11 +97,7 @@ public class EggBagItem extends PolymerItem {
         stack.set(DPItemDataComponents.HELD_EGGS, component.validate());
     }
 
-    private void playRemoveOneSound (Entity entity) {
-        entity.getWorld().playSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_BUNDLE_REMOVE_ONE, SoundCategory.PLAYERS, 0.8f, 0.8f + entity.getWorld().getRandom().nextFloat() * 0.4f, true);
-    }
-
-    private void playInsertSound (Entity entity) {
-        entity.getWorld().playSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_BUNDLE_INSERT, SoundCategory.PLAYERS, 0.8f, 0.8f, true);
+    private void playInsertSound (ServerPlayerEntity player) {
+        player.playSoundToPlayer(SoundEvents.ITEM_BUNDLE_INSERT, SoundCategory.PLAYERS, 1f, 1f);
     }
 }
