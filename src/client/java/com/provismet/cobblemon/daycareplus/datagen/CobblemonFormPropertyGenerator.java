@@ -16,5 +16,6 @@ public class CobblemonFormPropertyGenerator extends FormPropertiesOverrideProvid
         generator.add("alolabias", "region_bias", "alola");
         generator.add("galarbias", "region_bias", "galar");
         generator.add("hisuibias", "region_bias", "hisui");
+        generator.add("whitestriped", "fish_stripes", "white");
     }
 }
