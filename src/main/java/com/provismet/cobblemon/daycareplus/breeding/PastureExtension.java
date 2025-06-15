@@ -132,7 +132,7 @@ public class PastureExtension {
                 }
             }
 
-            if (applyMirrorHerb) {
+            if (applyMirrorHerb && !this.blockEntity.getTetheredPokemon().isEmpty()) {
                 Pokemon parent1 = this.blockEntity.getTetheredPokemon().getFirst().getPokemon();
                 Pokemon parent2 = this.blockEntity.getTetheredPokemon().getLast().getPokemon();
 
