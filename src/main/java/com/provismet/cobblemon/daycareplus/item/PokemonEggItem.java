@@ -67,8 +67,21 @@ public class PokemonEggItem extends PolymerItem {
     @Override
     public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
-        if (stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP) || !Options.shouldShowEggTooltip()) return;
+        if (stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) return;
 
+        Integer steps = stack.get(DPItemDataComponents.EGG_STEPS);
+        if (steps != null) {
+            String minutes = "" + (steps / TICKS_PER_MINUTE);
+            String seconds = "" + ((steps % TICKS_PER_MINUTE) / 20);
+
+            if (minutes.length() < 2) minutes = "0" + minutes;
+            if (seconds.length() < 2) seconds = "0" + seconds;
+
+            tooltip.add(Text.translatable("tooltip.daycareplus.egg.ticks", minutes + ":" + seconds));
+        }
+        if (!Options.shouldShowEggTooltip()) return;
+
+        tooltip.add(Text.empty());
         String properties = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
         if (properties == null) {
             tooltip.add(Text.translatable("tooltip.daycareplus.egg.no_data"));
@@ -84,6 +97,7 @@ public class PokemonEggItem extends PolymerItem {
             }
             if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getForm())).styled(Styles.WHITE_NO_ITALICS)));
             if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(Identifier.of(pokemonProperties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS)));
+            if (pokemonProperties.getAbility() != null) tooltip.add(Text.translatable("property.daycareplus.ability").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getAbility())).styled(Styles.WHITE_NO_ITALICS)));
             if (pokemonProperties.getGender() != null && pokemonProperties.getGender() != Gender.GENDERLESS) {
                 Text gender = switch (pokemonProperties.getGender()) {
                     case MALE -> Text.literal("M").formatted(Formatting.BLUE);
@@ -92,17 +106,6 @@ public class PokemonEggItem extends PolymerItem {
                 };
 
                 tooltip.add(Text.translatable("property.daycareplus.gender").formatted(Formatting.YELLOW).append(gender));
-            }
-
-            Integer steps = stack.get(DPItemDataComponents.EGG_STEPS);
-            if (steps != null) {
-                String minutes = "" + (steps / TICKS_PER_MINUTE);
-                String seconds = "" + ((steps % TICKS_PER_MINUTE) / 20);
-
-                if (minutes.length() < 2) minutes = "0" + minutes;
-                if (seconds.length() < 2) seconds = "0" + seconds;
-
-                tooltip.add(Text.translatable("tooltip.daycareplus.egg.ticks", minutes + ":" + seconds));
             }
 
             IVs iv = pokemonProperties.getIvs();
