@@ -42,7 +42,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         // Egg Item
         translationBuilder.add("message.overlay.daycareplus.egg.hatch", "Your egg hatched.");
         translationBuilder.add("tooltip.daycareplus.egg.no_data", "No data found.");
-        translationBuilder.add("tooltip.daycareplus.egg.ticks", "Time: %1$s");
+        translationBuilder.add("tooltip.daycareplus.egg.ticks", "§eTime:§f %1$s");
 
         // Daycare
         translationBuilder.add("message.chat.daycareplus.egg_produced", "Your daycare has produced an egg.");

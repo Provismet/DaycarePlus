@@ -65,6 +65,6 @@
   "stat.daycareplus.eggs_hatched": "Pokémon Eggs Hatched",
   "title.daycareplus.item_group": "Daycare+",
   "tooltip.daycareplus.egg.no_data": "No data found.",
-  "tooltip.daycareplus.egg.ticks": "Time: %1$s",
+  "tooltip.daycareplus.egg.ticks": "§eTime:§f %1$s",
   "tooltip.daycareplus.egg_bag.eggs_held": "Eggs Held: %1$s/%2$s"
 }
