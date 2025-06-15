@@ -183,6 +183,39 @@ public class PotentialPokemonProperties {
         );
     }
 
+    public List<String> getEggMoves () {
+        List<MoveTemplate> validEggMoves = this.form.getMoves().getEggMoves();
+        List<String> eggMoves = new ArrayList<>();
+
+        this.secondary.getBenchedMoves().forEach(benchedMove -> {
+            if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(benchedMove.getMoveTemplate().getName()))) {
+                eggMoves.add(benchedMove.getMoveTemplate().getName());
+            }
+        });
+
+        this.secondary.getMoveSet().forEach(move -> {
+            if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(move.getName()))) {
+                eggMoves.add(move.getName());
+            }
+        });
+
+        if (Options.doGen6EggMoves()) {
+            this.primary.getBenchedMoves().forEach(benchedMove -> {
+                if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(benchedMove.getMoveTemplate().getName()))) {
+                    eggMoves.add(benchedMove.getMoveTemplate().getName());
+                }
+            });
+
+            this.primary.getMoveSet().forEach(move -> {
+                if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(move.getName()))) {
+                    eggMoves.add(move.getName());
+                }
+            });
+        }
+
+        return eggMoves;
+    }
+
     public double getShinyRate () {
         float shinyRate = 1 / Cobblemon.config.getShinyRate();
         shinyRate *= Options.getShinyChanceMultiplier();
@@ -263,37 +296,9 @@ public class PotentialPokemonProperties {
     }
 
     private void setEggMoves (PokemonProperties properties) {
-        List<MoveTemplate> validEggMoves = this.form.getMoves().getEggMoves();
-        List<String> eggMoves = new ArrayList<>();
-
-        this.secondary.getRelearnableMoves().forEach(moveTemplate -> {
-            if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(moveTemplate.getName()))) {
-                eggMoves.add(moveTemplate.getName());
-            }
-        });
-
-        this.secondary.getMoveSet().forEach(move -> {
-            if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(move.getName()))) {
-                eggMoves.add(move.getName());
-            }
-        });
-
-        if (Options.doGen6EggMoves()) {
-            this.primary.getRelearnableMoves().forEach(moveTemplate -> {
-                if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(moveTemplate.getName()))) {
-                    eggMoves.add(moveTemplate.getName());
-                }
-            });
-
-            this.primary.getMoveSet().forEach(move -> {
-                if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(move.getName()))) {
-                    eggMoves.add(move.getName());
-                }
-            });
-        }
+        List<String> eggMoves = this.getEggMoves();
 
         if (properties.getMoves() != null) eggMoves.addAll(properties.getMoves());
-
         properties.setMoves(eggMoves.stream().distinct().toList());
     }
 

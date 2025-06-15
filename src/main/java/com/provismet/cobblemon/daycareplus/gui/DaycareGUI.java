@@ -14,13 +14,16 @@ import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.item.PokemonItem;
 import com.cobblemon.mod.common.pokemon.Nature;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.google.common.collect.ImmutableList;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
 import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
+import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
@@ -125,26 +128,41 @@ public interface DaycareGUI {
             props.setShiny(false);
             Pokemon tile = props.create();
 
+            ImmutableList.Builder<Text> eggData = ImmutableList.builder();
+            eggData.add(
+                Text.translatable("property.daycareplus.species").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(tile.getSpecies().getTranslatedName().styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.form").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(tile.getForm().getName()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).map(StringFormatting::titleCase).toList())).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append((offspring.get().getPossibleNatures().isEmpty() ? Text.literal("?") : offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).map(Text::translatable).reduce(Text.literal(""), (nature1, nature2) -> nature1.getString().isEmpty() ? nature2 : nature1.append(", ").append(nature2))).styled(Styles.WHITE_NO_ITALICS))
+            );
+            if (props.getMoves() != null && !props.getMoves().isEmpty()) {
+                eggData.add(Text.translatable("property.daycareplus.moves").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(String.join(", ", props.getMoves().stream().map(StringFormatting::titleCase).toList())).styled(Styles.WHITE_NO_ITALICS)));
+            }
+            eggData.add(
+                Text.empty(),
+                Text.translatable("property.daycareplus.ivs").styled(Styles.WHITE_NO_ITALICS),
+                Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP)).append(Text.literal(ivs.get(Stats.HP).toString()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.attack").styled(Styles.colouredNoItalics(Styles.ATTACK)).append(Text.literal(ivs.get(Stats.ATTACK).toString()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.defence").styled(Styles.colouredNoItalics(Styles.DEFENCE)).append(Text.literal(ivs.get(Stats.DEFENCE).toString()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.special_attack").styled(Styles.colouredNoItalics(Styles.SPECIAL_ATTACK)).append(Text.literal(ivs.get(Stats.SPECIAL_ATTACK).toString()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE)).append(Text.literal(ivs.get(Stats.SPECIAL_DEFENCE).toString()).styled(Styles.WHITE_NO_ITALICS)),
+                Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(ivs.get(Stats.SPEED).toString()).styled(Styles.WHITE_NO_ITALICS))
+            );
+
+            if (Options.shouldShowShinyChance()) eggData.add(
+                Text.empty(),
+                Text.translatable("property.daycareplus.shiny").styled(Styles.formattedNoItalics(Formatting.GOLD)).append(Text.literal("1/" + Math.max(1, (int)(1 / offspring.get().getShinyRate()))).styled(Styles.WHITE_NO_ITALICS))
+            );
+
+            if (FabricLoader.getInstance().isDevelopmentEnvironment()) eggData.add(
+                Text.empty(),
+                Text.literal("(Debug) Aspects: " + String.join(", ", tile.getAspects()))
+            );
+
             offspringInfo = GooeyButton.builder()
                 .display(PokemonItem.from(props))
                 .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.offspring").styled(Styles.WHITE_NO_ITALICS))
-                .with(DataComponentTypes.LORE, new LoreComponent(List.of(
-                    Text.translatable("property.daycareplus.species").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(tile.getSpecies().getTranslatedName().styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.form").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(tile.getForm().getName()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).map(StringFormatting::titleCase).toList())).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append((offspring.get().getPossibleNatures().isEmpty() ? Text.literal("?") : offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).map(Text::translatable).reduce(Text.literal(""), (nature1, nature2) -> nature1.getString().isEmpty() ? nature2 : nature1.append(", ").append(nature2))).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.empty(),
-                    Text.translatable("property.daycareplus.ivs").styled(Styles.WHITE_NO_ITALICS),
-                    Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP)).append(Text.literal(ivs.get(Stats.HP).toString()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.attack").styled(Styles.colouredNoItalics(Styles.ATTACK)).append(Text.literal(ivs.get(Stats.ATTACK).toString()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.defence").styled(Styles.colouredNoItalics(Styles.DEFENCE)).append(Text.literal(ivs.get(Stats.DEFENCE).toString()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.special_attack").styled(Styles.colouredNoItalics(Styles.SPECIAL_ATTACK)).append(Text.literal(ivs.get(Stats.SPECIAL_ATTACK).toString()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE)).append(Text.literal(ivs.get(Stats.SPECIAL_DEFENCE).toString()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(ivs.get(Stats.SPEED).toString()).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.empty(),
-                    Text.translatable("property.daycareplus.shiny").styled(Styles.formattedNoItalics(Formatting.GOLD)).append(Text.literal("1/" + Math.max(1, (int)(1 / offspring.get().getShinyRate()))).styled(Styles.WHITE_NO_ITALICS)),
-                    Text.literal("(Debug) Aspects: " + String.join(", ", tile.getAspects())) // TODO: Temporary for bug testing.
-                )))
+                .with(DataComponentTypes.LORE, new LoreComponent(eggData.build()))
                 .build();
         }
         else {
