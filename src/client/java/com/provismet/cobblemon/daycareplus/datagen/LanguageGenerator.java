@@ -46,6 +46,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("message.chat.daycareplus.egg_produced", "Your daycare has produced an egg.");
         translationBuilder.add("message.chat.daycareplus.single_egg_produced", "Your daycare produced %1$s egg while you were away.");
         translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");
+        translationBuilder.add("message.chat.daycareplus.move_learnt", "Your %1$s learnt %2$s while in the daycare.");
         translationBuilder.add("message.overlay.daycareplus.not_owner", "This is not your daycare.");
         translationBuilder.add("gui.button.daycareplus.open_pasture", "Open Pasture");
         translationBuilder.add("gui.button.daycareplus.info", "Info");
@@ -67,6 +68,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(CobblemonItems.POWER_WEIGHT.getTranslationKey() + ".breeding", "This parent will pass on its HP IV to the child.");
         translationBuilder.add(CobblemonItems.POWER_BRACER.getTranslationKey() + ".breeding", "This parent will pass on its Attack IV to the child.");
         translationBuilder.add(CobblemonItems.POWER_BAND.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Defence IV to the child.");
+        translationBuilder.add(CobblemonItems.MIRROR_HERB.getTranslationKey() + ".breeding", "This Pokemon can may learn egg moves from its partner.");
 
         // Intro GUI
         translationBuilder.add("gui.button.daycareplus.intro.daycare", "Daycare");
