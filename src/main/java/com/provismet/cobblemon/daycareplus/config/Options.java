@@ -1,14 +1,13 @@
 package com.provismet.cobblemon.daycareplus.config;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.lilylib.util.json.JsonBuilder;
+import com.provismet.lilylib.util.json.JsonReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -20,6 +19,7 @@ public class Options {
     private static double successRatePerEggAttempt = 0.75;
     private static int pastureInventorySize = 128;
     private static int maxPasturesPerPlayer = 3;
+    private static boolean showShinyChance = true;
 
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
@@ -54,6 +54,10 @@ public class Options {
 
     public static int getMaxPasturesPerPlayer () {
         return maxPasturesPerPlayer;
+    }
+
+    public static boolean shouldShowShinyChance () {
+        return showShinyChance;
     }
 
     public static int getEggPoints (int eggCycles) {
@@ -101,37 +105,33 @@ public class Options {
     }
 
     public static void save () {
-        JsonObject json = new JsonObject();
-
-        JsonObject eggProduction = new JsonObject();
-        eggProduction.addProperty("ticksPerEggAttempt", ticksPerEggAttempt);
-        eggProduction.addProperty("successRatePerEggAttempt", successRatePerEggAttempt);
-        eggProduction.addProperty("pastureInventorySize", pastureInventorySize);
-        eggProduction.addProperty("maxPasturesPerPlayer", maxPasturesPerPlayer);
-        json.add("eggProduction", eggProduction);
-
-        JsonObject shinyChance = new JsonObject();
-        shinyChance.addProperty("standardMultiplier", shinyChanceMultiplier);
-        shinyChance.addProperty("masudaMultiplier", masudaMultiplier);
-        shinyChance.addProperty("crystalMultiplier", crystalMultiplier);
-        json.add("shinyChance", shinyChance);
-
-        JsonObject breedingRules = new JsonObject();
-        breedingRules.addProperty("inheritMovesFromBothParents", inheritEggMovesFromBothParents);
-        breedingRules.addProperty("ticksPerEggCycle", pointsPerEggCycle);
-        breedingRules.addProperty("showEggTooltip", showEggTooltip);
-        json.add("breedingRules", breedingRules);
-
-        JsonObject eggBags = new JsonObject();
-        eggBags.add("leather", leather.toJson());
-        eggBags.add("iron", iron.toJson());
-        eggBags.add("gold", gold.toJson());
-        eggBags.add("diamond", diamond.toJson());
-        eggBags.add("netherite", netherite.toJson());
-        json.add("eggBags", eggBags);
+        JsonBuilder builder = new JsonBuilder()
+            .append(
+                "eggProduction", new JsonBuilder()
+                    .append("ticksPerEggAttempt", ticksPerEggAttempt)
+                    .append("successRatePerEggAttempt", successRatePerEggAttempt)
+                    .append("pastureInventorySize", pastureInventorySize)
+                    .append("maxPasturesPerPlayer", maxPasturesPerPlayer))
+            .append(
+                "shinyChance", new JsonBuilder()
+                    .append("standardMultiplier", shinyChanceMultiplier)
+                    .append("masudaMultiplier", masudaMultiplier)
+                    .append("crystalMultiplier", crystalMultiplier))
+            .append(
+                "breedingRules", new JsonBuilder()
+                    .append("inheritMovesFromBothParents", inheritEggMovesFromBothParents)
+                    .append("ticksPerEggCycle", pointsPerEggCycle)
+                    .append("showEggTooltip", showEggTooltip))
+            .append(
+                "eggBags", new JsonBuilder()
+                    .append("leather", leather.toJson())
+                    .append("iron", iron.toJson())
+                    .append("gold", gold.toJson())
+                    .append("diamond", diamond.toJson())
+                    .append("netherite", netherite.toJson()));
 
         try (FileWriter writer = new FileWriter(FILE)) {
-            writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(json));
+            writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
         }
         catch (IOException e) {
             DaycarePlusServer.LOGGER.error("Error whilst saving config: ", e);
@@ -148,31 +148,34 @@ public class Options {
         }
 
         try {
-            JsonElement json = JsonParser.parseReader(new FileReader(file));
-            if (json instanceof JsonObject config) {
-                if (config.get("eggProduction") instanceof JsonObject eggProduction) {
-                    ticksPerEggAttempt = eggProduction.getAsJsonPrimitive("ticksPerEggAttempt").getAsInt();
-                    successRatePerEggAttempt = eggProduction.getAsJsonPrimitive("successRatePerEggAttempt").getAsDouble();
-                    pastureInventorySize = eggProduction.getAsJsonPrimitive("pastureInventorySize").getAsInt();
-                    maxPasturesPerPlayer = eggProduction.getAsJsonPrimitive("maxPasturesPerPlayer").getAsInt();
-                }
-                if (config.get("shinyChance") instanceof JsonObject shinyChance) {
-                    shinyChanceMultiplier = shinyChance.getAsJsonPrimitive("standardMultiplier").getAsFloat();
-                    masudaMultiplier = shinyChance.getAsJsonPrimitive("masudaMultiplier").getAsFloat();
-                    crystalMultiplier = shinyChance.getAsJsonPrimitive("crystalMultiplier").getAsFloat();
-                }
-                if (config.get("breedingRules") instanceof JsonObject breedingRules) {
-                    inheritEggMovesFromBothParents = breedingRules.getAsJsonPrimitive("inheritMovesFromBothParents").getAsBoolean();
-                    pointsPerEggCycle = breedingRules.getAsJsonPrimitive("ticksPerEggCycle").getAsInt();
-                    showEggTooltip = breedingRules.getAsJsonPrimitive("showEggTooltip").getAsBoolean();
-                }
-                if (config.get("eggBags") instanceof JsonObject eggBags) {
-                    leather = EggBagSettings.fromJson(eggBags.getAsJsonObject("leather"));
-                    iron = EggBagSettings.fromJson(eggBags.getAsJsonObject("iron"));
-                    gold = EggBagSettings.fromJson(eggBags.getAsJsonObject("gold"));
-                    diamond = EggBagSettings.fromJson(eggBags.getAsJsonObject("diamond"));
-                    netherite = EggBagSettings.fromJson(eggBags.getAsJsonObject("netherite"));
-                }
+            JsonReader reader = JsonReader.file(file);
+            if (reader != null) {
+                reader.getObjectAsReader("eggProduction").ifPresent(eggProduction -> {
+                    eggProduction.getInteger("ticksPerEggAttempt").ifPresent(val -> ticksPerEggAttempt = val);
+                    eggProduction.getDouble("successRatePerEggAttempt").ifPresent(val -> successRatePerEggAttempt = val);
+                    eggProduction.getInteger("pastureInventorySize").ifPresent(val -> pastureInventorySize = val);
+                    eggProduction.getInteger("maxPasturesPerPlayer").ifPresent(val -> maxPasturesPerPlayer = val);
+                });
+
+                reader.getObjectAsReader("shinyChance").ifPresent(shinyChance -> {
+                    shinyChance.getFloat("standardMultiplier").ifPresent(val -> shinyChanceMultiplier = val);
+                    shinyChance.getFloat("masudaMultiplier").ifPresent(val -> masudaMultiplier = val);
+                    shinyChance.getFloat("crystalMultiplier").ifPresent(val -> crystalMultiplier = val);
+                });
+
+                reader.getObjectAsReader("breedingRules").ifPresent(breedingRules -> {
+                    breedingRules.getBoolean("inheritMovesFromBothParents").ifPresent(val -> inheritEggMovesFromBothParents = val);
+                    breedingRules.getInteger("ticksPerEggCycle").ifPresent(val -> pointsPerEggCycle = val);
+                    breedingRules.getBoolean("showEggTooltip").ifPresent(val -> showEggTooltip = val);
+                });
+
+                reader.getObjectAsReader("eggBags").ifPresent(eggBags -> {
+                    eggBags.getObject("leather").ifPresent(val -> leather = EggBagSettings.fromJson(val));
+                    eggBags.getObject("iron").ifPresent(val -> iron = EggBagSettings.fromJson(val));
+                    eggBags.getObject("gold").ifPresent(val -> gold = EggBagSettings.fromJson(val));
+                    eggBags.getObject("diamond").ifPresent(val -> diamond = EggBagSettings.fromJson(val));
+                    eggBags.getObject("netherite").ifPresent(val -> netherite = EggBagSettings.fromJson(val));
+                });
             }
         }
         catch (FileNotFoundException e) {
