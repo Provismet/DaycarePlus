@@ -8,6 +8,8 @@ import com.cobblemon.mod.common.api.abilities.Ability;
 import com.cobblemon.mod.common.api.abilities.AbilityTemplate;
 import com.cobblemon.mod.common.api.abilities.CommonAbilityType;
 import com.cobblemon.mod.common.api.abilities.PotentialAbility;
+import com.cobblemon.mod.common.api.events.CobblemonEvents;
+import com.cobblemon.mod.common.api.events.pokemon.ShinyChanceCalculationEvent;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.pokeball.PokeBalls;
 import com.cobblemon.mod.common.api.pokemon.Natures;
@@ -217,16 +219,20 @@ public class PotentialPokemonProperties {
     }
 
     public double getShinyRate () {
-        float shinyRate = 1 / Cobblemon.config.getShinyRate();
-        shinyRate *= Options.getShinyChanceMultiplier();
+        float shinyRate = Cobblemon.config.getShinyRate();
+        shinyRate /= Options.getShinyChanceMultiplier();
 
         if (this.primary.getOriginalTrainer() != null && this.secondary.getOriginalTrainer() != null && !this.primary.getOriginalTrainer().equals(this.secondary.getOriginalTrainer())) {
-            shinyRate *= Options.getMasudaMultiplier();
+            shinyRate /= Options.getMasudaMultiplier();
         }
-        if (this.primary.getShiny()) shinyRate *= Options.getCrystalMultiplier();
-        if (this.secondary.getShiny()) shinyRate *= Options.getCrystalMultiplier();
+        if (this.primary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
+        if (this.secondary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
 
-        return shinyRate;
+        ShinyChanceCalculationEvent event = new ShinyChanceCalculationEvent(shinyRate, this.primary);
+        CobblemonEvents.SHINY_CHANCE_CALCULATION.emit(event);
+
+        double denominator = event.calculate(null);
+        return denominator == 0 ? 1 : 1 / denominator;
     }
 
     private void setPokeBall (PokemonProperties properties) {
