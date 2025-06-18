@@ -27,7 +27,8 @@ public class RecipeGenerator extends FabricRecipeProvider {
             .input('s', Items.STRING)
             .input('r', Items.RABBIT_HIDE)
             .input('i', Items.LEATHER)
-            .criterion(FabricRecipeProvider.hasItem(DPItems.POKEMON_EGG), FabricRecipeProvider.conditionsFromItem(DPItems.POKEMON_EGG)); // Unlock the recipe after collecting an egg.
+            .criterion(FabricRecipeProvider.hasItem(DPItems.POKEMON_EGG), FabricRecipeProvider.conditionsFromItem(DPItems.POKEMON_EGG))
+            .offerTo(recipeExporter); // Unlock the recipe after collecting an egg.
 
         this.eggBag(DPItems.IRON_EGG_BAG, Items.IRON_BLOCK, DPItems.LEATHER_EGG_BAG).offerTo(recipeExporter);
         this.eggBag(DPItems.GOLD_EGG_BAG, Items.GOLD_BLOCK, DPItems.LEATHER_EGG_BAG).offerTo(recipeExporter); // Non-linear progression.
