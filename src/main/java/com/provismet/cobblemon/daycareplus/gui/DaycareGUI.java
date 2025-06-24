@@ -20,6 +20,7 @@ import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
+import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
@@ -193,11 +194,12 @@ public interface DaycareGUI {
 
     static ButtonBase createEggButton (IMixinPastureBlockEntity mixinPasture) {
         return GooeyButton.builder()
-            .display(Items.EGG.getDefaultStack())
+            .display(DPItems.POKEMON_EGG.getDefaultStack())
             .with(
                 DataComponentTypes.CUSTOM_NAME,
                 Text.translatable("gui.button.daycareplus.eggs_held", mixinPasture.count(), mixinPasture.size())
                     .styled(Styles.WHITE_NO_ITALICS))
+            .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
             .build();
     }
 

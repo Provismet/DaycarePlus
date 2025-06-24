@@ -8,6 +8,7 @@ import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingLink;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
+import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
@@ -31,7 +32,8 @@ public interface IntroGUI {
             .build();
 
         GooeyButton activateBreeding = GooeyButton.builder()
-            .display(Items.EGG.getDefaultStack())
+            .display(DPItems.POKEMON_EGG.getDefaultStack())
+            .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
             .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.intro.daycare").styled(Styles.WHITE_NO_ITALICS))
             .with(DataComponentTypes.LORE, new LoreComponent(List.of(
                 Text.translatable("gui.button.daycareplus.intro.daycare.tooltip.1").styled(Styles.GRAY_NO_ITALICS),
