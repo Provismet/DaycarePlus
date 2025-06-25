@@ -126,8 +126,12 @@ public class PastureExtension {
                         FertilityProperty.decrement(potentialEgg.getSecondary());
 
                         if (Options.shouldConsumeHeldItems()) {
-                            if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING)) potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true);
-                            if (potentialEgg.getSecondary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING)) potentialEgg.getSecondary().swapHeldItem(ItemStack.EMPTY, true);
+                            if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getPrimary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
+                                potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true);
+                            }
+                            if (potentialEgg.getSecondary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getSecondary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
+                                potentialEgg.getSecondary().swapHeldItem(ItemStack.EMPTY, true);
+                            }
                         }
 
                         int lower = Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary()));

@@ -37,6 +37,9 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .addOptionalTag(DPItemTags.BREEDING_ITEM)
             .add(CobblemonItems.DESTINY_KNOT);
 
+        this.getOrCreateTagBuilder(DPItemTags.NO_CONSUME_BREEDING)
+            .add(CobblemonItems.MIRROR_HERB);
+
         this.getOrCreateTagBuilder(DPItemTags.EGG_BAGS)
             .add(DPItems.LEATHER_EGG_BAG)
             .add(DPItems.IRON_EGG_BAG)
