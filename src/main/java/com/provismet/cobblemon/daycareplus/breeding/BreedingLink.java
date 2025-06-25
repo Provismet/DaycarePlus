@@ -47,6 +47,10 @@ public class BreedingLink {
         remove(player.getUuid(), daycareId);
     }
 
+    public static void remove (ServerPlayerEntity player) {
+        link.remove(player.getUuid().toString());
+    }
+
     public static boolean has (UUID player, UUID daycareId) {
         return link.getOrDefault(player.toString(), Set.of()).contains(daycareId.toString());
     }
