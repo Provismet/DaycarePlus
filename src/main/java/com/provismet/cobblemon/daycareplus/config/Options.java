@@ -21,6 +21,12 @@ public class Options {
     private static int maxPasturesPerPlayer = 3;
     private static boolean showShinyChance = true;
 
+    // Competitive Breeding
+    private static boolean competitiveBreeding = false;
+    private static int maxFertility = 8;
+    private static boolean allowBreedingWithoutFertility = false;
+    private static boolean consumeHeldItems = true;
+
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
     private static boolean showEggTooltip = true;
@@ -58,6 +64,22 @@ public class Options {
 
     public static boolean shouldShowShinyChance () {
         return showShinyChance;
+    }
+
+    public static boolean doCompetitiveBreeding () {
+        return competitiveBreeding;
+    }
+
+    public static int getMaxFertility () {
+        return maxFertility;
+    }
+
+    public static boolean shouldAllowBreedingWithoutFertility () {
+        return allowBreedingWithoutFertility;
+    }
+
+    public static boolean shouldConsumeHeldItems () {
+        return consumeHeldItems;
     }
 
     public static int getEggPoints (int eggCycles) {
@@ -114,6 +136,12 @@ public class Options {
                     .append("maxPasturesPerPlayer", maxPasturesPerPlayer)
                     .append("showShinyChance", showShinyChance))
             .append(
+                "competitiveMode", new JsonBuilder()
+                    .append("useCompetitiveMode", competitiveBreeding)
+                    .append("maxFertility", maxFertility)
+                    .append("allowBreedingWithoutFertility", allowBreedingWithoutFertility)
+                    .append("consumeHeldItems", consumeHeldItems))
+            .append(
                 "shinyChance", new JsonBuilder()
                     .append("standardMultiplier", shinyChanceMultiplier)
                     .append("masudaMultiplier", masudaMultiplier)
@@ -157,6 +185,13 @@ public class Options {
                     eggProduction.getInteger("pastureInventorySize").ifPresent(val -> pastureInventorySize = val);
                     eggProduction.getInteger("maxPasturesPerPlayer").ifPresent(val -> maxPasturesPerPlayer = val);
                     eggProduction.getBoolean("showShinyChance").ifPresent(val -> showShinyChance = val);
+                });
+
+                reader.getObjectAsReader("competitiveMode").ifPresent(competitiveMode -> {
+                    competitiveMode.getBoolean("useCompetitiveMode").ifPresent(val -> competitiveBreeding = val);
+                    competitiveMode.getInteger("maxFertility").ifPresent(val -> maxFertility = val);
+                    competitiveMode.getBoolean("allowBreedingWithoutFertility").ifPresent(val -> allowBreedingWithoutFertility = val);
+                    competitiveMode.getBoolean("consumeHeldItems").ifPresent(val -> consumeHeldItems = val);
                 });
 
                 reader.getObjectAsReader("shinyChance").ifPresent(shinyChance -> {

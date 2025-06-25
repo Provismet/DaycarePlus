@@ -12,6 +12,7 @@ import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
+import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
@@ -120,6 +121,19 @@ public class PastureExtension {
                     }
 
                     PokemonProperties properties = potentialEgg.createPokemonProperties();
+                    if (Options.doCompetitiveBreeding()) {
+                        FertilityProperty.decrement(potentialEgg.getPrimary());
+                        FertilityProperty.decrement(potentialEgg.getSecondary());
+
+                        if (Options.shouldConsumeHeldItems()) {
+                            if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING)) potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true);
+                            if (potentialEgg.getSecondary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING)) potentialEgg.getSecondary().swapHeldItem(ItemStack.EMPTY, true);
+                        }
+
+                        int lower = Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary()));
+                        properties.getCustomProperties().add(new FertilityProperty(lower));
+                    }
+
                     if (owner instanceof ServerPlayerEntity serverPlayer) {
                         CobblemonEvents.COLLECT_EGG.emit(new CollectEggEvent(properties, potentialEgg.getPrimary(), potentialEgg.getSecondary(), serverPlayer));
                     }

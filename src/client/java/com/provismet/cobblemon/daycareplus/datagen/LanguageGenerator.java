@@ -95,6 +95,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("property.daycareplus.special_defence", "Sp.Defence: ");
         translationBuilder.add("property.daycareplus.speed", "Speed: ");
         translationBuilder.add("property.daycareplus.shiny", "Shiny Chance: ");
+        translationBuilder.add("property.daycareplus.fertility", "Fertility: ");
 
         // Stats
         translationBuilder.add("stat.daycareplus.eggs_hatched", "Pokémon Eggs Hatched");

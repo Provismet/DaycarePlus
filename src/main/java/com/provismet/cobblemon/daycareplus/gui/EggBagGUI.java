@@ -8,6 +8,7 @@ import ca.landonjw.gooeylibs2.api.page.PageAction;
 import ca.landonjw.gooeylibs2.api.template.Template;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import ca.landonjw.gooeylibs2.api.template.types.InventoryTemplate;
+import com.provismet.cobblemon.daycareplus.api.EggHelper;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
@@ -171,7 +172,7 @@ public class EggBagGUI extends GooeyPage {
         Function<ItemStack, Button> makeButton = stack -> GooeyButton.builder()
             .display(stack)
             .onClick(buttonAction -> {
-                if (stack.isOf(DPItems.POKEMON_EGG)) {
+                if (EggHelper.isEgg(stack)) {
                     eggBag.set(DPItemDataComponents.HELD_EGGS, component.addCopyAndEmpty(stack));
                     buttonAction.getPlayer().playSoundToPlayer(SoundEvents.ITEM_BUNDLE_INSERT, SoundCategory.PLAYERS, 1f, 1f);
                 }

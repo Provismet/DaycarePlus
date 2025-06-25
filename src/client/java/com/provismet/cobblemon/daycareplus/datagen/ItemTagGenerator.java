@@ -22,7 +22,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
     protected void configure (RegistryWrapper.WrapperLookup wrapperLookup) {
         this.getOrCreateTagBuilder(DPItemTags.BREEDING_ITEM)
             .add(CobblemonItems.EVERSTONE)
-            .add(CobblemonItems.DESTINY_KNOT)
             .add(CobblemonItems.POWER_ANKLET)
             .add(CobblemonItems.POWER_BAND)
             .add(CobblemonItems.POWER_BELT)
@@ -30,6 +29,13 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(CobblemonItems.POWER_LENS)
             .add(CobblemonItems.POWER_WEIGHT)
             .add(CobblemonItems.MIRROR_HERB);
+
+        this.getOrCreateTagBuilder(DPItemTags.COMPETITIVE_BREEDING)
+            .addOptionalTag(DPItemTags.BREEDING_ITEM);
+
+        this.getOrCreateTagBuilder(DPItemTags.NONCOMPETITIVE_BREEDING)
+            .addOptionalTag(DPItemTags.BREEDING_ITEM)
+            .add(CobblemonItems.DESTINY_KNOT);
 
         this.getOrCreateTagBuilder(DPItemTags.EGG_BAGS)
             .add(DPItems.LEATHER_EGG_BAG)

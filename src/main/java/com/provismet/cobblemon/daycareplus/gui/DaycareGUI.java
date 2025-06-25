@@ -16,6 +16,7 @@ import com.cobblemon.mod.common.pokemon.Nature;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.google.common.collect.ImmutableList;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
+import com.provismet.cobblemon.daycareplus.breeding.FertilityProperty;
 import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
@@ -34,6 +35,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Unit;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -88,7 +90,7 @@ public interface DaycareGUI {
         if (parent1 != null) {
             parent1Info = createButtonForPokemon(parent1);
 
-            if (parent1.heldItem().isIn(DPItemTags.BREEDING_ITEM)) {
+            if (Options.doCompetitiveBreeding() ? parent1.heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) : parent1.heldItem().isIn(DPItemTags.NONCOMPETITIVE_BREEDING)) {
                 parent1Item = GooeyButton.builder()
                     .display(parent1.heldItem())
                     .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
@@ -107,7 +109,7 @@ public interface DaycareGUI {
         if (parent2 != null) {
             parent2Info = createButtonForPokemon(parent2);
 
-            if (parent2.heldItem().isIn(DPItemTags.BREEDING_ITEM)) {
+            if (Options.doCompetitiveBreeding() ? parent2.heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) : parent2.heldItem().isIn(DPItemTags.NONCOMPETITIVE_BREEDING)) {
                 parent2Item = GooeyButton.builder()
                     .display(parent2.heldItem())
                     .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
@@ -149,6 +151,14 @@ public interface DaycareGUI {
                 Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE)).append(Text.literal(ivs.get(Stats.SPECIAL_DEFENCE).toString()).styled(Styles.WHITE_NO_ITALICS)),
                 Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(ivs.get(Stats.SPEED).toString()).styled(Styles.WHITE_NO_ITALICS))
             );
+
+            if (Options.doCompetitiveBreeding()) {
+                int newFertility = MathHelper.clamp(Math.min(FertilityProperty.get(parent1), FertilityProperty.get(parent2)) - 1, 0, Options.getMaxFertility());
+                eggData.add(
+                    Text.empty(),
+                    Text.translatable("property.daycareplus.fertility").styled(Styles.formattedNoItalics(Formatting.DARK_GREEN)).append(Text.literal(String.valueOf(newFertility)).styled(Styles.WHITE_NO_ITALICS))
+                );
+            }
 
             if (Options.shouldShowShinyChance()) eggData.add(
                 Text.empty(),
@@ -204,23 +214,32 @@ public interface DaycareGUI {
     }
 
     static ButtonBase createButtonForPokemon (Pokemon pokemon) {
+        ImmutableList.Builder<Text> listBuilder = ImmutableList.<Text>builder().add(
+            Text.translatable("property.daycareplus.species").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(pokemon.getSpecies().getTranslatedName().styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.form").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(pokemon.getForm().getName()).styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.translatable(pokemon.getAbility().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.translatable(pokemon.getNature().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
+            Text.empty(),
+            Text.translatable("property.daycareplus.ivs").styled(Styles.WHITE_NO_ITALICS),
+            Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.HP))).styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.attack").styled(Styles.colouredNoItalics(Styles.ATTACK)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.ATTACK))).styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.defence").styled(Styles.colouredNoItalics(Styles.DEFENCE)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.DEFENCE))).styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.special_attack").styled(Styles.colouredNoItalics(Styles.SPECIAL_ATTACK)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.SPECIAL_ATTACK))).styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.SPECIAL_DEFENCE))).styled(Styles.WHITE_NO_ITALICS)),
+            Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.SPEED))).styled(Styles.WHITE_NO_ITALICS))
+        );
+
+        if (Options.doCompetitiveBreeding()) {
+            listBuilder.add(
+                Text.empty(),
+                Text.translatable("property.daycareplus.fertility").styled(Styles.formattedNoItalics(Formatting.DARK_GREEN)).append(Text.literal(String.valueOf(FertilityProperty.get(pokemon))).styled(Styles.WHITE_NO_ITALICS))
+            );
+        }
+
         return GooeyButton.builder()
             .display(PokemonItem.from(pokemon))
             .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.parent").styled(Styles.WHITE_NO_ITALICS))
-            .with(DataComponentTypes.LORE, new LoreComponent(List.of(
-                Text.translatable("property.daycareplus.species").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(pokemon.getSpecies().getTranslatedName().styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.form").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(pokemon.getForm().getName()).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.translatable(pokemon.getAbility().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.translatable(pokemon.getNature().getDisplayName()).styled(Styles.WHITE_NO_ITALICS)),
-                Text.empty(),
-                Text.translatable("property.daycareplus.ivs").styled(Styles.WHITE_NO_ITALICS),
-                Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.HP))).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.attack").styled(Styles.colouredNoItalics(Styles.ATTACK)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.ATTACK))).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.defence").styled(Styles.colouredNoItalics(Styles.DEFENCE)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.DEFENCE))).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.special_attack").styled(Styles.colouredNoItalics(Styles.SPECIAL_ATTACK)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.SPECIAL_ATTACK))).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.SPECIAL_DEFENCE))).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(String.valueOf(pokemon.getIvs().getOrDefault(Stats.SPEED))).styled(Styles.WHITE_NO_ITALICS))
-            )))
+            .with(DataComponentTypes.LORE, new LoreComponent(listBuilder.build()))
             .build();
     }
 }

@@ -3,6 +3,7 @@ package com.provismet.cobblemon.daycareplus.item.component;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.provismet.cobblemon.daycareplus.api.EggHelper;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,8 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
 
     public EggBagDataComponent addCopyAndEmpty (ItemStack stack) {
         Builder builder = new Builder(this);
-        if (builder.add(stack.copy())) stack.setCount(0);
+        Optional<ItemStack> maybeEgg = EggHelper.tryGetEgg(stack.copy());
+        if (maybeEgg.isPresent() && builder.add(maybeEgg.get())) stack.setCount(0);
         return builder.build();
     }
 
@@ -58,7 +60,8 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
     public EggBagDataComponent addAllCopiesAndEmpty (Iterable<ItemStack> stacks) {
         Builder builder = new Builder(this);
         for (ItemStack stack : stacks) {
-            if (builder.add(stack.copy())) stack.setCount(0);
+            Optional<ItemStack> maybeEgg = EggHelper.tryGetEgg(stack.copy());
+            if (maybeEgg.isPresent() && builder.add(maybeEgg.get())) stack.setCount(0);
         }
         return builder.build();
     }

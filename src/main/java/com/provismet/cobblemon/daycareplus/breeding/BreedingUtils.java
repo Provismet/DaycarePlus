@@ -14,6 +14,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.config.Options;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -37,6 +38,7 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         Set<EggGroup> eggGroups1 = parent1.getSpecies().getEggGroups();
         Set<EggGroup> eggGroups2 = parent2.getSpecies().getEggGroups();
 
+        if (Options.doCompetitiveBreeding() && !Options.shouldAllowBreedingWithoutFertility() && !parentsHaveFertility(parent1, parent2)) return false;
         if (eggGroups1.contains(EggGroup.UNDISCOVERED) || eggGroups2.contains(EggGroup.UNDISCOVERED)) return false;
         if (eggGroups1.contains(EggGroup.DITTO) ^ eggGroups2.contains(EggGroup.DITTO)) return true;
         if (parent1.getGender() == Gender.GENDERLESS || parent2.getGender() == Gender.GENDERLESS) return false;
@@ -59,6 +61,10 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         Pokemon primary = getMotherOrNonDitto(parent1, parent2);
         Pokemon secondary = primary == parent1 ? parent2 : parent1;
         return Optional.of(new PotentialPokemonProperties(primary, secondary));
+    }
+
+    public static boolean parentsHaveFertility (Pokemon parent1, Pokemon parent2) {
+        return FertilityProperty.get(parent1) > 0 && FertilityProperty.get(parent2) > 0;
     }
 
     public static FormData getBabyForm (Pokemon parent) {

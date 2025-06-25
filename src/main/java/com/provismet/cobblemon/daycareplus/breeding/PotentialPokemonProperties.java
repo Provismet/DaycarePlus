@@ -287,7 +287,7 @@ public class PotentialPokemonProperties {
 
     private void setNature (PokemonProperties properties) {
         List<Nature> natures = this.getPossibleNatures();
-        if (!natures.isEmpty()) {
+        if (!natures.isEmpty() && !(Options.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary))) {
             // Technically there can be 2 possible natures if both parents hold an everstone.
             if (Math.random() < 0.5) properties.setNature(natures.getFirst().getName().toString());
             else properties.setNature(natures.getLast().getName().toString());
@@ -310,7 +310,10 @@ public class PotentialPokemonProperties {
 
     private void setIVs (PokemonProperties properties) {
         int forcedIVs = 3;
-        if (this.primary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT)) {
+        if (Options.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary)) {
+            forcedIVs = 0;
+        }
+        else if (this.primary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT)) {
             forcedIVs = 5;
         }
 
@@ -370,11 +373,29 @@ public class PotentialPokemonProperties {
                     forced = true;
                     possibleIVs.add(parent2.getIvs().getOrDefault(stat));
                 }
+            }
 
-                if (!forced) {
+            if (!forced) {
+                possibleIVs.add(WILDCARD);
+                possibleIVs.add(parent1.getIvs().getOrDefault(stat));
+                possibleIVs.add(parent2.getIvs().getOrDefault(stat));
+            }
+
+            if (Options.doCompetitiveBreeding()) {
+                if (BreedingUtils.parentsHaveFertility(parent1, parent2)) {
+                    possibleIVs.remove(WILDCARD);
+                    forced = true;
+                    int mean = 0;
+                    for (int value : possibleIVs) {
+                        mean += value;
+                    }
+                    mean /= possibleIVs.size();
+                    possibleIVs.clear();
+                    possibleIVs.add(mean);
+                }
+                else { // Inherit nothing without fertility.
+                    possibleIVs.clear();
                     possibleIVs.add(WILDCARD);
-                    possibleIVs.add(parent1.getIvs().getOrDefault(stat));
-                    possibleIVs.add(parent2.getIvs().getOrDefault(stat));
                 }
             }
 
@@ -383,7 +404,7 @@ public class PotentialPokemonProperties {
 
         @Override
         public String toString () {
-            return String.join(" | ", this.values.stream().map(val -> val == WILDCARD ? "?" : String.valueOf(val) ).toList());
+            return String.join(" | ", this.values.stream().map(val -> val == WILDCARD ? "?" : String.valueOf(val)).toList());
         }
     }
 }
