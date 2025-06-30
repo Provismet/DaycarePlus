@@ -1,6 +1,7 @@
 package com.provismet.cobblemon.daycareplus.mixin;
 
 import ca.landonjw.gooeylibs2.api.UIManager;
+import com.cobblemon.mod.common.CobblemonSounds;
 import com.cobblemon.mod.common.block.PastureBlock;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
@@ -12,6 +13,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -58,6 +60,7 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
                 }
 
                 UIManager.openUIForcefully(serverPlayer, DaycareGUI.create(pastureBlockEntity, mixinPasture, serverPlayer, state, hit));
+                serverPlayer.playSoundToPlayer(CobblemonSounds.PC_ON, SoundCategory.BLOCKS, 1f, 1f);
                 cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
             }
             else if (!mixinPasture.shouldSkipIntro() && pastureBlockEntity.getTetheredPokemon().isEmpty() && pastureBlockEntity.getOwnerId() == player.getUuid()) {
