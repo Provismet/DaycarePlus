@@ -7,9 +7,12 @@
 	"authors": [
 		"Provismet"
 	],
+	"contributors": [
+		"Oculyn"
+	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/Provismet/DaycarePlus",
+		"sources": "https://github.com/Provismet/DaycarePlus"
 	},
 	"license": "Lily License v1.1",
 	"icon": "assets/daycareplus/icon.png",
