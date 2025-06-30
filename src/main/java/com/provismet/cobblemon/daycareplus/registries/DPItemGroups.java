@@ -15,6 +15,7 @@ public abstract class DPItemGroups {
             entries.add(DPItems.GOLD_EGG_BAG);
             entries.add(DPItems.DIAMOND_EGG_BAG);
             entries.add(DPItems.NETHERITE_EGG_BAG);
+            entries.add(DPItems.FERTILITY_CANDY);
         })
         .build();
 

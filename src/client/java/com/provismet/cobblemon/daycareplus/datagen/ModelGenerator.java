@@ -33,6 +33,7 @@ public class ModelGenerator extends FabricModelProvider {
             TextureMap.layer0(DaycarePlusServer.identifier("item/pokemon_egg_shiny")),
             itemModelGenerator.writer
         );
+        generated.accept(DPItems.FERTILITY_CANDY);
 
         generated.accept(DPItems.LEATHER_EGG_BAG);
         generated.accept(DPItems.IRON_EGG_BAG);

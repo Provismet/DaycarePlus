@@ -30,6 +30,10 @@ public class FertilityProperty extends IntProperty {
         return Options.getMaxFertility();
     }
 
+    public static void increment (Pokemon pokemon) {
+        new FertilityProperty(get(pokemon) + 1).apply(pokemon);
+    }
+
     public static void decrement (Pokemon pokemon) {
         new FertilityProperty(get(pokemon) - 1).apply(pokemon);
     }

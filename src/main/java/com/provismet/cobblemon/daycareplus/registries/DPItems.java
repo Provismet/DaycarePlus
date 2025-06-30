@@ -3,6 +3,7 @@ package com.provismet.cobblemon.daycareplus.registries;
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.item.EggBagItem;
+import com.provismet.cobblemon.daycareplus.item.FertilityBoosterItem;
 import com.provismet.cobblemon.daycareplus.item.PokemonEggItem;
 import com.provismet.cobblemon.daycareplus.item.PolymerItem;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
@@ -19,6 +20,7 @@ public abstract class DPItems {
         (settings, vanillaItem, modelData) ->
             new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData, PolymerResourcePackUtils.requestModel(vanillaItem, DaycarePlusServer.identifier("pokemon_egg_shiny").withPrefixedPath("item/")))
     );
+    public static final FertilityBoosterItem FERTILITY_CANDY = register("fertility_candy", Items.IRON_NUGGET, FertilityBoosterItem::new);
 
     public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", Options.getLeather());
     public static final EggBagItem IRON_EGG_BAG = registerBag("iron_egg_bag", Options.getIron());

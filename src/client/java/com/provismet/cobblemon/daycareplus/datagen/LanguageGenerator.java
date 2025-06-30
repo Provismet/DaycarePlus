@@ -30,6 +30,9 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPIconItems.RIGHT, "Right");
         translationBuilder.add(DPIconItems.TAKE_ALL, "Deposit All");
 
+        translationBuilder.add(DPItems.FERTILITY_CANDY, "Fertility Candy");
+        translationBuilder.add("message.overlay.daycareplus.fertility_boosted", "Your %1$s now has %2$s fertility.");
+
         // Egg Bag
         translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.singular", "Collected %1$s egg.");
         translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.plural", "Collected %1$s eggs.");
@@ -96,6 +99,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("property.daycareplus.speed", "Speed: ");
         translationBuilder.add("property.daycareplus.shiny", "Shiny Chance: ");
         translationBuilder.add("property.daycareplus.fertility", "Fertility: ");
+        translationBuilder.add("daycareplus.ui.fertility.level", "Fertility");
 
         // Stats
         translationBuilder.add("stat.daycareplus.eggs_hatched", "Pokémon Eggs Hatched");
