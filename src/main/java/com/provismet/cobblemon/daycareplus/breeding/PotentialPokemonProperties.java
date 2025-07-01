@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -222,7 +223,7 @@ public class PotentialPokemonProperties {
         float shinyRate = Cobblemon.config.getShinyRate();
         shinyRate /= Options.getShinyChanceMultiplier();
 
-        if (this.primary.getOriginalTrainer() != null && this.secondary.getOriginalTrainer() != null && !this.primary.getOriginalTrainer().equals(this.secondary.getOriginalTrainer())) {
+        if (!Objects.equals(this.primary.getOriginalTrainer(), this.secondary.getOriginalTrainer())) {
             shinyRate /= Options.getMasudaMultiplier();
         }
         if (this.primary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
