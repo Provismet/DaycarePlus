@@ -313,7 +313,7 @@ public class PotentialPokemonProperties {
         if (Options.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary)) {
             forcedIVs = 0;
         }
-        else if (this.primary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.getHeldItem$common().isOf(CobblemonItems.DESTINY_KNOT)) {
+        else if (this.primary.heldItem().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.heldItem().isOf(CobblemonItems.DESTINY_KNOT)) {
             forcedIVs = 5;
         }
 
@@ -337,7 +337,7 @@ public class PotentialPokemonProperties {
 
         for (int i = 0; i < forcedIVs && !remaining.isEmpty(); ++i) {
             Stat inheritThis = MathExtras.randomChoice(remaining);
-            iv.set(inheritThis, MathExtras.randomChoice(potentials.get(inheritThis).values().stream().toList()));
+            iv.set(inheritThis, MathExtras.randomChoice(potentials.get(inheritThis).values().stream().filter(value -> value != PotentialIV.WILDCARD).toList()));
             remaining.remove(inheritThis);
         }
 

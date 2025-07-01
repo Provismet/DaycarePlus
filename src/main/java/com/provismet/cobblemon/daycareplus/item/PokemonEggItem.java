@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.cobblemon.mod.common.api.events.pokemon.HatchEggEvent;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
+import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.IVs;
@@ -112,17 +113,17 @@ public class PokemonEggItem extends PolymerItem {
             if (iv != null) {
                 tooltip.add(Text.empty());
                 tooltip.add(Text.translatable("property.daycareplus.hp").styled(Styles.colouredNoItalics(Styles.HP))
-                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.HP))).styled(Styles.WHITE_NO_ITALICS)));
+                    .append(Text.literal(this.formatIV(iv, Stats.HP)).styled(Styles.WHITE_NO_ITALICS)));
                 tooltip.add(Text.translatable("property.daycareplus.attack").styled(Styles.colouredNoItalics(Styles.ATTACK))
-                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.ATTACK))).styled(Styles.WHITE_NO_ITALICS)));
+                    .append(Text.literal(this.formatIV(iv, Stats.ATTACK)).styled(Styles.WHITE_NO_ITALICS)));
                 tooltip.add(Text.translatable("property.daycareplus.defence").styled(Styles.colouredNoItalics(Styles.DEFENCE))
-                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.DEFENCE))).styled(Styles.WHITE_NO_ITALICS)));
+                    .append(Text.literal(this.formatIV(iv, Stats.DEFENCE)).styled(Styles.WHITE_NO_ITALICS)));
                 tooltip.add(Text.translatable("property.daycareplus.special_attack").styled(Styles.colouredNoItalics(Styles.SPECIAL_ATTACK))
-                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.SPECIAL_ATTACK))).styled(Styles.WHITE_NO_ITALICS)));
+                    .append(Text.literal(this.formatIV(iv, Stats.SPECIAL_ATTACK)).styled(Styles.WHITE_NO_ITALICS)));
                 tooltip.add(Text.translatable("property.daycareplus.special_defence").styled(Styles.colouredNoItalics(Styles.SPECIAL_DEFENCE))
-                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.SPECIAL_DEFENCE))).styled(Styles.WHITE_NO_ITALICS)));
+                    .append(Text.literal(this.formatIV(iv, Stats.SPECIAL_DEFENCE)).styled(Styles.WHITE_NO_ITALICS)));
                 tooltip.add(Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED))
-                    .append(Text.literal(String.valueOf(iv.getOrDefault(Stats.SPEED))).styled(Styles.WHITE_NO_ITALICS)));
+                    .append(Text.literal(this.formatIV(iv, Stats.SPEED)).styled(Styles.WHITE_NO_ITALICS)));
             }
         }
     }
@@ -170,5 +171,11 @@ public class PokemonEggItem extends PolymerItem {
         if (stack.get(DataComponentTypes.CUSTOM_MODEL_DATA) != null) return -1;
         if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=true")) return this.shiny.value();
         return super.getPolymerCustomModelData(stack, player);
+    }
+
+    private String formatIV (IVs ivs, Stat stat) {
+        Integer iv = ivs.get(stat);
+        if (iv == null) return "?";
+        return String.valueOf(iv);
     }
 }
