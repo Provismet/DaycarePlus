@@ -60,7 +60,6 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
                 }
 
                 UIManager.openUIForcefully(serverPlayer, DaycareGUI.create(pastureBlockEntity, mixinPasture, serverPlayer, state, hit));
-                serverPlayer.playSoundToPlayer(CobblemonSounds.PC_ON, SoundCategory.BLOCKS, 1f, 1f);
                 cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
             }
             else if (!mixinPasture.shouldSkipIntro() && pastureBlockEntity.getTetheredPokemon().isEmpty() && pastureBlockEntity.getOwnerId() == player.getUuid()) {

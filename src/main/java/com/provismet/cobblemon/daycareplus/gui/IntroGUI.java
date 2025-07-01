@@ -5,6 +5,7 @@ import ca.landonjw.gooeylibs2.api.button.GooeyButton;
 import ca.landonjw.gooeylibs2.api.page.GooeyPage;
 import ca.landonjw.gooeylibs2.api.page.Page;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
+import com.cobblemon.mod.common.CobblemonSounds;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingLink;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
@@ -75,6 +76,8 @@ public interface IntroGUI {
         return GooeyPage.builder()
             .title("Daycare Setup")
             .template(template)
+            .onOpen(pageAction -> pageAction.getPlayer().playSoundToPlayer(CobblemonSounds.PC_ON, SoundCategory.BLOCKS, 1f, 1f))
+            .onClose(pageAction -> pageAction.getPlayer().playSoundToPlayer(CobblemonSounds.PC_OFF, SoundCategory.BLOCKS, 1f, 1f))
             .build();
     }
 }

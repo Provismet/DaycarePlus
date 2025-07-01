@@ -201,6 +201,7 @@ public interface DaycareGUI {
         return GooeyPage.builder()
             .title("Daycare")
             .template(template)
+            .onOpen(pageAction -> pageAction.getPlayer().playSoundToPlayer(CobblemonSounds.PC_ON, SoundCategory.BLOCKS, 1f, 1f))
             .onClose(pageAction -> pageAction.getPlayer().playSoundToPlayer(CobblemonSounds.PC_OFF, SoundCategory.BLOCKS, 1f, 1f))
             .build();
     }
