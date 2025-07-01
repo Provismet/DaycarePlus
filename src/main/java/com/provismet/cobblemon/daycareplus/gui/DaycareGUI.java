@@ -69,6 +69,7 @@ public interface DaycareGUI {
             .display(CobblemonItems.PASTURE.getDefaultStack())
             .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.open_pasture").styled(Styles.WHITE_NO_ITALICS))
             .onClick(action -> {
+                player.closeHandledScreen();
                 mixinPasture.setShouldSkipDaycareGUI(true);
                 state.onUse(player.getWorld(), player, hit);
             })
