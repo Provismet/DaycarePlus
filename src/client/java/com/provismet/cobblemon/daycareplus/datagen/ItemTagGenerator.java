@@ -47,10 +47,13 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(DPItems.DIAMOND_EGG_BAG)
             .add(DPItems.NETHERITE_EGG_BAG);
 
-        this.getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "hidden_from_recipe_viewers")))
+        this.getOrCreateTagBuilder(DPItemTags.GUI)
             .add(DPIconItems.INFO)
             .add(DPIconItems.LEFT)
             .add(DPIconItems.RIGHT)
             .add(DPIconItems.TAKE_ALL);
+
+        this.getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "hidden_from_recipe_viewers")))
+            .addOptionalTag(DPItemTags.GUI);
     }
 }

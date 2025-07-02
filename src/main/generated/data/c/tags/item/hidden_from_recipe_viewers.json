@@ -1,8 +1,8 @@
 {
   "values": [
-    "daycareplus:info",
-    "daycareplus:left_arrow",
-    "daycareplus:right_arrow",
-    "daycareplus:take_all"
+    {
+      "id": "#daycareplus:gui",
+      "required": false
+    }
   ]
 }

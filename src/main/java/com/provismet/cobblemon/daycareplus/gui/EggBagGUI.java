@@ -12,8 +12,8 @@ import com.provismet.cobblemon.daycareplus.api.EggHelper;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
-import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.Styles;
+import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -53,7 +53,8 @@ public class EggBagGUI extends GooeyPage {
     }
 
     public static EggBagGUI createFrom (ItemStack bag, ServerPlayerEntity player) {
-        Template template = EggBagGUI.createTemplate();
+        Template template = EggBagGUI.createBorder();
+        EggBagGUI.fillSpace(template);
         InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(bag, player);
         EggBagGUI gui = new EggBagGUI(template, inventoryTemplate, Text.translatable(bag.getTranslationKey()), bag);
         gui.player = player;
@@ -67,13 +68,15 @@ public class EggBagGUI extends GooeyPage {
 
     public void reset () {
         EggBagDataComponent component = this.getComponent();
-        Template template = EggBagGUI.createTemplate();
-        InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(this.bag, this.player);
-        this.isAtEnd = false;
+        EggBagGUI.fillSpace(this.getTemplate());
 
-        for (int i = 0; i + 9 < template.getSize() && i + this.minSlotDisplayed < component.contents().size(); ++i) {
+        InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(this.bag, this.player);
+        this.setPlayerInventoryTemplate(inventoryTemplate);
+
+        this.isAtEnd = false;
+        for (int i = 0; i + 9 < this.getTemplate().getSize() && i + this.minSlotDisplayed < component.contents().size(); ++i) {
             int slotToTake = i + this.minSlotDisplayed;
-            template.getSlot(i + 9).setButton(
+            this.getTemplate().getSlot(i + 9).setButton(
                 GooeyButton.builder()
                     .display(component.contents().get(slotToTake))
                     .onClick(buttonAction -> {
@@ -89,9 +92,7 @@ public class EggBagGUI extends GooeyPage {
 
             if (i + this.minSlotDisplayed == component.contents().size() - 1) this.isAtEnd = true;
         }
-
-        this.setTemplate(template);
-        this.setPlayerInventoryTemplate(inventoryTemplate);
+        this.update();
     }
 
     public void nextPage () {
@@ -110,13 +111,7 @@ public class EggBagGUI extends GooeyPage {
         return this.bag.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
     }
 
-    private static Template createTemplate () {
-        ButtonBase filler = GooeyButton.builder()
-            .display(Items.GRAY_STAINED_GLASS_PANE.getDefaultStack())
-            .with(DataComponentTypes.HIDE_TOOLTIP, Unit.INSTANCE)
-            .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
-            .build();
-
+    private static Template createBorder () {
         ButtonBase borderFiller = GooeyButton.builder()
             .display(Items.BLACK_STAINED_GLASS_PANE.getDefaultStack())
             .with(DataComponentTypes.HIDE_TOOLTIP, Unit.INSTANCE)
@@ -158,12 +153,26 @@ public class EggBagGUI extends GooeyPage {
             .build();
 
         return ChestTemplate.builder(ROWS_PER_PAGE + 1)
-            .fill(filler)
             .row(0, borderFiller)
             .set(0, previous)
             .set(7, takeAll)
             .set(8, next)
             .build();
+    }
+
+    private static void fillSpace (Template input) {
+        ButtonBase filler = GooeyButton.builder()
+            .display(Items.GRAY_STAINED_GLASS_PANE.getDefaultStack())
+            .with(DataComponentTypes.HIDE_TOOLTIP, Unit.INSTANCE)
+            .with(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE)
+            .build();
+
+        input.getSlots().forEach(delegate -> {
+            if (delegate.getButton().isEmpty()
+                || !(delegate.getButton().get().getDisplay().isIn(DPItemTags.GUI) || delegate.getButton().get().getDisplay().isOf(Items.BLACK_STAINED_GLASS_PANE))) {
+                delegate.setButton(filler);
+            }
+        });
     }
 
     private static InventoryTemplate createFromPlayer (ItemStack eggBag, ServerPlayerEntity player) {
