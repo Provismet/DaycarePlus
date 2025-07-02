@@ -223,7 +223,7 @@ public class PotentialPokemonProperties {
         float shinyRate = Cobblemon.config.getShinyRate();
         shinyRate /= Options.getShinyChanceMultiplier();
 
-        if (!Objects.equals(this.primary.getOriginalTrainer(), this.secondary.getOriginalTrainer())) {
+        if (!Objects.equals(this.primary.getOriginalTrainer(), this.secondary.getOriginalTrainer()) || !(Objects.equals(this.primary.getOriginalTrainerName(), this.secondary.getOriginalTrainerName()))) {
             shinyRate /= Options.getMasudaMultiplier();
         }
         if (this.primary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
