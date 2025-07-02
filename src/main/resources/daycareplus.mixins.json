@@ -4,8 +4,7 @@
     "compatibilityLevel": "JAVA_21",
     "server": [
         "PastureBlockEntityMixin",
-        "PastureBlockMixin",
-        "ServerPlayerEntityMixin"
+        "PastureBlockMixin"
     ],
     "injectors": {
         "defaultRequire": 1

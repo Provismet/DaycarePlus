@@ -6,8 +6,10 @@ import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.util.Styles;
+import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -34,6 +36,30 @@ public class EggBagItem extends PolymerItem {
     public EggBagItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData, int eggsToTick) {
         super(settings, baseVanillaItem, modelData);
         this.eggsToTick = eggsToTick;
+    }
+
+    @Override
+    public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, world, entity, slot, selected);
+        if (!(entity instanceof ServerPlayerEntity player) || player.age % 20 != 0) return;
+
+        // Exit early if other egg bags are found.
+        for (int i = slot + 1; i < player.getInventory().size(); ++i) {
+            if (player.getInventory().getStack(i).isIn(DPItemTags.EGG_BAGS)) return;
+        }
+
+        int abilityMultiplier = 1;
+        for (Pokemon pokemon : PlayerExtensionsKt.party(player)) {
+            if (HATCH_ABILITIES.contains(pokemon.getAbility().getName().toLowerCase(Locale.ROOT))) {
+                abilityMultiplier = 2;
+                break;
+            }
+        }
+
+        this.tickEggs(stack, player, 20 * abilityMultiplier);
+        if (player.currentScreenHandler instanceof GooeyContainer gooeyContainer && gooeyContainer.getPage() instanceof EggBagGUI gui) {
+            gui.reset();
+        }
     }
 
     @Override
