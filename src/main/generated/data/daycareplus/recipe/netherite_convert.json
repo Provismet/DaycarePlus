@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "daycareplus:netherite_egg_bag"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "daycareplus:netherite_incubator"
+  }
+}

@@ -3,10 +3,11 @@ package com.provismet.cobblemon.daycareplus.registries;
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.item.EggBagItem;
+import com.provismet.cobblemon.daycareplus.item.IncubatorItem;
 import com.provismet.cobblemon.daycareplus.item.FertilityBoosterItem;
 import com.provismet.cobblemon.daycareplus.item.PokemonEggItem;
 import com.provismet.cobblemon.daycareplus.item.PolymerItem;
-import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
+import com.provismet.cobblemon.daycareplus.item.component.HeldEggsDataComponent;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.item.Item;
@@ -22,10 +23,21 @@ public abstract class DPItems {
     );
     public static final FertilityBoosterItem FERTILITY_CANDY = register("fertility_candy", FertilityBoosterItem::new);
 
-    public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", "leather", Options.getLeather());
+    public static final IncubatorItem COPPER_INCUBATOR = registerIncubator("copper_incubator", "copper", Options.getCopper());
+    public static final IncubatorItem IRON_INCUBATOR = registerIncubator("iron_incubator", "iron", Options.getIron());
+    public static final IncubatorItem GOLD_INCUBATOR = registerIncubator("gold_incubator", "gold", Options.getGold());
+    public static final IncubatorItem DIAMOND_INCUBATOR = registerIncubator("diamond_incubator", "diamond", Options.getDiamond());
+    public static final IncubatorItem NETHERITE_INCUBATOR = registerIncubator("netherite_incubator", "netherite", Options.getNetherite());
+
+    @Deprecated
+    public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", "copper", Options.getCopper());
+    @Deprecated
     public static final EggBagItem IRON_EGG_BAG = registerBag("iron_egg_bag", "iron", Options.getIron());
+    @Deprecated
     public static final EggBagItem GOLD_EGG_BAG = registerBag("gold_egg_bag", "gold", Options.getGold());
+    @Deprecated
     public static final EggBagItem DIAMOND_EGG_BAG = registerBag("diamond_egg_bag", "diamond", Options.getDiamond());
+    @Deprecated
     public static final EggBagItem NETHERITE_EGG_BAG = registerBag("netherite_egg_bag", "netherite", Options.getNetherite());
 
     private static <T extends PolymerItem> T register (String name, ItemConstructor<T> constructor) {
@@ -34,13 +46,27 @@ public abstract class DPItems {
         return Registry.register(Registries.ITEM, itemId, constructor.apply(new Item.Settings(), Items.IRON_NUGGET, model));
     }
 
-    private static EggBagItem registerBag (String name, String bagTier, Options.EggBagSettings eggBagSettings) {
+    @Deprecated
+    private static EggBagItem registerBag (String name, String bagTier, Options.IncubatorSettings eggBagSettings) {
         return register(name, (settings, vanillaItem, modelData) -> new EggBagItem(
             settings
                 .maxCount(1)
-                .component(DPItemDataComponents.HELD_EGGS, new EggBagDataComponent(eggBagSettings.capacity(), bagTier)),
+                .component(DPItemDataComponents.HELD_EGGS, new HeldEggsDataComponent(eggBagSettings.capacity(), bagTier)),
             vanillaItem,
             modelData,
+            eggBagSettings.eggsToTick()
+        ));
+    }
+
+    private static IncubatorItem registerIncubator (String name, String bagTier, Options.IncubatorSettings eggBagSettings) {
+        PolymerModelData eggModel = PolymerResourcePackUtils.requestModel(Items.IRON_NUGGET, DaycarePlusServer.identifier(name).withPrefixedPath("item/").withSuffixedPath("_full"));
+        return register(name, (settings, vanillaItem, modelData) -> new IncubatorItem(
+            settings
+                .maxCount(1)
+                .component(DPItemDataComponents.HELD_EGGS, new HeldEggsDataComponent(eggBagSettings.capacity(), bagTier)),
+            vanillaItem,
+            modelData,
+            eggModel,
             eggBagSettings.eggsToTick()
         ));
     }

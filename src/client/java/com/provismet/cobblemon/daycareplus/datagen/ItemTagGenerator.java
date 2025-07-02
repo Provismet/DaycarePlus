@@ -40,7 +40,12 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         this.getOrCreateTagBuilder(DPItemTags.NO_CONSUME_BREEDING)
             .add(CobblemonItems.MIRROR_HERB);
 
-        this.getOrCreateTagBuilder(DPItemTags.EGG_BAGS)
+        this.getOrCreateTagBuilder(DPItemTags.INCUBATORS)
+            .add(DPItems.COPPER_INCUBATOR)
+            .add(DPItems.IRON_INCUBATOR)
+            .add(DPItems.GOLD_INCUBATOR)
+            .add(DPItems.DIAMOND_INCUBATOR)
+            .add(DPItems.NETHERITE_INCUBATOR)
             .add(DPItems.LEATHER_EGG_BAG)
             .add(DPItems.IRON_EGG_BAG)
             .add(DPItems.GOLD_EGG_BAG)

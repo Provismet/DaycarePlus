@@ -18,43 +18,43 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public record EggBagDataComponent (List<ItemStack> contents, int capacity, Optional<String> tier) {
-    public static final EggBagDataComponent DEFAULT = new EggBagDataComponent(List.of(), 0, Optional.empty());
+public record HeldEggsDataComponent(List<ItemStack> contents, int capacity, Optional<String> tier) {
+    public static final HeldEggsDataComponent DEFAULT = new HeldEggsDataComponent(List.of(), 0, Optional.empty());
 
-    public static final Codec<EggBagDataComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        ItemStack.CODEC.listOf().fieldOf("items").forGetter(EggBagDataComponent::contents),
-        Codecs.POSITIVE_INT.fieldOf("capacity").forGetter(EggBagDataComponent::capacity),
-        Codec.STRING.optionalFieldOf("tier").forGetter(EggBagDataComponent::tier)
-    ).apply(instance, EggBagDataComponent::new));
+    public static final Codec<HeldEggsDataComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        ItemStack.CODEC.listOf().fieldOf("items").forGetter(HeldEggsDataComponent::contents),
+        Codecs.POSITIVE_INT.fieldOf("capacity").forGetter(HeldEggsDataComponent::capacity),
+        Codec.STRING.optionalFieldOf("tier").forGetter(HeldEggsDataComponent::tier)
+    ).apply(instance, HeldEggsDataComponent::new));
 
-    public static final PacketCodec<RegistryByteBuf, EggBagDataComponent> PACKET_CODEC = PacketCodec.tuple(
+    public static final PacketCodec<RegistryByteBuf, HeldEggsDataComponent> PACKET_CODEC = PacketCodec.tuple(
         ItemStack.PACKET_CODEC.collect(PacketCodecs.toList()),
-        EggBagDataComponent::contents,
+        HeldEggsDataComponent::contents,
         PacketCodecs.INTEGER,
-        EggBagDataComponent::capacity,
+        HeldEggsDataComponent::capacity,
         PacketCodecs.optional(PacketCodecs.STRING),
-        EggBagDataComponent::tier,
-        EggBagDataComponent::new
+        HeldEggsDataComponent::tier,
+        HeldEggsDataComponent::new
     );
 
-    public EggBagDataComponent (int capacity, @Nullable String tier) {
+    public HeldEggsDataComponent (int capacity, @Nullable String tier) {
         this(List.of(), capacity, Optional.ofNullable(tier));
     }
 
-    public EggBagDataComponent add (ItemStack stack) {
+    public HeldEggsDataComponent add (ItemStack stack) {
         Builder builder = new Builder(this);
         builder.add(stack);
         return builder.build();
     }
 
-    public EggBagDataComponent addCopyAndEmpty (ItemStack stack) {
+    public HeldEggsDataComponent addCopyAndEmpty (ItemStack stack) {
         Builder builder = new Builder(this);
         Optional<ItemStack> maybeEgg = EggHelper.tryGetEgg(stack.copy());
         if (maybeEgg.isPresent() && builder.add(maybeEgg.get())) stack.setCount(0);
         return builder.build();
     }
 
-    public EggBagDataComponent addAll (Iterable<ItemStack> stacks) {
+    public HeldEggsDataComponent addAll (Iterable<ItemStack> stacks) {
         Builder builder = new Builder(this);
         for (ItemStack stack : stacks) {
             builder.add(stack.copyAndEmpty());
@@ -62,7 +62,7 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity, Optio
         return builder.build();
     }
 
-    public EggBagDataComponent addAllCopiesAndEmpty (Iterable<ItemStack> stacks) {
+    public HeldEggsDataComponent addAllCopiesAndEmpty (Iterable<ItemStack> stacks) {
         Builder builder = new Builder(this);
         for (ItemStack stack : stacks) {
             Optional<ItemStack> maybeEgg = EggHelper.tryGetEgg(stack.copy());
@@ -71,7 +71,7 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity, Optio
         return builder.build();
     }
 
-    public EggBagDataComponent remove (int index) {
+    public HeldEggsDataComponent remove (int index) {
         if (this.get(index).isEmpty()) return this;
 
         Builder builder = new Builder(this);
@@ -79,7 +79,7 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity, Optio
         return builder.build();
     }
 
-    public EggBagDataComponent validate () {
+    public HeldEggsDataComponent validate () {
         Builder builder = new Builder(this);
         builder.validate();
         return builder.build();
@@ -109,7 +109,7 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity, Optio
         private final int capacity;
         private final Optional<String> tier;
 
-        public Builder (EggBagDataComponent component) {
+        public Builder (HeldEggsDataComponent component) {
             this.mutableContents = new LinkedList<>();
             this.mutableContents.addAll(component.contents);
             this.capacity = component.capacity;
@@ -138,12 +138,12 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity, Optio
             this.mutableContents.removeIf(ItemStack::isEmpty);
         }
 
-        public EggBagDataComponent build () {
+        public HeldEggsDataComponent build () {
             if (this.tier.isPresent()) {
-                int newCapacity = Options.getBagSettings(this.tier.get()).capacity();
-                return new EggBagDataComponent(this.mutableContents.stream().toList(), newCapacity, this.tier);
+                int newCapacity = Options.getIncubatorSettings(this.tier.get()).capacity();
+                return new HeldEggsDataComponent(this.mutableContents.stream().toList(), newCapacity, this.tier);
             }
-            return new EggBagDataComponent(this.mutableContents.stream().toList(), this.capacity, this.tier);
+            return new HeldEggsDataComponent(this.mutableContents.stream().toList(), this.capacity, this.tier);
         }
     }
 }

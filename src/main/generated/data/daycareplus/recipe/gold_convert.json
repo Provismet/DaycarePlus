@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "daycareplus:gold_egg_bag"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "daycareplus:gold_incubator"
+  }
+}

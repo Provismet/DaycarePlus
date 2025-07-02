@@ -2,23 +2,23 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
+    "g": {
+      "item": "minecraft:glass"
+    },
     "i": {
       "item": "minecraft:iron_block"
     },
     "r": {
-      "item": "daycareplus:leather_egg_bag"
-    },
-    "s": {
-      "item": "minecraft:string"
+      "item": "daycareplus:copper_incubator"
     }
   },
   "pattern": [
-    " s ",
-    "iri",
+    "iii",
+    "grg",
     "iii"
   ],
   "result": {
     "count": 1,
-    "id": "daycareplus:iron_egg_bag"
+    "id": "daycareplus:iron_incubator"
   }
 }

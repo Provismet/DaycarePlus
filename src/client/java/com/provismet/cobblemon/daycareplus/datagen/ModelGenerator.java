@@ -10,6 +10,8 @@ import net.minecraft.data.client.ItemModelGenerator;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureMap;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.util.function.Consumer;
 
@@ -26,6 +28,15 @@ public class ModelGenerator extends FabricModelProvider {
     @Override
     public void generateItemModels (ItemModelGenerator itemModelGenerator) {
         Consumer<Item> generated = item -> itemModelGenerator.register(item, Models.GENERATED);
+        Consumer<Item> incubator = item -> {
+            Identifier id = Registries.ITEM.getId(item).withPrefixedPath("item/").withSuffixedPath("_full");
+            generated.accept(item);
+            Models.GENERATED.upload(
+                id,
+                TextureMap.layer0(id),
+                itemModelGenerator.writer
+            );
+        };
 
         generated.accept(DPItems.POKEMON_EGG);
         Models.GENERATED.upload(
@@ -34,6 +45,12 @@ public class ModelGenerator extends FabricModelProvider {
             itemModelGenerator.writer
         );
         generated.accept(DPItems.FERTILITY_CANDY);
+
+        incubator.accept(DPItems.COPPER_INCUBATOR);
+        incubator.accept(DPItems.IRON_INCUBATOR);
+        incubator.accept(DPItems.GOLD_INCUBATOR);
+        incubator.accept(DPItems.DIAMOND_INCUBATOR);
+        incubator.accept(DPItems.NETHERITE_INCUBATOR);
 
         generated.accept(DPItems.LEATHER_EGG_BAG);
         generated.accept(DPItems.IRON_EGG_BAG);

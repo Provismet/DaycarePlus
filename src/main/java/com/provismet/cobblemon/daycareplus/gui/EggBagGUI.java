@@ -9,7 +9,7 @@ import ca.landonjw.gooeylibs2.api.template.Template;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import ca.landonjw.gooeylibs2.api.template.types.InventoryTemplate;
 import com.provismet.cobblemon.daycareplus.api.EggHelper;
-import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
+import com.provismet.cobblemon.daycareplus.item.component.HeldEggsDataComponent;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.util.Styles;
@@ -67,7 +67,7 @@ public class EggBagGUI extends GooeyPage {
     }
 
     public void reset () {
-        EggBagDataComponent component = this.getComponent();
+        HeldEggsDataComponent component = this.getComponent();
         EggBagGUI.fillSpace(this.getTemplate());
 
         InventoryTemplate inventoryTemplate = EggBagGUI.createFromPlayer(this.bag, this.player);
@@ -107,8 +107,8 @@ public class EggBagGUI extends GooeyPage {
         this.reset();
     }
 
-    private EggBagDataComponent getComponent () {
-        return this.bag.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
+    private HeldEggsDataComponent getComponent () {
+        return this.bag.getOrDefault(DPItemDataComponents.HELD_EGGS, HeldEggsDataComponent.DEFAULT);
     }
 
     private static Template createBorder () {
@@ -143,7 +143,7 @@ public class EggBagGUI extends GooeyPage {
             .with(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.take").styled(Styles.WHITE_NO_ITALICS))
             .onClick(buttonAction -> {
                 if (buttonAction.getPage() instanceof EggBagGUI eggBagGUI) {
-                    EggBagDataComponent component = eggBagGUI.getBag().getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
+                    HeldEggsDataComponent component = eggBagGUI.getBag().getOrDefault(DPItemDataComponents.HELD_EGGS, HeldEggsDataComponent.DEFAULT);
                     component = component.addAllCopiesAndEmpty(buttonAction.getPlayer().getInventory().main);
                     eggBagGUI.getBag().set(DPItemDataComponents.HELD_EGGS, component);
                     buttonAction.getPlayer().playSoundToPlayer(SoundEvents.ITEM_BUNDLE_INSERT, SoundCategory.PLAYERS, 1f, 1f);
@@ -176,7 +176,7 @@ public class EggBagGUI extends GooeyPage {
     }
 
     private static InventoryTemplate createFromPlayer (ItemStack eggBag, ServerPlayerEntity player) {
-        EggBagDataComponent component = eggBag.getOrDefault(DPItemDataComponents.HELD_EGGS, EggBagDataComponent.DEFAULT);
+        HeldEggsDataComponent component = eggBag.getOrDefault(DPItemDataComponents.HELD_EGGS, HeldEggsDataComponent.DEFAULT);
 
         Function<ItemStack, Button> makeButton = stack -> GooeyButton.builder()
             .display(stack)

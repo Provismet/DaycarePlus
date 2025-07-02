@@ -39,12 +39,12 @@ public class Options {
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
 
-    // Egg Bags
-    private static EggBagSettings leather = new EggBagSettings(8, 1);
-    private static EggBagSettings iron = new EggBagSettings(64, 2);
-    private static EggBagSettings gold = new EggBagSettings(32, 8);
-    private static EggBagSettings diamond = new EggBagSettings(96, 4);
-    private static EggBagSettings netherite = new EggBagSettings(128, 8);
+    // Incubators
+    private static IncubatorSettings copper = new IncubatorSettings(8, 1);
+    private static IncubatorSettings iron = new IncubatorSettings(64, 2);
+    private static IncubatorSettings gold = new IncubatorSettings(32, 32);
+    private static IncubatorSettings diamond = new IncubatorSettings(96, 4);
+    private static IncubatorSettings netherite = new IncubatorSettings(128, 8);
 
     public static long getTicksPerEggAttempt () {
         return ticksPerEggAttempt;
@@ -106,33 +106,33 @@ public class Options {
         return inheritEggMovesFromBothParents;
     }
 
-    public static EggBagSettings getLeather () {
-        return leather;
+    public static IncubatorSettings getCopper () {
+        return copper;
     }
 
-    public static EggBagSettings getIron () {
+    public static IncubatorSettings getIron () {
         return iron;
     }
 
-    public static EggBagSettings getGold () {
+    public static IncubatorSettings getGold () {
         return gold;
     }
 
-    public static EggBagSettings getDiamond () {
+    public static IncubatorSettings getDiamond () {
         return diamond;
     }
 
-    public static EggBagSettings getNetherite () {
+    public static IncubatorSettings getNetherite () {
         return netherite;
     }
 
-    public static EggBagSettings getBagSettings (String tier) {
+    public static IncubatorSettings getIncubatorSettings (String tier) {
         return switch (tier) {
             case "iron" -> iron;
             case "gold" -> gold;
             case "diamond" -> diamond;
             case "netherite" -> netherite;
-            default -> leather;
+            default -> copper;
         };
     }
 
@@ -162,8 +162,8 @@ public class Options {
                     .append("ticksPerEggCycle", pointsPerEggCycle)
                     .append("showEggTooltip", showEggTooltip))
             .append(
-                "eggBags", new JsonBuilder()
-                    .append("leather", leather.toJson())
+                "incubators", new JsonBuilder()
+                    .append("copper", copper.toJson())
                     .append("iron", iron.toJson())
                     .append("gold", gold.toJson())
                     .append("diamond", diamond.toJson())
@@ -216,12 +216,12 @@ public class Options {
                     breedingRules.getBoolean("showEggTooltip").ifPresent(val -> showEggTooltip = val);
                 });
 
-                reader.getObjectAsReader("eggBags").ifPresent(eggBags -> {
-                    eggBags.getObject("leather").ifPresent(val -> leather = EggBagSettings.fromJson(val));
-                    eggBags.getObject("iron").ifPresent(val -> iron = EggBagSettings.fromJson(val));
-                    eggBags.getObject("gold").ifPresent(val -> gold = EggBagSettings.fromJson(val));
-                    eggBags.getObject("diamond").ifPresent(val -> diamond = EggBagSettings.fromJson(val));
-                    eggBags.getObject("netherite").ifPresent(val -> netherite = EggBagSettings.fromJson(val));
+                reader.getObjectAsReader("incubators").ifPresent(incubators -> {
+                    incubators.getObject("copper").ifPresent(val -> copper = IncubatorSettings.fromJson(val));
+                    incubators.getObject("iron").ifPresent(val -> iron = IncubatorSettings.fromJson(val));
+                    incubators.getObject("gold").ifPresent(val -> gold = IncubatorSettings.fromJson(val));
+                    incubators.getObject("diamond").ifPresent(val -> diamond = IncubatorSettings.fromJson(val));
+                    incubators.getObject("netherite").ifPresent(val -> netherite = IncubatorSettings.fromJson(val));
                 });
             }
         }
@@ -234,8 +234,8 @@ public class Options {
         save();
     }
 
-    public record EggBagSettings (int capacity, int eggsToTick) {
-        public static EggBagSettings fromJson (JsonObject json) {
+    public record IncubatorSettings(int capacity, int eggsToTick) {
+        public static IncubatorSettings fromJson (JsonObject json) {
             int capacity = 1;
             int eggs = 1;
             if (json.has("capacity")) {
@@ -244,7 +244,7 @@ public class Options {
             if (json.has("eggsToTickSimultaneously")) {
                 eggs = json.getAsJsonPrimitive("eggsToTickSimultaneously").getAsInt();
             }
-            return new EggBagSettings(capacity, eggs);
+            return new IncubatorSettings(capacity, eggs);
         }
 
         public JsonObject toJson () {

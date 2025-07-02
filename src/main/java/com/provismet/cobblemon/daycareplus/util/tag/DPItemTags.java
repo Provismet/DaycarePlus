@@ -10,7 +10,7 @@ public abstract class DPItemTags {
     public static final TagKey<Item> COMPETITIVE_BREEDING = DPItemTags.of("competitive_breeding");
     public static final TagKey<Item> NONCOMPETITIVE_BREEDING = DPItemTags.of("noncompetitive_breeding");
     public static final TagKey<Item> NO_CONSUME_BREEDING = DPItemTags.of("no_consume_breeding");
-    public static final TagKey<Item> EGG_BAGS = DPItemTags.of("egg_bags");
+    public static final TagKey<Item> INCUBATORS = DPItemTags.of("incubators");
     public static final TagKey<Item> GUI = DPItemTags.of("gui");
 
     private static TagKey<Item> of (String path) {

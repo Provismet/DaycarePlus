@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_leather_egg_bag": {
+    "has_iron_egg_bag": {
       "conditions": {
         "items": [
           {
-            "items": "daycareplus:leather_egg_bag"
+            "items": "daycareplus:iron_egg_bag"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "daycareplus:iron_egg_bag"
+        "recipe": "daycareplus:iron_convert"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_leather_egg_bag"
+      "has_iron_egg_bag"
     ]
   ],
   "rewards": {
     "recipes": [
-      "daycareplus:iron_egg_bag"
+      "daycareplus:iron_convert"
     ]
   }
 }
