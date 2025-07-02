@@ -1,6 +1,10 @@
 package com.provismet.cobblemon.daycareplus.item;
 
 import ca.landonjw.gooeylibs2.api.UIManager;
+import ca.landonjw.gooeylibs2.api.container.GooeyContainer;
+import com.cobblemon.mod.common.block.PastureBlock;
+import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.util.PlayerExtensionsKt;
 import com.provismet.cobblemon.daycareplus.gui.EggBagGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.EggBagDataComponent;
@@ -8,6 +12,7 @@ import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import net.minecraft.block.Block;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,12 +30,16 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 public class EggBagItem extends PolymerItem {
+    private static final Set<String> HATCH_ABILITIES = Set.of("flamebody", "steamengine", "magmaarmor");
     private final int eggsToTick;
 
     public EggBagItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData, int eggsToTick) {
@@ -77,19 +86,27 @@ public class EggBagItem extends PolymerItem {
 
     @Override
     public ActionResult useOnBlock (ItemUsageContext context) {
-        if (context.getWorld().getBlockEntity(context.getBlockPos()) instanceof IMixinPastureBlockEntity daycare) {
-            EggBagDataComponent component = context.getStack().get(DPItemDataComponents.HELD_EGGS);
-            if (component != null) {
-                int remainingSlots = component.capacity() - component.contents().size();
-                List<ItemStack> eggs = daycare.withdraw(remainingSlots);
-                int size = eggs.size();
-                context.getStack().set(DPItemDataComponents.HELD_EGGS, component.addAll(eggs));
-                if (context.getPlayer() instanceof ServerPlayerEntity player) {
-                    this.playInsertSound(player);
-                    if (size == 1) player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
-                    else player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.plural", size), true);
+        Block block = context.getWorld().getBlockState(context.getBlockPos()).getBlock();
+
+        if (block instanceof PastureBlock pastureBlock) {
+            BlockPos pasturePos = pastureBlock.getBasePosition(context.getWorld().getBlockState(context.getBlockPos()), context.getBlockPos());
+
+            if (context.getWorld().getBlockEntity(pasturePos) instanceof IMixinPastureBlockEntity daycare) {
+                EggBagDataComponent component = context.getStack().get(DPItemDataComponents.HELD_EGGS);
+                if (component != null) {
+                    int remainingSlots = component.capacity() - component.contents().size();
+                    List<ItemStack> eggs = daycare.withdraw(remainingSlots);
+                    int size = eggs.size();
+                    context.getStack().set(DPItemDataComponents.HELD_EGGS, component.addAll(eggs));
+                    if (context.getPlayer() instanceof ServerPlayerEntity player) {
+                        this.playInsertSound(player);
+                        if (size == 1)
+                            player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
+                        else
+                            player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.plural", size), true);
+                    }
+                    return ActionResult.SUCCESS;
                 }
-                return ActionResult.SUCCESS;
             }
         }
         return super.useOnBlock(context);
