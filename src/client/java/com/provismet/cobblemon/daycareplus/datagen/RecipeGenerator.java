@@ -33,7 +33,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         this.eggBag(DPItems.IRON_EGG_BAG, Items.IRON_BLOCK, DPItems.LEATHER_EGG_BAG).offerTo(recipeExporter);
         this.eggBag(DPItems.GOLD_EGG_BAG, Items.GOLD_BLOCK, DPItems.LEATHER_EGG_BAG).offerTo(recipeExporter); // Non-linear progression.
         this.eggBag(DPItems.DIAMOND_EGG_BAG, Items.DIAMOND_BLOCK, DPItems.IRON_EGG_BAG).offerTo(recipeExporter);
-        RecipeProvider.offerNetheriteUpgradeRecipe(recipeExporter, DPItems.DIAMOND_EGG_BAG, RecipeCategory.MISC, DPItems.NETHERITE_EGG_BAG);
+        this.eggBag(DPItems.NETHERITE_EGG_BAG, Items.NETHERITE_INGOT, DPItems.DIAMOND_EGG_BAG).offerTo(recipeExporter); // Do not use upgrades, they carry over components!
     }
 
     private ShapedRecipeJsonBuilder eggBag (Item bag, Item inputMaterial, Item previousBag) {

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.provismet.cobblemon.daycareplus.api.EggHelper;
+import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.item.ItemStack;
@@ -11,17 +12,19 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.dynamic.Codecs;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
-    public static final EggBagDataComponent DEFAULT = new EggBagDataComponent(List.of(), 0);
+public record EggBagDataComponent (List<ItemStack> contents, int capacity, Optional<String> tier) {
+    public static final EggBagDataComponent DEFAULT = new EggBagDataComponent(List.of(), 0, Optional.empty());
 
     public static final Codec<EggBagDataComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        ItemStack.CODEC.listOf().fieldOf("items").forGetter(component -> component.contents),
-        Codecs.POSITIVE_INT.fieldOf("capacity").forGetter(component -> component.capacity)
+        ItemStack.CODEC.listOf().fieldOf("items").forGetter(EggBagDataComponent::contents),
+        Codecs.POSITIVE_INT.fieldOf("capacity").forGetter(EggBagDataComponent::capacity),
+        Codec.STRING.optionalFieldOf("tier").forGetter(EggBagDataComponent::tier)
     ).apply(instance, EggBagDataComponent::new));
 
     public static final PacketCodec<RegistryByteBuf, EggBagDataComponent> PACKET_CODEC = PacketCodec.tuple(
@@ -29,11 +32,13 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
         EggBagDataComponent::contents,
         PacketCodecs.INTEGER,
         EggBagDataComponent::capacity,
+        PacketCodecs.optional(PacketCodecs.STRING),
+        EggBagDataComponent::tier,
         EggBagDataComponent::new
     );
 
-    public EggBagDataComponent (int capacity) {
-        this(List.of(), capacity);
+    public EggBagDataComponent (int capacity, @Nullable String tier) {
+        this(List.of(), capacity, Optional.ofNullable(tier));
     }
 
     public EggBagDataComponent add (ItemStack stack) {
@@ -102,11 +107,13 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
     public static class Builder {
         private final List<ItemStack> mutableContents;
         private final int capacity;
+        private final Optional<String> tier;
 
         public Builder (EggBagDataComponent component) {
             this.mutableContents = new LinkedList<>();
             this.mutableContents.addAll(component.contents);
             this.capacity = component.capacity;
+            this.tier = component.tier;
         }
 
         public boolean add (ItemStack stack) {
@@ -132,7 +139,11 @@ public record EggBagDataComponent (List<ItemStack> contents, int capacity) {
         }
 
         public EggBagDataComponent build () {
-            return new EggBagDataComponent(this.mutableContents.stream().toList(), this.capacity);
+            if (this.tier.isPresent()) {
+                int newCapacity = Options.getBagSettings(this.tier.get()).capacity();
+                return new EggBagDataComponent(this.mutableContents.stream().toList(), newCapacity, this.tier);
+            }
+            return new EggBagDataComponent(this.mutableContents.stream().toList(), this.capacity, this.tier);
         }
     }
 }

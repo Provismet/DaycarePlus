@@ -1,4 +1,5 @@
 {
+  "daycareplus.ui.fertility.level": "Fertility",
   "gui.button.daycareplus.eggs_held": "%1$s/%2$s eggs held",
   "gui.button.daycareplus.info": "Info",
   "gui.button.daycareplus.info.tooltip.1": "The daycare attempt to produce an egg periodically.",

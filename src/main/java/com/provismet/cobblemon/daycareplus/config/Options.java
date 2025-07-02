@@ -126,6 +126,16 @@ public class Options {
         return netherite;
     }
 
+    public static EggBagSettings getBagSettings (String tier) {
+        return switch (tier) {
+            case "iron" -> iron;
+            case "gold" -> gold;
+            case "diamond" -> diamond;
+            case "netherite" -> netherite;
+            default -> leather;
+        };
+    }
+
     public static void save () {
         JsonBuilder builder = new JsonBuilder()
             .append(
