@@ -40,7 +40,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class IncubatorItem extends PolymerItem {
-    private static final Set<String> HATCH_ABILITIES = Set.of("flamebody", "steamengine", "magmaarmor");
+    public static final Set<String> HATCH_ABILITIES = Set.of("flamebody", "steamengine", "magmaarmor");
     private final int eggsToTick;
     private final PolymerModelData hasEggData;
 

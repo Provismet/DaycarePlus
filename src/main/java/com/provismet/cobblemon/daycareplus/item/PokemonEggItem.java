@@ -20,6 +20,7 @@ import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
@@ -29,9 +30,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class PokemonEggItem extends PolymerItem {
@@ -171,6 +174,21 @@ public class PokemonEggItem extends PolymerItem {
         if (stack.get(DataComponentTypes.CUSTOM_MODEL_DATA) != null) return -1;
         if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=true")) return this.shiny.value();
         return super.getPolymerCustomModelData(stack, player);
+    }
+
+    @Override
+    public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, world, entity, slot, selected);
+        if (!(entity instanceof ServerPlayerEntity player) || player.age % 20 != 0) return;
+
+        int abilityMultiplier = 1;
+        for (Pokemon pokemon : PlayerExtensionsKt.party(player)) {
+            if (IncubatorItem.HATCH_ABILITIES.contains(pokemon.getAbility().getName().toLowerCase(Locale.ROOT))) {
+                abilityMultiplier = 2;
+                break;
+            }
+        }
+        this.decrementEggSteps(stack, 20 * abilityMultiplier, player);
     }
 
     private String formatIV (IVs ivs, Stat stat) {
