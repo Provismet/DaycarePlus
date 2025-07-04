@@ -93,6 +93,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
     @Override
     public ButtonBase getEggCounterButton () {
+        this.updateEggCounter();
         return eggCounter;
     }
 
