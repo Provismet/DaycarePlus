@@ -35,6 +35,7 @@ public class Options {
     private static float shinyChanceMultiplier = 1;
     private static float masudaMultiplier = 2;
     private static float crystalMultiplier = 1;
+    private static boolean useShinyEvent = true;
 
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
@@ -88,6 +89,10 @@ public class Options {
 
     public static boolean shouldShowEggTooltip () {
         return showEggTooltip;
+    }
+
+    public static boolean shouldUseShinyChanceEvent () {
+        return useShinyEvent;
     }
 
     public static float getShinyChanceMultiplier () {
@@ -153,6 +158,7 @@ public class Options {
                     .append("consumeHeldItems", consumeHeldItems))
             .append(
                 "shinyChance", new JsonBuilder()
+                    .append("useEventTrigger", useShinyEvent)
                     .append("standardMultiplier", shinyChanceMultiplier)
                     .append("masudaMultiplier", masudaMultiplier)
                     .append("crystalMultiplier", crystalMultiplier))
@@ -205,6 +211,7 @@ public class Options {
                 });
 
                 reader.getObjectAsReader("shinyChance").ifPresent(shinyChance -> {
+                    shinyChance.getBoolean("useEventTrigger").ifPresent(val -> useShinyEvent = val);;
                     shinyChance.getFloat("standardMultiplier").ifPresent(val -> shinyChanceMultiplier = val);
                     shinyChance.getFloat("masudaMultiplier").ifPresent(val -> masudaMultiplier = val);
                     shinyChance.getFloat("crystalMultiplier").ifPresent(val -> crystalMultiplier = val);

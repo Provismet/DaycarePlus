@@ -220,20 +220,25 @@ public class PotentialPokemonProperties {
     }
 
     public double getShinyRate () {
-        float shinyRate = Cobblemon.config.getShinyRate();
-        shinyRate /= Options.getShinyChanceMultiplier();
+        float shinyRate;
 
-        if (!Objects.equals(this.primary.getOriginalTrainer(), this.secondary.getOriginalTrainer()) || !(Objects.equals(this.primary.getOriginalTrainerName(), this.secondary.getOriginalTrainerName()))) {
+        if (Options.shouldUseShinyChanceEvent()) {
+            ShinyChanceCalculationEvent event = new ShinyChanceCalculationEvent(Cobblemon.config.getShinyRate(), this.primary);
+            CobblemonEvents.SHINY_CHANCE_CALCULATION.emit(event);
+            shinyRate = event.calculate(null);
+        }
+        else {
+            shinyRate = Cobblemon.config.getShinyRate();
+        }
+
+        shinyRate /= Options.getShinyChanceMultiplier();
+        if (!Objects.equals(this.primary.getOriginalTrainer(), this.secondary.getOriginalTrainer())) {
             shinyRate /= Options.getMasudaMultiplier();
         }
         if (this.primary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
         if (this.secondary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
 
-        ShinyChanceCalculationEvent event = new ShinyChanceCalculationEvent(shinyRate, this.primary);
-        CobblemonEvents.SHINY_CHANCE_CALCULATION.emit(event);
-
-        double denominator = event.calculate(null);
-        return denominator == 0 ? 1 : 1 / denominator;
+        return shinyRate == 0 ? 1 : 1 / shinyRate;
     }
 
     private void setPokeBall (PokemonProperties properties) {
