@@ -43,7 +43,9 @@ public class LanguageGenerator extends LilyLanguageProvider {
         // Egg Bag
         translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.singular", "Collected %1$s egg.");
         translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.plural", "Collected %1$s eggs.");
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.creative", "Egg bags cannot be used in creative mode!");
+        translationBuilder.add("message.overlay.daycareplus.egg_bag.creative", "Incubators cannot be used in creative mode!");
+        translationBuilder.add("message.overlay.daycareplus.egg_bag.stolen", "This is not your incubator!");
+        translationBuilder.add("message.overlay.daycareplus.egg_bag.typeless", "This incubator has no tier data!");
         translationBuilder.add("tooltip.daycareplus.egg_bag.eggs_held", "Eggs Held: %1$s/%2$s");
         translationBuilder.add("gui.button.daycareplus.prev", "Previous");
         translationBuilder.add("gui.button.daycareplus.next", "Next");
@@ -55,6 +57,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("tooltip.daycareplus.egg.ticks", "§eTime:§f %1$s");
 
         // Daycare
+        translationBuilder.add("gui.title.daycareplus.daycare", "Daycare");
         translationBuilder.add("message.chat.daycareplus.egg_produced", "Your daycare has produced an egg.");
         translationBuilder.add("message.chat.daycareplus.single_egg_produced", "Your daycare produced %1$s egg while you were away.");
         translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");
@@ -83,6 +86,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(CobblemonItems.MIRROR_HERB.getTranslationKey() + ".breeding", "This Pokemon may learn egg moves from its partner.");
 
         // Intro GUI
+        translationBuilder.add("gui.title.daycareplus.intro", "Daycare Setup");
         translationBuilder.add("gui.button.daycareplus.intro.daycare", "Daycare");
         translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.1", "Use this pasture to breed Pokémon.");
         translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.2", "Daycares Active: %1$s/%2$s");

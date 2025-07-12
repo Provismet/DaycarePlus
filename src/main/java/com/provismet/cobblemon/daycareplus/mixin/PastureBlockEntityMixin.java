@@ -1,6 +1,5 @@
 package com.provismet.cobblemon.daycareplus.mixin;
 
-import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingLink;
 import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
@@ -8,6 +7,7 @@ import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.gui.DaycareGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.util.Styles;
+import eu.pb4.sgui.api.elements.GuiElement;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -49,7 +49,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Unique private boolean skipDaycareGUI = false;
     @Unique private PastureExtension extension;
     @Unique private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(Options.getPastureInventorySize(), ItemStack.EMPTY);
-    @Unique private ButtonBase eggCounter = DaycareGUI.createEggButton(this);
+    @Unique private GuiElement eggCounter = DaycareGUI.createEggButton(this);
 
     @Override
     public PastureExtension getExtension () {
@@ -92,7 +92,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     }
 
     @Override
-    public ButtonBase getEggCounterButton () {
+    public GuiElement getEggCounterButton () {
         this.updateEggCounter();
         return eggCounter;
     }
@@ -205,9 +205,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
     @Unique
     private void updateEggCounter () {
-        this.eggCounter.getDisplay().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.eggs_held", this.count(), this.size())
-            .styled(Styles.WHITE_NO_ITALICS));
-        this.eggCounter.update();
+        this.eggCounter.getItemStack().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.eggs_held", this.count(), this.size()).styled(Styles.WHITE_NO_ITALICS));
     }
 
     @Inject(method = "TICKER$lambda$14", at = @At("HEAD"))

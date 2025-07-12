@@ -1,6 +1,5 @@
 package com.provismet.cobblemon.daycareplus.mixin;
 
-import ca.landonjw.gooeylibs2.api.UIManager;
 import com.cobblemon.mod.common.block.PastureBlock;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
@@ -57,11 +56,11 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
                     return;
                 }
 
-                UIManager.openUIForcefully(serverPlayer, DaycareGUI.create(pastureBlockEntity, mixinPasture, serverPlayer, state, hit));
+                DaycareGUI.create(pastureBlockEntity, mixinPasture, serverPlayer, state, hit).open();
                 cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
             }
             else if (!mixinPasture.shouldSkipIntro() && pastureBlockEntity.getTetheredPokemon().isEmpty() && pastureBlockEntity.getOwnerId() == player.getUuid()) {
-                UIManager.openUIForcefully(serverPlayer, IntroGUI.create(mixinPasture, serverPlayer));
+                IntroGUI.create(mixinPasture, serverPlayer).open();
                 cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
             }
         }
