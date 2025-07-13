@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class IncubatorTiers {
     private static final String FILE = "./config/daycareplus/incubators.json";
@@ -30,6 +31,10 @@ public class IncubatorTiers {
 
     public static Optional<IncubatorSettings> get (String tier) {
         return Optional.ofNullable(settings.get(tier));
+    }
+
+    public static Set<String> getTiers () {
+        return settings.keySet();
     }
 
     public static void load () {

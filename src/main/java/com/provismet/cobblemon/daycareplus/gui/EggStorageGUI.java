@@ -1,6 +1,5 @@
 package com.provismet.cobblemon.daycareplus.gui;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.storage.EggStorage;
 import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
@@ -34,6 +33,18 @@ public class EggStorageGUI extends SimpleGui {
         this.storage = storage;
     }
 
+    public static EggStorageGUI create (ServerPlayerEntity player, String storageName) {
+        Optional<EggStorage> storage = IncubatorCollection.getOrCreate(player).get(storageName);
+        if (storage.isPresent()) {
+            EggStorageGUI gui = new EggStorageGUI(player, storage.get());
+            gui.updateBorder();
+            gui.loadPage();
+            return gui;
+        }
+
+        return null;
+    }
+
     private void updateBorder () {
         GuiElement borderFiller = GuiElementBuilder.from(Items.BLACK_STAINED_GLASS_PANE.getDefaultStack())
             .hideDefaultTooltip()
@@ -59,6 +70,7 @@ public class EggStorageGUI extends SimpleGui {
             .setCallback((index, type1, action, gui) -> {
                 this.player.getInventory().main.forEach(this.storage::addCopyAndEmpty);
                 this.player.playSoundToPlayer(SoundEvents.ITEM_BUNDLE_INSERT, SoundCategory.PLAYERS, 1f, 1f);
+                this.loadPage();
             })
             .build();
 
@@ -68,18 +80,26 @@ public class EggStorageGUI extends SimpleGui {
     }
 
     private void loadPage () {
-        for (int i = 0; this.minSlotDisplayed + i < this.storage.size() && i + 9 < this.getVirtualSize(); ++i) {
+        for (int i = 0; i + 9 < this.getVirtualSize(); ++i) {
             int storageIndex = this.minSlotDisplayed + i;
-            GuiElement eggButton = GuiElementBuilder.from(this.storage.get(this.minSlotDisplayed + i))
-                .setCallback((index, clickType, action, gui) -> {
-                    ItemStack stack = this.storage.get(storageIndex);
-                    if (!stack.isEmpty() && this.player.giveItemStack(stack)) {
-                        this.storage.withdraw(storageIndex);
-                        this.player.playSoundToPlayer(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, SoundCategory.PLAYERS, 1f, 1f);
-                        this.loadPage();
-                    }
-                })
-                .build();
+            GuiElement eggButton;
+
+            if (storageIndex < this.storage.size()) {
+                eggButton = GuiElementBuilder.from(this.storage.get(this.minSlotDisplayed + i))
+                    .setCallback((index, clickType, action, gui) -> {
+                        ItemStack stack = this.storage.get(storageIndex);
+                        if (!stack.isEmpty() && this.player.giveItemStack(stack)) {
+                            this.storage.withdraw(storageIndex);
+                            this.player.playSoundToPlayer(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, SoundCategory.PLAYERS, 1f, 1f);
+                            this.loadPage();
+                        }
+                    })
+                    .build();
+            }
+            else {
+                eggButton = GuiElementBuilder.from(ItemStack.EMPTY).build();
+            }
+
             this.setSlot(i + 9, eggButton);
         }
 
@@ -102,21 +122,24 @@ public class EggStorageGUI extends SimpleGui {
 
     @Override
     public boolean onAnyClick (int index, ClickType type, SlotActionType action) {
-        DaycarePlusServer.LOGGER.info("Slot index: {}", index);
-        DaycarePlusServer.LOGGER.info("ClickType: {}", type.toString());
-        DaycarePlusServer.LOGGER.info("SlotActionType: {}", action.toString());
+        if (index >= 54) {
+            int inventoryIndex;
+            if (index >= 81) inventoryIndex = index - 81; // Hotbar
+            else inventoryIndex = index - 45; // Main - Hotbar is first in the list (54 - 9).
+
+            if (inventoryIndex < this.player.getInventory().main.size()) {
+                this.storage.addCopyAndEmpty(this.player.getInventory().main.get(inventoryIndex));
+            }
+            this.loadPage();
+        }
+
         return super.onAnyClick(index, type, action);
     }
 
-    public static EggStorageGUI create (ServerPlayerEntity player, String storageName) {
-        Optional<EggStorage> storage = IncubatorCollection.getOrCreate(player).get(storageName);
-        if (storage.isPresent()) {
-            EggStorageGUI gui = new EggStorageGUI(player, storage.get());
-            gui.updateBorder();
-            gui.loadPage();
-            return gui;
+    @Override
+    public void onTick () {
+        if (this.player.age % 20 == 1) { // Reload one tick after the eggs have ticked.
+            this.loadPage();
         }
-
-        return null;
     }
 }

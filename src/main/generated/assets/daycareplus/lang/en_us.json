@@ -52,12 +52,13 @@
   "message.chat.daycareplus.multiple_egg_produced": "Your daycare produced %1$s eggs while you were away.",
   "message.chat.daycareplus.single_egg_produced": "Your daycare produced %1$s egg while you were away.",
   "message.overlay.daycareplus.egg.hatch": "Your egg hatched.",
-  "message.overlay.daycareplus.egg_bag.collection.plural": "Collected %1$s eggs.",
-  "message.overlay.daycareplus.egg_bag.collection.singular": "Collected %1$s egg.",
-  "message.overlay.daycareplus.egg_bag.creative": "Incubators cannot be used in creative mode!",
-  "message.overlay.daycareplus.egg_bag.stolen": "This is not your incubator!",
-  "message.overlay.daycareplus.egg_bag.typeless": "This incubator has no tier data!",
   "message.overlay.daycareplus.fertility_boosted": "Your %1$s now has %2$s fertility.",
+  "message.overlay.daycareplus.incubator.claimed": "This is now your incubator.",
+  "message.overlay.daycareplus.incubator.collection.plural": "Collected %1$s eggs.",
+  "message.overlay.daycareplus.incubator.collection.singular": "Collected %1$s egg.",
+  "message.overlay.daycareplus.incubator.creative": "Incubators cannot be used in creative mode!",
+  "message.overlay.daycareplus.incubator.stolen": "This is not your incubator!",
+  "message.overlay.daycareplus.incubator.typeless": "This incubator has no tier data!",
   "message.overlay.daycareplus.limit_reached": "You cannot activate anymore daycares, limit reached.",
   "message.overlay.daycareplus.not_owner": "This is not your daycare.",
   "property.daycareplus.ability": "Ability: ",
@@ -80,5 +81,5 @@
   "title.daycareplus.item_group": "Daycare+",
   "tooltip.daycareplus.egg.no_data": "No data found.",
   "tooltip.daycareplus.egg.ticks": "§eTime:§f %1$s",
-  "tooltip.daycareplus.egg_bag.eggs_held": "Eggs Held: %1$s/%2$s"
+  "tooltip.daycareplus.incubator.eggs_held": "Eggs Held: %1$s/%2$s"
 }

@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.provismet.cobblemon.daycareplus.api.EggHelper;
 import com.provismet.cobblemon.daycareplus.config.IncubatorTiers;
+import com.provismet.cobblemon.daycareplus.item.PokemonEggItem;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,9 +17,7 @@ import java.util.Optional;
 public class EggStorage {
     public static final Codec<EggStorage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.STRING.fieldOf("tier").forGetter(EggStorage::getTier),
-        Codec.INT.fieldOf("capacity").forGetter(EggStorage::getCapacity),
-        Codec.INT.fieldOf("eggsToTick").forGetter(EggStorage::getEggsToTick),
-        ItemStack.CODEC.listOf().fieldOf("storage").forGetter(EggStorage::getStorage)
+        PokemonEggItem.CODEC.listOf().fieldOf("storage").forGetter(EggStorage::getStorage)
     ).apply(instance, EggStorage::new));
 
     private final List<ItemStack> storage;
@@ -26,17 +25,25 @@ public class EggStorage {
     private int eggsToTick;
     private String tier;
 
-    public EggStorage (String tier, int capacity, int eggsToTick, List<ItemStack> eggs) {
+    public EggStorage (String tier, List<ItemStack> eggs) {
         this.storage = new LinkedList<>(eggs);
         this.tier = tier;
-        this.capacity = capacity;
-        this.eggsToTick = eggsToTick;
+
+        Optional<IncubatorTiers.IncubatorSettings> settings = IncubatorTiers.get(tier);
+        if (settings.isPresent()) {
+            this.capacity = settings.get().capacity();
+            this.eggsToTick = settings.get().eggsToTick();
+        }
+        else {
+            this.capacity = 1;
+            this.eggsToTick= 1;
+        }
     }
 
     @Nullable
     public static EggStorage fromSettings (String tier) {
         Optional<IncubatorTiers.IncubatorSettings> settings = IncubatorTiers.get(tier);
-        return settings.map(incubatorSettings -> new EggStorage(tier, incubatorSettings.capacity(), incubatorSettings.eggsToTick(), List.of())).orElse(null);
+        return settings.map(incubatorSettings -> new EggStorage(tier, List.of())).orElse(null);
     }
 
     public void setTier (String tier) {
@@ -99,5 +106,14 @@ public class EggStorage {
             DPItems.POKEMON_EGG.decrementEggSteps(this.storage.get(i), stepsToProcess, player);
         }
         this.storage.removeIf(ItemStack::isEmpty);
+    }
+
+    public void tryUpgradeTo (String tier) {
+        Optional<IncubatorTiers.IncubatorSettings> settings = IncubatorTiers.get(tier);
+        if (settings.isPresent() && settings.get().capacity() > this.capacity && settings.get().eggsToTick() > this.eggsToTick) {
+            this.tier = tier;
+            this.capacity = settings.get().capacity();
+            this.eggsToTick = settings.get().eggsToTick();
+        }
     }
 }

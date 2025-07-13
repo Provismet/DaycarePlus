@@ -13,6 +13,8 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
 import com.cobblemon.mod.common.util.ResourceLocationExtensionsKt;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
@@ -20,7 +22,6 @@ import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
@@ -30,14 +31,28 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 public class PokemonEggItem extends PolymerItem {
+    public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(() -> RecordCodecBuilder.create(instance -> instance.group(
+        Codec.STRING.optionalFieldOf("pokemon").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.POKEMON_PROPERTIES))),
+        Codec.INT.optionalFieldOf("steps").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.EGG_STEPS))),
+        Codec.INT.optionalFieldOf("max_steps").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.MAX_EGG_STEPS)))
+    ).apply(instance, (pokemonProperties, steps, maxSteps) -> {
+        if (pokemonProperties.isEmpty()) return ItemStack.EMPTY;
+        if (steps.isEmpty() || maxSteps.isEmpty()) return DPItems.POKEMON_EGG.createEggItem(PokemonProperties.Companion.parse(pokemonProperties.get()));
+
+        ItemStack stack = DPItems.POKEMON_EGG.getDefaultStack();
+        stack.set(DPItemDataComponents.POKEMON_PROPERTIES, pokemonProperties.get());
+        stack.set(DPItemDataComponents.EGG_STEPS, steps.get());
+        stack.set(DPItemDataComponents.MAX_EGG_STEPS, maxSteps.get());
+        return stack;
+    })));
+
     private static final int TICKS_PER_MINUTE = 60 * 20;
     private static final int DEFAULT_STEPS = 7200;
 
@@ -174,21 +189,6 @@ public class PokemonEggItem extends PolymerItem {
         if (stack.get(DataComponentTypes.CUSTOM_MODEL_DATA) != null) return -1;
         if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=true")) return this.shiny.value();
         return super.getPolymerCustomModelData(stack, player);
-    }
-
-    @Override
-    public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        super.inventoryTick(stack, world, entity, slot, selected);
-        if (!(entity instanceof ServerPlayerEntity player) || player.age % 20 != 0) return;
-
-        int abilityMultiplier = 1;
-        for (Pokemon pokemon : PlayerExtensionsKt.party(player)) {
-            if (IncubatorItem.HATCH_ABILITIES.contains(pokemon.getAbility().getName().toLowerCase(Locale.ROOT))) {
-                abilityMultiplier = 2;
-                break;
-            }
-        }
-        this.decrementEggSteps(stack, 20 * abilityMultiplier, player);
     }
 
     private String formatIV (IVs ivs, Stat stat) {

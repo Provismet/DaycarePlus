@@ -41,12 +41,13 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("message.overlay.daycareplus.fertility_boosted", "Your %1$s now has %2$s fertility.");
 
         // Egg Bag
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.singular", "Collected %1$s egg.");
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.plural", "Collected %1$s eggs.");
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.creative", "Incubators cannot be used in creative mode!");
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.stolen", "This is not your incubator!");
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.typeless", "This incubator has no tier data!");
-        translationBuilder.add("tooltip.daycareplus.egg_bag.eggs_held", "Eggs Held: %1$s/%2$s");
+        translationBuilder.add("message.overlay.daycareplus.incubator.collection.singular", "Collected %1$s egg.");
+        translationBuilder.add("message.overlay.daycareplus.incubator.collection.plural", "Collected %1$s eggs.");
+        translationBuilder.add("message.overlay.daycareplus.incubator.creative", "Incubators cannot be used in creative mode!");
+        translationBuilder.add("message.overlay.daycareplus.incubator.stolen", "This is not your incubator!");
+        translationBuilder.add("message.overlay.daycareplus.incubator.typeless", "This incubator has no tier data!");
+        translationBuilder.add("message.overlay.daycareplus.incubator.claimed", "This is now your incubator.");
+        translationBuilder.add("tooltip.daycareplus.incubator.eggs_held", "Eggs Held: %1$s/%2$s");
         translationBuilder.add("gui.button.daycareplus.prev", "Previous");
         translationBuilder.add("gui.button.daycareplus.next", "Next");
         translationBuilder.add("gui.button.daycareplus.take", "Deposit All");
