@@ -4,8 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.provismet.cobblemon.daycareplus.config.IncubatorTiers;
-import com.provismet.cobblemon.daycareplus.gui.EggStorageGUI;
-import com.provismet.cobblemon.daycareplus.item.component.IncubatorType;
 import com.provismet.cobblemon.daycareplus.storage.EggStorage;
 import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -80,7 +78,7 @@ public class IncubatorCommand {
         else {
             collection.put(type, EggStorage.fromSettings(tier));
         }
-        context.getSource().sendFeedback(() -> Text.literal("Modified incubator for ").append(player.getName()), false);
+        context.getSource().sendFeedback(() -> Text.literal("Modified incubator for ").append(player.getName()), true);
         return 1;
     }
 
