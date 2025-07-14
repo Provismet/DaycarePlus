@@ -101,7 +101,7 @@ public class IncubatorItem extends PolymerItem {
             if (context.getWorld().getBlockEntity(pasturePos) instanceof IMixinPastureBlockEntity daycare) {
                 Optional<EggStorage> storage = this.getStorage(context.getStack());
                 if (storage.isPresent()) {
-                    int remainingSlots = storage.get().size() - storage.get().getCapacity();
+                    int remainingSlots = storage.get().getCapacity() - storage.get().size();
                     List<ItemStack> eggs = daycare.withdraw(remainingSlots);
                     eggs.forEach(storage.get()::addCopyAndEmpty);
 
