@@ -37,26 +37,21 @@ public class PastureExtension {
 
     private void tryApplyMirrorHerb (Pokemon potentialHolder, Pokemon other) {
         if (!potentialHolder.heldItem().isOf(CobblemonItems.MIRROR_HERB)) return;
-        DaycarePlusServer.LOGGER.info("Attempting mirror herb.");
-
         PlayerEntity owner = null;
         if (this.blockEntity.getOwnerId() != null && this.blockEntity.getWorld() != null) {
             owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
         }
 
         for (Move move : other.getMoveSet()) {
-            DaycarePlusServer.LOGGER.info("Testing {} from {}", move.getName(), other.getDisplayName().getString());
             if (potentialHolder.getForm().getMoves().getEggMoves().stream().anyMatch(moveTemplate -> moveTemplate.getName().equalsIgnoreCase(move.getName()))) {
                 // Avoid relearning moves you already have.
                 if (potentialHolder.getMoveSet().getMoves().stream().map(Move::getTemplate).anyMatch(moveTemplate -> moveTemplate.getName().equalsIgnoreCase(move.getName()))) {
-                    DaycarePlusServer.LOGGER.info("{} is already in the moveset of {}", move.getName(), potentialHolder.getDisplayName().getString());
                     continue;
                 }
                 boolean alreadyLearnt = false;
                 for (BenchedMove benchedMove : potentialHolder.getBenchedMoves()) {
                     if (benchedMove.getMoveTemplate().getName().equalsIgnoreCase(move.getName())) {
                         alreadyLearnt = true;
-                        DaycarePlusServer.LOGGER.info("{} is already in the benched moves of {}", move.getName(), potentialHolder.getDisplayName().getString());
                         break;
                     }
                 }
