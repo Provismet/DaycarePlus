@@ -109,14 +109,12 @@ public class PokemonEggItem extends PolymerItem {
             PokemonProperties pokemonProperties = PokemonProperties.Companion.parse(properties);
             if (pokemonProperties.getSpecies() != null) {
                 MutableText species = Text.translatable("property.daycareplus.species").formatted(Formatting.YELLOW)
-                    .append(Text.literal(StringFormatting.titleCase(pokemonProperties.getSpecies())).styled(Styles.WHITE_NO_ITALICS));
-
-                if (Objects.requireNonNullElse(pokemonProperties.getShiny(), false)) species = species.append(Text.literal(" ★").formatted(Formatting.GOLD));
+                    .append(this.getTooltipSpeciesName(pokemonProperties));
                 tooltip.add(species);
             }
-            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getForm())).styled(Styles.WHITE_NO_ITALICS)));
-            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(Identifier.of(pokemonProperties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS)));
-            if (pokemonProperties.getAbility() != null) tooltip.add(Text.translatable("property.daycareplus.ability").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getAbility())).styled(Styles.WHITE_NO_ITALICS)));
+            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").formatted(Formatting.YELLOW).append(this.getTooltipFormName(pokemonProperties)));
+            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").formatted(Formatting.YELLOW).append(this.getTooltipNatureName(pokemonProperties)));
+            if (pokemonProperties.getAbility() != null) tooltip.add(Text.translatable("property.daycareplus.ability").formatted(Formatting.YELLOW).append(this.getTooltipAbilityName(pokemonProperties)));
             if (pokemonProperties.getGender() != null && pokemonProperties.getGender() != Gender.GENDERLESS) {
                 Text gender = switch (pokemonProperties.getGender()) {
                     case MALE -> Text.literal("M").formatted(Formatting.BLUE);
@@ -144,6 +142,29 @@ public class PokemonEggItem extends PolymerItem {
                     .append(Text.literal(this.formatIV(iv, Stats.SPEED)).styled(Styles.WHITE_NO_ITALICS)));
             }
         }
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipSpeciesName (PokemonProperties properties) {
+        MutableText text = Text.literal(StringFormatting.titleCase(properties.getSpecies())).styled(Styles.WHITE_NO_ITALICS);
+        if (Objects.requireNonNullElse(properties.getShiny(), false)) text.append(Text.literal(" ★").formatted(Formatting.GOLD));
+        return text;
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipFormName (PokemonProperties properties) {
+        return Text.literal(StringFormatting.titleCase(properties.getForm())).styled(Styles.WHITE_NO_ITALICS);
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipNatureName (PokemonProperties properties) {
+        assert properties.getNature() != null;
+        return Text.literal(StringFormatting.titleCase(Identifier.of(properties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS);
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipAbilityName (PokemonProperties properties) {
+        return Text.literal(StringFormatting.titleCase(properties.getAbility())).styled(Styles.WHITE_NO_ITALICS);
     }
 
     public int getRemainingSteps (ItemStack stack) {
