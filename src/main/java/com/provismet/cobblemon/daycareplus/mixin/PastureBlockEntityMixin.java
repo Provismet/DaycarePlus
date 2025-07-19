@@ -3,7 +3,7 @@ package com.provismet.cobblemon.daycareplus.mixin;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingLink;
 import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.gui.DaycareGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.util.Styles;
@@ -48,7 +48,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Unique private boolean skipIntroDialogue = false;
     @Unique private boolean skipDaycareGUI = false;
     @Unique private PastureExtension extension;
-    @Unique private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(Options.getPastureInventorySize(), ItemStack.EMPTY);
+    @Unique private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(DaycarePlusOptions.getPastureInventorySize(), ItemStack.EMPTY);
     @Unique private GuiElement eggCounter = DaycareGUI.createEggButton(this);
 
     @Override
@@ -224,7 +224,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
                 }
             }
 
-            if (pasture.getOwnerId() != null && BreedingLink.count(pasture.getOwnerId()) > Options.getMaxPasturesPerPlayer()) {
+            if (pasture.getOwnerId() != null && BreedingLink.count(pasture.getOwnerId()) > DaycarePlusOptions.getMaxPasturesPerPlayer()) {
                 imixin.setShouldBreed(false);
                 imixin.setExtension(null);
                 BreedingLink.remove(pasture.getOwnerId(), imixin.getBreederUUID());

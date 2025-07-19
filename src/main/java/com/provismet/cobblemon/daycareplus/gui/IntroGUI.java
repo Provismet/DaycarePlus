@@ -3,7 +3,7 @@ package com.provismet.cobblemon.daycareplus.gui;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.CobblemonSounds;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingLink;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.Styles;
@@ -31,7 +31,7 @@ public interface IntroGUI {
             .hideDefaultTooltip()
             .setName(Text.translatable("gui.button.daycareplus.intro.daycare").styled(Styles.WHITE_NO_ITALICS))
             .addLoreLine(Text.translatable("gui.button.daycareplus.intro.daycare.tooltip.1").styled(Styles.GRAY_NO_ITALICS))
-            .addLoreLine(Text.translatable("gui.button.daycareplus.intro.daycare.tooltip.2", BreedingLink.count(serverPlayer), Options.getMaxPasturesPerPlayer()).styled(Styles.GRAY_NO_ITALICS))
+            .addLoreLine(Text.translatable("gui.button.daycareplus.intro.daycare.tooltip.2", BreedingLink.count(serverPlayer), DaycarePlusOptions.getMaxPasturesPerPlayer()).styled(Styles.GRAY_NO_ITALICS))
             .setCallback((index, type, action, gui) -> {
                 if (BreedingLink.isAtLimit(gui.getPlayer())) {
                     gui.getPlayer().playSoundToPlayer(SoundEvents.ENTITY_VILLAGER_NO, SoundCategory.PLAYERS, 1f, 1f);

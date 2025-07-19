@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Options {
+public class DaycarePlusOptions {
     private static final String FILE = "./config/daycareplus/config.json";
 
     // Egg Production
@@ -22,7 +22,6 @@ public class Options {
 
     // Competitive Breeding
     private static boolean competitiveBreeding = false;
-    private static int maxFertility = 8;
     private static boolean allowBreedingWithoutFertility = false;
     private static boolean consumeHeldItems = true;
 
@@ -61,10 +60,6 @@ public class Options {
 
     public static boolean doCompetitiveBreeding () {
         return competitiveBreeding;
-    }
-
-    public static int getMaxFertility () {
-        return maxFertility;
     }
 
     public static boolean shouldAllowBreedingWithoutFertility () {
@@ -115,7 +110,6 @@ public class Options {
             .append(
                 "competitiveMode", new JsonBuilder()
                     .append("useCompetitiveMode", competitiveBreeding)
-                    .append("maxFertility", maxFertility)
                     .append("allowBreedingWithoutFertility", allowBreedingWithoutFertility)
                     .append("consumeHeldItems", consumeHeldItems))
             .append(
@@ -160,7 +154,6 @@ public class Options {
 
                 reader.getObjectAsReader("competitiveMode").ifPresent(competitiveMode -> {
                     competitiveMode.getBoolean("useCompetitiveMode").ifPresent(val -> competitiveBreeding = val);
-                    competitiveMode.getInteger("maxFertility").ifPresent(val -> maxFertility = val);
                     competitiveMode.getBoolean("allowBreedingWithoutFertility").ifPresent(val -> allowBreedingWithoutFertility = val);
                     competitiveMode.getBoolean("consumeHeldItems").ifPresent(val -> consumeHeldItems = val);
                 });

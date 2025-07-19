@@ -15,7 +15,7 @@ import com.cobblemon.mod.common.util.PlayerExtensionsKt;
 import com.cobblemon.mod.common.util.ResourceLocationExtensionsKt;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.StringFormatting;
@@ -71,8 +71,8 @@ public class PokemonEggItem extends PolymerItem {
             Identifier speciesId = ResourceLocationExtensionsKt.asIdentifierDefaultingNamespace(properties.getSpecies(), Cobblemon.MODID);
             Species species = PokemonSpecies.INSTANCE.getByIdentifier(speciesId);
             if (species != null) {
-                stack.set(DPItemDataComponents.EGG_STEPS, Options.getEggPoints(species.getEggCycles()));
-                stack.set(DPItemDataComponents.MAX_EGG_STEPS, Options.getEggPoints(species.getEggCycles()));
+                stack.set(DPItemDataComponents.EGG_STEPS, DaycarePlusOptions.getEggPoints(species.getEggCycles()));
+                stack.set(DPItemDataComponents.MAX_EGG_STEPS, DaycarePlusOptions.getEggPoints(species.getEggCycles()));
             }
             else {
                 stack.set(DPItemDataComponents.EGG_STEPS, DEFAULT_STEPS);
@@ -98,7 +98,7 @@ public class PokemonEggItem extends PolymerItem {
 
             tooltip.add(Text.translatable("tooltip.daycareplus.egg.ticks", minutes + ":" + seconds));
         }
-        if (!Options.shouldShowEggTooltip()) return;
+        if (!DaycarePlusOptions.shouldShowEggTooltip()) return;
 
         tooltip.add(Text.empty());
         String properties = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);

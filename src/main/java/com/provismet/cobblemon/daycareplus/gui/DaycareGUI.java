@@ -12,9 +12,10 @@ import com.cobblemon.mod.common.pokemon.Nature;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.google.common.collect.ImmutableList;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
-import com.provismet.cobblemon.daycareplus.breeding.FertilityProperty;
+import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
 import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
@@ -85,7 +86,7 @@ public interface DaycareGUI {
         if (parent1 != null) {
             parent1Info = createButtonForPokemon(parent1);
 
-            if (Options.doCompetitiveBreeding() ? parent1.heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) : parent1.heldItem().isIn(DPItemTags.NONCOMPETITIVE_BREEDING)) {
+            if (DaycarePlusOptions.doCompetitiveBreeding() ? parent1.heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) : parent1.heldItem().isIn(DPItemTags.NONCOMPETITIVE_BREEDING)) {
                 parent1Item = GuiElementBuilder.from(parent1.heldItem())
                     .hideDefaultTooltip()
                     .addLoreLine(Text.translatable(parent1.heldItem().getTranslationKey() + ".breeding").styled(Styles.GRAY_NO_ITALICS))
@@ -101,7 +102,7 @@ public interface DaycareGUI {
         if (parent2 != null) {
             parent2Info = createButtonForPokemon(parent2);
 
-            if (Options.doCompetitiveBreeding() ? parent2.heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) : parent2.heldItem().isIn(DPItemTags.NONCOMPETITIVE_BREEDING)) {
+            if (DaycarePlusOptions.doCompetitiveBreeding() ? parent2.heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) : parent2.heldItem().isIn(DPItemTags.NONCOMPETITIVE_BREEDING)) {
                 parent2Item = GuiElementBuilder.from(parent2.heldItem())
                     .hideDefaultTooltip()
                     .addLoreLine(Text.translatable(parent2.heldItem().getTranslationKey() + ".breeding").styled(Styles.GRAY_NO_ITALICS))
@@ -141,15 +142,15 @@ public interface DaycareGUI {
                 Text.translatable("property.daycareplus.speed").styled(Styles.colouredNoItalics(Styles.SPEED)).append(Text.literal(ivs.get(Stats.SPEED).toString()).styled(Styles.WHITE_NO_ITALICS))
             );
 
-            if (Options.doCompetitiveBreeding()) {
-                int newFertility = MathHelper.clamp(Math.min(FertilityProperty.get(parent1), FertilityProperty.get(parent2)) - 1, 0, Options.getMaxFertility());
+            if (DaycarePlusOptions.doCompetitiveBreeding()) {
+                int newFertility = MathHelper.clamp(Math.min(FertilityProperty.get(parent1), FertilityProperty.get(parent2)) - 1, 0, FertilityProperty.getMax());
                 eggData.add(
                     Text.empty(),
                     Text.translatable("property.daycareplus.fertility").styled(Styles.formattedNoItalics(Formatting.DARK_GREEN)).append(Text.literal(String.valueOf(newFertility)).styled(Styles.WHITE_NO_ITALICS))
                 );
             }
 
-            if (Options.shouldShowShinyChance()) eggData.add(
+            if (DaycarePlusOptions.shouldShowShinyChance()) eggData.add(
                 Text.empty(),
                 Text.translatable("property.daycareplus.shiny").styled(Styles.formattedNoItalics(Formatting.GOLD)).append(Text.literal("1/" + Math.max(1, (int)(1 / offspring.get().getShinyRate()))).styled(Styles.WHITE_NO_ITALICS))
             );
@@ -223,7 +224,11 @@ public interface DaycareGUI {
             .addLoreLine(formatProperty("property.daycareplus.speed", Styles.colouredNoItalics(Styles.SPEED), String.valueOf(pokemon.getIvs().getOrDefault(Stats.SPEED))));
 
 
-        if (Options.doCompetitiveBreeding()) {
+        if (!BreedableProperty.get(pokemon)) {
+            builder.addLoreLine(Text.empty())
+                .addLoreLine(Text.translatable("property.daycareplus.unbreedable").styled(Styles.formattedNoItalics(Formatting.DARK_RED)));
+        }
+        else if (DaycarePlusOptions.doCompetitiveBreeding()) {
             builder.addLoreLine(Text.empty())
                 .addLoreLine(formatProperty("property.daycareplus.fertility", Styles.formattedNoItalics(Formatting.DARK_GREEN), String.valueOf(FertilityProperty.get(pokemon))));
         }
