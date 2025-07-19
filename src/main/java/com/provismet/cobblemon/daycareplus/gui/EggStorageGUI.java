@@ -39,6 +39,7 @@ public class EggStorageGUI extends SimpleGui {
             EggStorageGUI gui = new EggStorageGUI(player, storage.get());
             gui.updateBorder();
             gui.loadPage();
+            gui.setTitle(Text.translatable("gui.title.daycareplus.incubator"));
             return gui;
         }
 

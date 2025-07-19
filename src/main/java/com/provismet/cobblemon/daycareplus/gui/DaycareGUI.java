@@ -182,7 +182,7 @@ public interface DaycareGUI {
                 this.player.playSoundToPlayer(CobblemonSounds.PC_OFF, SoundCategory.BLOCKS, 1f, 1f);
             }
         };
-        gui.setTitle(Text.literal("gui.title.daycareplus.daycare"));
+        gui.setTitle(Text.translatable("gui.title.daycareplus.daycare"));
 
         for (int i = 0; i < gui.getVirtualSize(); ++i) {
             gui.setSlot(i, filler);
