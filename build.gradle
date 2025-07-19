@@ -46,13 +46,13 @@ dependencies {
 	modImplementation "eu.pb4:polymer-virtual-entity:${project.polymer_version}"
 	modImplementation "eu.pb4:polymer-networking:${project.polymer_version}"
 	modImplementation include("eu.pb4:sgui:${project.sgui_version}")
-	modImplementation include("ca.landonjw.gooeylibs:fabric:${project.gooeylibs_version}")
 
 	modImplementation include("com.github.Provismet:lilylib:${project.lilylib_version}")
 }
 
 loom {
 	splitEnvironmentSourceSets()
+	accessWidenerPath = file("src/main/resources/daycareplus.accesswidener")
 
 	mods {
 		"daycareplus" {

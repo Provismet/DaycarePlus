@@ -31,6 +31,7 @@
 	"mixins": [
 		"daycareplus.mixins.json"
 	],
+	"accessWidener": "daycareplus.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.0",
 		"minecraft": "~1.21.1",

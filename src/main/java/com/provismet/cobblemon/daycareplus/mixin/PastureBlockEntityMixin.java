@@ -210,6 +210,8 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
     @Inject(method = "TICKER$lambda$14", at = @At("HEAD"))
     private static void tick (World world, BlockPos pos, BlockState blockState, PokemonPastureBlockEntity pasture, CallbackInfo info) {
+        if (world.isClient()) return;
+
         IMixinPastureBlockEntity imixin = (IMixinPastureBlockEntity)(Object)pasture;
         if (imixin.shouldBreed()) {
             if (imixin.getBreederUUID() == null) {

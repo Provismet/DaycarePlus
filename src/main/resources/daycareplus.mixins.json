@@ -5,12 +5,9 @@
     "server": [
         "PastureBlockEntityMixin",
         "PastureBlockMixin",
-        "ServerPlayerEntityMixin"
+        "SpeciesFeaturesMixin"
     ],
     "injectors": {
         "defaultRequire": 1
-    },
-    "mixins": [
-        "SpeciesFeaturesMixin"
-    ]
+    }
 }
