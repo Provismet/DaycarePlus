@@ -6,11 +6,12 @@ import com.cobblemon.mod.common.api.events.pokemon.CollectEggEvent;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
+import com.cobblemon.mod.common.api.pokemon.feature.IntSpeciesFeature;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
+import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,26 +38,21 @@ public class PastureExtension {
 
     private void tryApplyMirrorHerb (Pokemon potentialHolder, Pokemon other) {
         if (!potentialHolder.heldItem().isOf(CobblemonItems.MIRROR_HERB)) return;
-        DaycarePlusServer.LOGGER.info("Attempting mirror herb.");
-
         PlayerEntity owner = null;
         if (this.blockEntity.getOwnerId() != null && this.blockEntity.getWorld() != null) {
             owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
         }
 
         for (Move move : other.getMoveSet()) {
-            DaycarePlusServer.LOGGER.info("Testing {} from {}", move.getName(), other.getDisplayName().getString());
             if (potentialHolder.getForm().getMoves().getEggMoves().stream().anyMatch(moveTemplate -> moveTemplate.getName().equalsIgnoreCase(move.getName()))) {
                 // Avoid relearning moves you already have.
                 if (potentialHolder.getMoveSet().getMoves().stream().map(Move::getTemplate).anyMatch(moveTemplate -> moveTemplate.getName().equalsIgnoreCase(move.getName()))) {
-                    DaycarePlusServer.LOGGER.info("{} is already in the moveset of {}", move.getName(), potentialHolder.getDisplayName().getString());
                     continue;
                 }
                 boolean alreadyLearnt = false;
                 for (BenchedMove benchedMove : potentialHolder.getBenchedMoves()) {
                     if (benchedMove.getMoveTemplate().getName().equalsIgnoreCase(move.getName())) {
                         alreadyLearnt = true;
-                        DaycarePlusServer.LOGGER.info("{} is already in the benched moves of {}", move.getName(), potentialHolder.getDisplayName().getString());
                         break;
                     }
                 }
@@ -97,9 +93,9 @@ public class PastureExtension {
 
             long ticksToProcess = Math.max(0, world.getTime() - prevTime);
             this.prevTime = world.getTime();
-            long eggAttempts = ticksToProcess / Options.getTicksPerEggAttempt();
+            long eggAttempts = ticksToProcess / DaycarePlusOptions.getTicksPerEggAttempt();
 
-            if ((world.getTime() + this.uuid.getLeastSignificantBits()) % Options.getTicksPerEggAttempt() == 0) ++eggAttempts;
+            if ((world.getTime() + this.uuid.getLeastSignificantBits()) % DaycarePlusOptions.getTicksPerEggAttempt() == 0) ++eggAttempts;
 
             int calculatedEggs = 0;
             PlayerEntity owner = null;
@@ -109,7 +105,7 @@ public class PastureExtension {
             }
 
             for (int i = 0; i < eggAttempts; ++i) {
-                if (world.getRandom().nextDouble() > Options.getSuccessRatePerEggAttempt()) continue;
+                if (world.getRandom().nextDouble() > DaycarePlusOptions.getSuccessRatePerEggAttempt()) continue;
                 applyMirrorHerb = true;
 
                 Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();
@@ -121,11 +117,11 @@ public class PastureExtension {
                     }
 
                     PokemonProperties properties = potentialEgg.createPokemonProperties();
-                    if (Options.doCompetitiveBreeding()) {
+                    if (DaycarePlusOptions.doCompetitiveBreeding()) {
                         FertilityProperty.decrement(potentialEgg.getPrimary());
                         FertilityProperty.decrement(potentialEgg.getSecondary());
 
-                        if (Options.shouldConsumeHeldItems()) {
+                        if (DaycarePlusOptions.shouldConsumeHeldItems()) {
                             if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getPrimary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
                                 potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true);
                             }
@@ -135,7 +131,7 @@ public class PastureExtension {
                         }
 
                         int lower = Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary()));
-                        properties.getCustomProperties().add(new FertilityProperty(lower));
+                        properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, lower));
                     }
 
                     if (owner instanceof ServerPlayerEntity serverPlayer) {
@@ -160,7 +156,7 @@ public class PastureExtension {
                 }
             }
 
-            calculatedEggs = MathHelper.clamp(calculatedEggs, 0, Options.getPastureInventorySize());
+            calculatedEggs = MathHelper.clamp(calculatedEggs, 0, DaycarePlusOptions.getPastureInventorySize());
             if (calculatedEggs > 0 && owner != null) {
                 if (calculatedEggs == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.single_egg_produced", calculatedEggs));
                 else owner.sendMessage(Text.translatable("message.chat.daycareplus.multiple_egg_produced", calculatedEggs));

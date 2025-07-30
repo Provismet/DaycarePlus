@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.breeding;
 
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public class BreedingLink {
     }
 
     public static boolean isAtLimit (UUID player) {
-        return count(player) >= Options.getMaxPasturesPerPlayer();
+        return count(player) >= DaycarePlusOptions.getMaxPasturesPerPlayer();
     }
 
     public static boolean isAtLimit (ServerPlayerEntity player) {

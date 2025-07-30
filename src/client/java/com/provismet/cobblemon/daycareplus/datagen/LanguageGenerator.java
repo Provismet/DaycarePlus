@@ -38,13 +38,18 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPIconItems.TAKE_ALL, "Deposit All");
 
         translationBuilder.add(DPItems.FERTILITY_CANDY, "Fertility Candy");
+        translationBuilder.add(DPItems.FERTILITY_CANDY.getTranslationKey() + ".tooltip", "Increases a Pokémon's fertility by 1");
         translationBuilder.add("message.overlay.daycareplus.fertility_boosted", "Your %1$s now has %2$s fertility.");
 
         // Egg Bag
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.singular", "Collected %1$s egg.");
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.collection.plural", "Collected %1$s eggs.");
-        translationBuilder.add("message.overlay.daycareplus.egg_bag.creative", "Egg bags cannot be used in creative mode!");
-        translationBuilder.add("tooltip.daycareplus.egg_bag.eggs_held", "Eggs Held: %1$s/%2$s");
+        translationBuilder.add("message.overlay.daycareplus.incubator.collection.singular", "Collected %1$s egg.");
+        translationBuilder.add("message.overlay.daycareplus.incubator.collection.plural", "Collected %1$s eggs.");
+        translationBuilder.add("message.overlay.daycareplus.incubator.creative", "Incubators cannot be used in creative mode!");
+        translationBuilder.add("message.overlay.daycareplus.incubator.stolen", "This is not your incubator!");
+        translationBuilder.add("message.overlay.daycareplus.incubator.typeless", "This incubator has no tier data!");
+        translationBuilder.add("message.overlay.daycareplus.incubator.claimed", "This is now your incubator.");
+        translationBuilder.add("tooltip.daycareplus.incubator.eggs_held", "Eggs Held: %1$s/%2$s");
+        translationBuilder.add("gui.title.daycareplus.incubator", "Incubator");
         translationBuilder.add("gui.button.daycareplus.prev", "Previous");
         translationBuilder.add("gui.button.daycareplus.next", "Next");
         translationBuilder.add("gui.button.daycareplus.take", "Deposit All");
@@ -55,6 +60,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("tooltip.daycareplus.egg.ticks", "§eTime:§f %1$s");
 
         // Daycare
+        translationBuilder.add("gui.title.daycareplus.daycare", "Daycare");
         translationBuilder.add("message.chat.daycareplus.egg_produced", "Your daycare has produced an egg.");
         translationBuilder.add("message.chat.daycareplus.single_egg_produced", "Your daycare produced %1$s egg while you were away.");
         translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");
@@ -83,6 +89,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(CobblemonItems.MIRROR_HERB.getTranslationKey() + ".breeding", "This Pokemon may learn egg moves from its partner.");
 
         // Intro GUI
+        translationBuilder.add("gui.title.daycareplus.intro", "Daycare Setup");
         translationBuilder.add("gui.button.daycareplus.intro.daycare", "Daycare");
         translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.1", "Use this pasture to breed Pokémon.");
         translationBuilder.add("gui.button.daycareplus.intro.daycare.tooltip.2", "Daycares Active: %1$s/%2$s");
@@ -106,6 +113,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("property.daycareplus.speed", "Speed: ");
         translationBuilder.add("property.daycareplus.shiny", "Shiny Chance: ");
         translationBuilder.add("property.daycareplus.fertility", "Fertility: ");
+        translationBuilder.add("property.daycareplus.unbreedable", "Unbreedable");
         translationBuilder.add("daycareplus.ui.fertility.level", "Fertility");
 
         // Stats

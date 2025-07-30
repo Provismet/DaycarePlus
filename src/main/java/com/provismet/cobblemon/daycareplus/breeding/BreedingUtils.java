@@ -14,7 +14,9 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
+import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -34,11 +36,17 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
     private static final Map<Identifier, PreEvoFormOverride> PRE_EVO_OVERRIDES = new HashMap<>();
     private static final Map<String, FormPropertiesOverride> FORM_PROPERTY_OVERRIDES = new HashMap<>();
 
+    public static boolean isAllowedToBreed (Pokemon pokemon) {
+        return BreedableProperty.get(pokemon)
+            && (!DaycarePlusOptions.doCompetitiveBreeding() || DaycarePlusOptions.shouldAllowBreedingWithoutFertility() || FertilityProperty.get(pokemon) > 0);
+    }
+
     public static boolean canBreed (Pokemon parent1, Pokemon parent2) {
+        if (!isAllowedToBreed(parent1) || !isAllowedToBreed(parent2)) return false;
+
         Set<EggGroup> eggGroups1 = parent1.getSpecies().getEggGroups();
         Set<EggGroup> eggGroups2 = parent2.getSpecies().getEggGroups();
 
-        if (Options.doCompetitiveBreeding() && !Options.shouldAllowBreedingWithoutFertility() && !parentsHaveFertility(parent1, parent2)) return false;
         if (eggGroups1.contains(EggGroup.UNDISCOVERED) || eggGroups2.contains(EggGroup.UNDISCOVERED)) return false;
         if (eggGroups1.contains(EggGroup.DITTO) ^ eggGroups2.contains(EggGroup.DITTO)) return true;
         if (parent1.getGender() == Gender.GENDERLESS || parent2.getGender() == Gender.GENDERLESS) return false;

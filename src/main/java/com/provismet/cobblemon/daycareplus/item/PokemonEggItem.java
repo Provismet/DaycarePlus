@@ -13,7 +13,9 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
 import com.cobblemon.mod.common.util.ResourceLocationExtensionsKt;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.StringFormatting;
@@ -33,8 +35,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class PokemonEggItem extends PolymerItem {
+    public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(() -> RecordCodecBuilder.create(instance -> instance.group(
+        Codec.STRING.optionalFieldOf("pokemon").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.POKEMON_PROPERTIES))),
+        Codec.INT.optionalFieldOf("steps").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.EGG_STEPS))),
+        Codec.INT.optionalFieldOf("max_steps").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.MAX_EGG_STEPS)))
+    ).apply(instance, (pokemonProperties, steps, maxSteps) -> {
+        if (pokemonProperties.isEmpty()) return ItemStack.EMPTY;
+        if (steps.isEmpty() || maxSteps.isEmpty()) return DPItems.POKEMON_EGG.createEggItem(PokemonProperties.Companion.parse(pokemonProperties.get()));
+
+        ItemStack stack = DPItems.POKEMON_EGG.getDefaultStack();
+        stack.set(DPItemDataComponents.POKEMON_PROPERTIES, pokemonProperties.get());
+        stack.set(DPItemDataComponents.EGG_STEPS, steps.get());
+        stack.set(DPItemDataComponents.MAX_EGG_STEPS, maxSteps.get());
+        return stack;
+    })));
+
     private static final int TICKS_PER_MINUTE = 60 * 20;
     private static final int DEFAULT_STEPS = 7200;
 
@@ -53,8 +71,8 @@ public class PokemonEggItem extends PolymerItem {
             Identifier speciesId = ResourceLocationExtensionsKt.asIdentifierDefaultingNamespace(properties.getSpecies(), Cobblemon.MODID);
             Species species = PokemonSpecies.INSTANCE.getByIdentifier(speciesId);
             if (species != null) {
-                stack.set(DPItemDataComponents.EGG_STEPS, Options.getEggPoints(species.getEggCycles()));
-                stack.set(DPItemDataComponents.MAX_EGG_STEPS, Options.getEggPoints(species.getEggCycles()));
+                stack.set(DPItemDataComponents.EGG_STEPS, DaycarePlusOptions.getEggPoints(species.getEggCycles()));
+                stack.set(DPItemDataComponents.MAX_EGG_STEPS, DaycarePlusOptions.getEggPoints(species.getEggCycles()));
             }
             else {
                 stack.set(DPItemDataComponents.EGG_STEPS, DEFAULT_STEPS);
@@ -80,7 +98,7 @@ public class PokemonEggItem extends PolymerItem {
 
             tooltip.add(Text.translatable("tooltip.daycareplus.egg.ticks", minutes + ":" + seconds));
         }
-        if (!Options.shouldShowEggTooltip()) return;
+        if (!DaycarePlusOptions.shouldShowEggTooltip()) return;
 
         tooltip.add(Text.empty());
         String properties = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
@@ -91,14 +109,12 @@ public class PokemonEggItem extends PolymerItem {
             PokemonProperties pokemonProperties = PokemonProperties.Companion.parse(properties);
             if (pokemonProperties.getSpecies() != null) {
                 MutableText species = Text.translatable("property.daycareplus.species").formatted(Formatting.YELLOW)
-                    .append(Text.literal(StringFormatting.titleCase(pokemonProperties.getSpecies())).styled(Styles.WHITE_NO_ITALICS));
-
-                if (Objects.requireNonNullElse(pokemonProperties.getShiny(), false)) species = species.append(Text.literal(" ★").formatted(Formatting.GOLD));
+                    .append(this.getTooltipSpeciesName(pokemonProperties));
                 tooltip.add(species);
             }
-            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getForm())).styled(Styles.WHITE_NO_ITALICS)));
-            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(Identifier.of(pokemonProperties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS)));
-            if (pokemonProperties.getAbility() != null) tooltip.add(Text.translatable("property.daycareplus.ability").formatted(Formatting.YELLOW).append(Text.literal(StringFormatting.titleCase(pokemonProperties.getAbility())).styled(Styles.WHITE_NO_ITALICS)));
+            if (pokemonProperties.getForm() != null) tooltip.add(Text.translatable("property.daycareplus.form").formatted(Formatting.YELLOW).append(this.getTooltipFormName(pokemonProperties)));
+            if (pokemonProperties.getNature() != null) tooltip.add(Text.translatable("property.daycareplus.nature").formatted(Formatting.YELLOW).append(this.getTooltipNatureName(pokemonProperties)));
+            if (pokemonProperties.getAbility() != null) tooltip.add(Text.translatable("property.daycareplus.ability").formatted(Formatting.YELLOW).append(this.getTooltipAbilityName(pokemonProperties)));
             if (pokemonProperties.getGender() != null && pokemonProperties.getGender() != Gender.GENDERLESS) {
                 Text gender = switch (pokemonProperties.getGender()) {
                     case MALE -> Text.literal("M").formatted(Formatting.BLUE);
@@ -126,6 +142,29 @@ public class PokemonEggItem extends PolymerItem {
                     .append(Text.literal(this.formatIV(iv, Stats.SPEED)).styled(Styles.WHITE_NO_ITALICS)));
             }
         }
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipSpeciesName (PokemonProperties properties) {
+        MutableText text = Text.literal(StringFormatting.titleCase(properties.getSpecies())).styled(Styles.WHITE_NO_ITALICS);
+        if (Objects.requireNonNullElse(properties.getShiny(), false)) text.append(Text.literal(" ★").formatted(Formatting.GOLD));
+        return text;
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipFormName (PokemonProperties properties) {
+        return Text.literal(StringFormatting.titleCase(properties.getForm())).styled(Styles.WHITE_NO_ITALICS);
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipNatureName (PokemonProperties properties) {
+        assert properties.getNature() != null;
+        return Text.literal(StringFormatting.titleCase(Identifier.of(properties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS);
+    }
+
+    // Exists for mixin convenience.
+    private MutableText getTooltipAbilityName (PokemonProperties properties) {
+        return Text.literal(StringFormatting.titleCase(properties.getAbility())).styled(Styles.WHITE_NO_ITALICS);
     }
 
     public int getRemainingSteps (ItemStack stack) {

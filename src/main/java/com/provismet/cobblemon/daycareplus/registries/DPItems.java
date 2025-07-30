@@ -1,13 +1,12 @@
 package com.provismet.cobblemon.daycareplus.registries;
 
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
-import com.provismet.cobblemon.daycareplus.config.Options;
 import com.provismet.cobblemon.daycareplus.item.EggBagItem;
 import com.provismet.cobblemon.daycareplus.item.IncubatorItem;
 import com.provismet.cobblemon.daycareplus.item.FertilityBoosterItem;
 import com.provismet.cobblemon.daycareplus.item.PokemonEggItem;
 import com.provismet.cobblemon.daycareplus.item.PolymerItem;
-import com.provismet.cobblemon.daycareplus.item.component.HeldEggsDataComponent;
+import com.provismet.cobblemon.daycareplus.item.component.IncubatorType;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.item.Item;
@@ -23,22 +22,22 @@ public abstract class DPItems {
     );
     public static final FertilityBoosterItem FERTILITY_CANDY = register("fertility_candy", FertilityBoosterItem::new);
 
-    public static final IncubatorItem COPPER_INCUBATOR = registerIncubator("copper_incubator", "copper", Options.getCopper());
-    public static final IncubatorItem IRON_INCUBATOR = registerIncubator("iron_incubator", "iron", Options.getIron());
-    public static final IncubatorItem GOLD_INCUBATOR = registerIncubator("gold_incubator", "gold", Options.getGold());
-    public static final IncubatorItem DIAMOND_INCUBATOR = registerIncubator("diamond_incubator", "diamond", Options.getDiamond());
-    public static final IncubatorItem NETHERITE_INCUBATOR = registerIncubator("netherite_incubator", "netherite", Options.getNetherite());
+    public static final IncubatorItem COPPER_INCUBATOR = registerIncubator("copper_incubator", IncubatorType.ofMain("copper"));
+    public static final IncubatorItem IRON_INCUBATOR = registerIncubator("iron_incubator", IncubatorType.ofMain("iron"));
+    public static final IncubatorItem GOLD_INCUBATOR = registerIncubator("gold_incubator", new IncubatorType("gold", "gold"));
+    public static final IncubatorItem DIAMOND_INCUBATOR = registerIncubator("diamond_incubator", IncubatorType.ofMain("diamond"));
+    public static final IncubatorItem NETHERITE_INCUBATOR = registerIncubator("netherite_incubator", IncubatorType.ofMain("netherite"));
 
     @Deprecated
-    public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", "copper", Options.getCopper());
+    public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", COPPER_INCUBATOR);
     @Deprecated
-    public static final EggBagItem IRON_EGG_BAG = registerBag("iron_egg_bag", "iron", Options.getIron());
+    public static final EggBagItem IRON_EGG_BAG = registerBag("iron_egg_bag", IRON_INCUBATOR);
     @Deprecated
-    public static final EggBagItem GOLD_EGG_BAG = registerBag("gold_egg_bag", "gold", Options.getGold());
+    public static final EggBagItem GOLD_EGG_BAG = registerBag("gold_egg_bag", GOLD_INCUBATOR);
     @Deprecated
-    public static final EggBagItem DIAMOND_EGG_BAG = registerBag("diamond_egg_bag", "diamond", Options.getDiamond());
+    public static final EggBagItem DIAMOND_EGG_BAG = registerBag("diamond_egg_bag", DIAMOND_INCUBATOR);
     @Deprecated
-    public static final EggBagItem NETHERITE_EGG_BAG = registerBag("netherite_egg_bag", "netherite", Options.getNetherite());
+    public static final EggBagItem NETHERITE_EGG_BAG = registerBag("netherite_egg_bag", NETHERITE_INCUBATOR);
 
     private static <T extends PolymerItem> T register (String name, ItemConstructor<T> constructor) {
         Identifier itemId = DaycarePlusServer.identifier(name);
@@ -47,27 +46,19 @@ public abstract class DPItems {
     }
 
     @Deprecated
-    private static EggBagItem registerBag (String name, String bagTier, Options.IncubatorSettings eggBagSettings) {
-        return register(name, (settings, vanillaItem, modelData) -> new EggBagItem(
-            settings
-                .maxCount(1)
-                .component(DPItemDataComponents.HELD_EGGS, new HeldEggsDataComponent(eggBagSettings.capacity(), bagTier)),
-            vanillaItem,
-            modelData,
-            eggBagSettings.eggsToTick()
-        ));
+    private static EggBagItem registerBag (String name, Item to) {
+        return register(name, (settings, vanillaItem, modelData) -> new EggBagItem(settings, vanillaItem, modelData, to));
     }
 
-    private static IncubatorItem registerIncubator (String name, String bagTier, Options.IncubatorSettings eggBagSettings) {
+    private static IncubatorItem registerIncubator (String name, IncubatorType incubatorType) {
         PolymerModelData eggModel = PolymerResourcePackUtils.requestModel(Items.IRON_NUGGET, DaycarePlusServer.identifier(name).withPrefixedPath("item/").withSuffixedPath("_full"));
         return register(name, (settings, vanillaItem, modelData) -> new IncubatorItem(
             settings
                 .maxCount(1)
-                .component(DPItemDataComponents.HELD_EGGS, new HeldEggsDataComponent(eggBagSettings.capacity(), bagTier)),
+                .component(DPItemDataComponents.INCUBATOR_TYPE, incubatorType),
             vanillaItem,
             modelData,
-            eggModel,
-            eggBagSettings.eggsToTick()
+            eggModel
         ));
     }
 

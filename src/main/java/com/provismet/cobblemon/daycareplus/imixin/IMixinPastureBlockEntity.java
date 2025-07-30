@@ -1,8 +1,8 @@
 package com.provismet.cobblemon.daycareplus.imixin;
 
-import ca.landonjw.gooeylibs2.api.button.ButtonBase;
 import com.provismet.cobblemon.daycareplus.breeding.PastureContainer;
 import com.provismet.cobblemon.daycareplus.breeding.PastureExtension;
+import eu.pb4.sgui.api.elements.GuiElement;
 
 import java.util.UUID;
 
@@ -22,5 +22,5 @@ public interface IMixinPastureBlockEntity extends PastureContainer {
     UUID getBreederUUID ();
     void setBreederUUID (UUID uuid);
 
-    ButtonBase getEggCounterButton ();
+    GuiElement getEggCounterButton ();
 }

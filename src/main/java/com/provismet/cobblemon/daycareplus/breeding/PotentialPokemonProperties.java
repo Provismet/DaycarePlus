@@ -24,7 +24,7 @@ import com.cobblemon.mod.common.pokemon.Nature;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.pokemon.abilities.HiddenAbilityType;
-import com.provismet.cobblemon.daycareplus.config.Options;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.util.MathExtras;
 import kotlin.Pair;
 import net.minecraft.item.Item;
@@ -202,7 +202,7 @@ public class PotentialPokemonProperties {
             }
         });
 
-        if (Options.doGen6EggMoves()) {
+        if (DaycarePlusOptions.doGen6EggMoves()) {
             this.primary.getBenchedMoves().forEach(benchedMove -> {
                 if (validEggMoves.stream().anyMatch(valid -> valid.getName().equalsIgnoreCase(benchedMove.getMoveTemplate().getName()))) {
                     eggMoves.add(benchedMove.getMoveTemplate().getName());
@@ -220,20 +220,25 @@ public class PotentialPokemonProperties {
     }
 
     public double getShinyRate () {
-        float shinyRate = Cobblemon.config.getShinyRate();
-        shinyRate /= Options.getShinyChanceMultiplier();
+        float shinyRate;
 
-        if (!Objects.equals(this.primary.getOriginalTrainer(), this.secondary.getOriginalTrainer()) || !(Objects.equals(this.primary.getOriginalTrainerName(), this.secondary.getOriginalTrainerName()))) {
-            shinyRate /= Options.getMasudaMultiplier();
+        if (DaycarePlusOptions.shouldUseShinyChanceEvent()) {
+            ShinyChanceCalculationEvent event = new ShinyChanceCalculationEvent(Cobblemon.config.getShinyRate(), this.primary);
+            CobblemonEvents.SHINY_CHANCE_CALCULATION.emit(event);
+            shinyRate = event.calculate(null);
         }
-        if (this.primary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
-        if (this.secondary.getShiny()) shinyRate /= Options.getCrystalMultiplier();
+        else {
+            shinyRate = Cobblemon.config.getShinyRate();
+        }
 
-        ShinyChanceCalculationEvent event = new ShinyChanceCalculationEvent(shinyRate, this.primary);
-        CobblemonEvents.SHINY_CHANCE_CALCULATION.emit(event);
+        shinyRate /= DaycarePlusOptions.getShinyChanceMultiplier();
+        if (!Objects.equals(this.primary.getOriginalTrainer(), this.secondary.getOriginalTrainer())) {
+            shinyRate /= DaycarePlusOptions.getMasudaMultiplier();
+        }
+        if (this.primary.getShiny()) shinyRate /= DaycarePlusOptions.getCrystalMultiplier();
+        if (this.secondary.getShiny()) shinyRate /= DaycarePlusOptions.getCrystalMultiplier();
 
-        double denominator = event.calculate(null);
-        return denominator == 0 ? 1 : 1 / denominator;
+        return shinyRate == 0 ? 1 : 1 / shinyRate;
     }
 
     private void setPokeBall (PokemonProperties properties) {
@@ -288,7 +293,7 @@ public class PotentialPokemonProperties {
 
     private void setNature (PokemonProperties properties) {
         List<Nature> natures = this.getPossibleNatures();
-        if (!natures.isEmpty() && !(Options.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary))) {
+        if (!natures.isEmpty() && !(DaycarePlusOptions.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary))) {
             // Technically there can be 2 possible natures if both parents hold an everstone.
             if (Math.random() < 0.5) properties.setNature(natures.getFirst().getName().toString());
             else properties.setNature(natures.getLast().getName().toString());
@@ -311,7 +316,7 @@ public class PotentialPokemonProperties {
 
     private void setIVs (PokemonProperties properties) {
         int forcedIVs = 3;
-        if (Options.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary)) {
+        if (DaycarePlusOptions.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary)) {
             forcedIVs = 0;
         }
         else if (this.primary.heldItem().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.heldItem().isOf(CobblemonItems.DESTINY_KNOT)) {
@@ -382,7 +387,7 @@ public class PotentialPokemonProperties {
                 possibleIVs.add(parent2.getIvs().getOrDefault(stat));
             }
 
-            if (Options.doCompetitiveBreeding()) {
+            if (DaycarePlusOptions.doCompetitiveBreeding()) {
                 if (BreedingUtils.parentsHaveFertility(parent1, parent2)) {
                     possibleIVs.remove(WILDCARD);
                     forced = true;

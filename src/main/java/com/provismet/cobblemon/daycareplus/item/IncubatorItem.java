@@ -1,26 +1,24 @@
 package com.provismet.cobblemon.daycareplus.item;
 
-import ca.landonjw.gooeylibs2.api.UIManager;
-import ca.landonjw.gooeylibs2.api.container.GooeyContainer;
 import com.cobblemon.mod.common.block.PastureBlock;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
-import com.provismet.cobblemon.daycareplus.gui.EggBagGUI;
+import com.provismet.cobblemon.daycareplus.gui.EggStorageGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
-import com.provismet.cobblemon.daycareplus.item.component.HeldEggsDataComponent;
+import com.provismet.cobblemon.daycareplus.item.component.IncubatorOwner;
+import com.provismet.cobblemon.daycareplus.item.component.IncubatorType;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
+import com.provismet.cobblemon.daycareplus.storage.EggStorage;
+import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.block.Block;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.tooltip.BundleTooltipData;
-import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -40,49 +38,55 @@ import java.util.Optional;
 import java.util.Set;
 
 public class IncubatorItem extends PolymerItem {
-    private static final Set<String> HATCH_ABILITIES = Set.of("flamebody", "steamengine", "magmaarmor");
-    private final int eggsToTick;
+    public static final Set<String> HATCH_ABILITIES = Set.of("flamebody", "steamengine", "magmaarmor");
     private final PolymerModelData hasEggData;
 
-    public IncubatorItem (Settings settings, Item baseVanillaItem, PolymerModelData normalData, PolymerModelData hasEggData, int eggsToTick) {
+    public IncubatorItem (Settings settings, Item baseVanillaItem, PolymerModelData normalData, PolymerModelData hasEggData) {
         super(settings, baseVanillaItem, normalData);
-        this.eggsToTick = eggsToTick;
         this.hasEggData = hasEggData;
     }
 
     @Override
-    public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        super.inventoryTick(stack, world, entity, slot, selected);
-        if (!(entity instanceof ServerPlayerEntity player) || player.age % 20 != 0) return;
-
-        // Exit early if other egg bags are found.
-        for (int i = slot + 1; i < player.getInventory().size(); ++i) {
-            if (player.getInventory().getStack(i).isIn(DPItemTags.INCUBATORS)) return;
-        }
-
-        int abilityMultiplier = 1;
-        for (Pokemon pokemon : PlayerExtensionsKt.party(player)) {
-            if (HATCH_ABILITIES.contains(pokemon.getAbility().getName().toLowerCase(Locale.ROOT))) {
-                abilityMultiplier = 2;
-                break;
-            }
-        }
-
-        this.tickEggs(stack, player, 20 * abilityMultiplier);
-        if (player.currentScreenHandler instanceof GooeyContainer gooeyContainer && gooeyContainer.getPage() instanceof EggBagGUI gui) {
-            gui.reset();
-        }
-    }
-
-    @Override
     public TypedActionResult<ItemStack> use (World world, PlayerEntity user, Hand hand) {
+        ItemStack stack = user.getStackInHand(hand);
+
         if (user.isCreative()) {
-            user.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.creative").formatted(Formatting.RED), true);
-            return TypedActionResult.fail(user.getStackInHand(hand));
+            user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.creative").formatted(Formatting.RED), true);
+            return TypedActionResult.fail(stack);
         }
 
         if (user instanceof ServerPlayerEntity serverPlayer) {
-            UIManager.openUIForcefully(serverPlayer, EggBagGUI.createFrom(user.getStackInHand(hand), serverPlayer));
+            if (stack.get(DPItemDataComponents.INCUBATOR_OWNER) == null) {
+                stack.set(DPItemDataComponents.INCUBATOR_OWNER, new IncubatorOwner(serverPlayer));
+                user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.claimed"), true);
+                return TypedActionResult.success(stack);
+            }
+            else if (this.isOwnedBy(stack, serverPlayer)) {
+                IncubatorType incubatorType = stack.get(DPItemDataComponents.INCUBATOR_TYPE);
+                if (incubatorType == null) {
+                    user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.typeless").formatted(Formatting.RED), true);
+                    return TypedActionResult.fail(stack);
+                }
+
+                IncubatorCollection collection = IncubatorCollection.getOrCreate(serverPlayer);
+                Optional<EggStorage> currentStorage = collection.get(incubatorType.type());
+                if (currentStorage.isPresent()) {
+                    currentStorage.get().tryUpgradeTo(incubatorType.tier());
+                }
+                else {
+                    EggStorage storage = EggStorage.fromSettings(incubatorType.tier());
+
+                    if (storage != null) {
+                        collection.put(incubatorType.type(), storage);
+                    }
+                }
+                EggStorageGUI gui = EggStorageGUI.create(serverPlayer, incubatorType.type());
+                if (gui != null) gui.open();
+            }
+            else {
+                user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.stolen").formatted(Formatting.RED), true);
+                return TypedActionResult.fail(user.getStackInHand(hand));
+            }
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }
@@ -95,18 +99,18 @@ public class IncubatorItem extends PolymerItem {
             BlockPos pasturePos = pastureBlock.getBasePosition(context.getWorld().getBlockState(context.getBlockPos()), context.getBlockPos());
 
             if (context.getWorld().getBlockEntity(pasturePos) instanceof IMixinPastureBlockEntity daycare) {
-                HeldEggsDataComponent component = context.getStack().get(DPItemDataComponents.HELD_EGGS);
-                if (component != null) {
-                    int remainingSlots = component.capacity() - component.contents().size();
+                Optional<EggStorage> storage = this.getStorage(context.getStack());
+                if (storage.isPresent()) {
+                    int remainingSlots = storage.get().getCapacity() - storage.get().size();
                     List<ItemStack> eggs = daycare.withdraw(remainingSlots);
-                    int size = eggs.size();
-                    context.getStack().set(DPItemDataComponents.HELD_EGGS, component.addAll(eggs));
+                    eggs.forEach(storage.get()::addCopyAndEmpty);
+
                     if (context.getPlayer() instanceof ServerPlayerEntity player) {
                         this.playInsertSound(player);
-                        if (size == 1)
-                            player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.singular", size), true);
+                        if (eggs.size() == 1)
+                            player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.singular", eggs.size()), true);
                         else
-                            player.sendMessage(Text.translatable("message.overlay.daycareplus.egg_bag.collection.plural", size), true);
+                            player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.plural", eggs.size()), true);
                     }
                     return ActionResult.SUCCESS;
                 }
@@ -115,40 +119,62 @@ public class IncubatorItem extends PolymerItem {
         return super.useOnBlock(context);
     }
 
-    // TODO: Only exists clientside, future goal is to make this work on compatible clients. Don't know how to check that yet though.
     @Override
-    public Optional<TooltipData> getTooltipData (ItemStack stack) {
-        return !stack.contains(DataComponentTypes.HIDE_TOOLTIP) && !stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)
-            ? Optional.ofNullable(stack.getOrDefault(DPItemDataComponents.HELD_EGGS, HeldEggsDataComponent.DEFAULT)).map(HeldEggsDataComponent::asBundle).map(BundleTooltipData::new)
-            : Optional.empty();
+    public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        IncubatorOwner owner = stack.get(DPItemDataComponents.INCUBATOR_OWNER);
+        if (owner != null) tooltip.add(Text.literal(owner.playerName()).styled(Styles.GRAY_NO_ITALICS));
+
+        this.getStorage(stack)
+            .ifPresent(eggStorage -> tooltip.add(
+                Text.translatable("tooltip.daycareplus.incubator.eggs_held", eggStorage.size(), eggStorage.getCapacity()).styled(Styles.GRAY_NO_ITALICS)
+            ));
     }
 
     @Override
-    public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        HeldEggsDataComponent component = stack.getOrDefault(DPItemDataComponents.HELD_EGGS, HeldEggsDataComponent.DEFAULT);
-        tooltip.add(Text.translatable("tooltip.daycareplus.egg_bag.eggs_held", component.contents().size(), component.capacity()).styled(Styles.GRAY_NO_ITALICS));
+    public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        if (entity instanceof ServerPlayerEntity player && player.age % 20 == 0) {
+            for (int i = slot + 1; i < player.getInventory().main.size(); ++i) {
+                if (player.getInventory().main.get(i).isIn(DPItemTags.INCUBATORS)) return;
+            }
+
+            this.tickEggs(stack, player, 20);
+        }
     }
 
     public void tickEggs (ItemStack stack, ServerPlayerEntity player, int amount) {
-        HeldEggsDataComponent component = stack.getOrDefault(DPItemDataComponents.HELD_EGGS, HeldEggsDataComponent.DEFAULT);
-        if (component.contents().isEmpty()) return;
-
-        for (int i = 0; i < this.eggsToTick; ++i) {
-            component.get(i).ifPresent(eggStack -> {
-                if (eggStack.getItem() instanceof PokemonEggItem egg) {
-                    egg.decrementEggSteps(eggStack, amount, player);
-                }
-            });
+        int abilityMultiplier = 1;
+        for (Pokemon pokemon : PlayerExtensionsKt.party(player)) {
+            if (IncubatorItem.HATCH_ABILITIES.contains(pokemon.getAbility().getName().toLowerCase(Locale.ROOT))) {
+                abilityMultiplier = 2;
+                break;
+            }
         }
-        stack.set(DPItemDataComponents.HELD_EGGS, component.validate());
+
+        int trueAmount = amount * abilityMultiplier;
+        this.getStorage(stack).ifPresent(storage -> {
+            storage.tick(trueAmount, player);
+            stack.set(DPItemDataComponents.EGGS_HELD, storage.size());
+        });
+    }
+
+    private boolean isOwnedBy (ItemStack stack, ServerPlayerEntity player) {
+        return stack.getOrDefault(DPItemDataComponents.INCUBATOR_OWNER, IncubatorOwner.DEFAULT).matches(player);
+    }
+
+    private Optional<EggStorage> getStorage (ItemStack stack) {
+        IncubatorOwner owner = stack.get(DPItemDataComponents.INCUBATOR_OWNER);
+        IncubatorType type = stack.get(DPItemDataComponents.INCUBATOR_TYPE);
+        if (owner != null && type != null) {
+            IncubatorCollection collection = IncubatorCollection.getCollection(owner.uuid());
+            if (collection != null) return collection.get(type.type());
+        }
+        return Optional.empty();
     }
 
     @Override
-    public int getPolymerCustomModelData (ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        if (itemStack.getOrDefault(DPItemDataComponents.HELD_EGGS, HeldEggsDataComponent.DEFAULT).isEmpty()) {
-            return super.getPolymerCustomModelData(itemStack, player);
-        }
-        return this.hasEggData.value();
+    public int getPolymerCustomModelData (ItemStack stack, @Nullable ServerPlayerEntity player) {
+        if (stack.getOrDefault(DPItemDataComponents.EGGS_HELD, 0) > 0) return this.hasEggData.value();
+        return super.getPolymerCustomModelData(stack, player);
     }
 
     private void playInsertSound (ServerPlayerEntity player) {

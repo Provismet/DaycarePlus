@@ -1,7 +1,6 @@
 package com.provismet.cobblemon.daycareplus.config;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
 import com.provismet.lilylib.util.json.JsonBuilder;
 import com.provismet.lilylib.util.json.JsonReader;
@@ -11,8 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Options {
-    private static final String FILE = "./config/daycareplus.json";
+public class DaycarePlusOptions {
+    private static final String FILE = "./config/daycareplus/config.json";
 
     // Egg Production
     private static long ticksPerEggAttempt = 12000;
@@ -23,7 +22,6 @@ public class Options {
 
     // Competitive Breeding
     private static boolean competitiveBreeding = false;
-    private static int maxFertility = 8;
     private static boolean allowBreedingWithoutFertility = false;
     private static boolean consumeHeldItems = true;
 
@@ -35,16 +33,10 @@ public class Options {
     private static float shinyChanceMultiplier = 1;
     private static float masudaMultiplier = 2;
     private static float crystalMultiplier = 1;
+    private static boolean useShinyEvent = true;
 
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
-
-    // Incubators
-    private static IncubatorSettings copper = new IncubatorSettings(8, 1);
-    private static IncubatorSettings iron = new IncubatorSettings(64, 2);
-    private static IncubatorSettings gold = new IncubatorSettings(32, 32);
-    private static IncubatorSettings diamond = new IncubatorSettings(96, 4);
-    private static IncubatorSettings netherite = new IncubatorSettings(128, 8);
 
     public static long getTicksPerEggAttempt () {
         return ticksPerEggAttempt;
@@ -70,10 +62,6 @@ public class Options {
         return competitiveBreeding;
     }
 
-    public static int getMaxFertility () {
-        return maxFertility;
-    }
-
     public static boolean shouldAllowBreedingWithoutFertility () {
         return allowBreedingWithoutFertility;
     }
@@ -88,6 +76,10 @@ public class Options {
 
     public static boolean shouldShowEggTooltip () {
         return showEggTooltip;
+    }
+
+    public static boolean shouldUseShinyChanceEvent () {
+        return useShinyEvent;
     }
 
     public static float getShinyChanceMultiplier () {
@@ -106,36 +98,6 @@ public class Options {
         return inheritEggMovesFromBothParents;
     }
 
-    public static IncubatorSettings getCopper () {
-        return copper;
-    }
-
-    public static IncubatorSettings getIron () {
-        return iron;
-    }
-
-    public static IncubatorSettings getGold () {
-        return gold;
-    }
-
-    public static IncubatorSettings getDiamond () {
-        return diamond;
-    }
-
-    public static IncubatorSettings getNetherite () {
-        return netherite;
-    }
-
-    public static IncubatorSettings getIncubatorSettings (String tier) {
-        return switch (tier) {
-            case "iron" -> iron;
-            case "gold" -> gold;
-            case "diamond" -> diamond;
-            case "netherite" -> netherite;
-            default -> copper;
-        };
-    }
-
     public static void save () {
         JsonBuilder builder = new JsonBuilder()
             .append(
@@ -148,11 +110,11 @@ public class Options {
             .append(
                 "competitiveMode", new JsonBuilder()
                     .append("useCompetitiveMode", competitiveBreeding)
-                    .append("maxFertility", maxFertility)
                     .append("allowBreedingWithoutFertility", allowBreedingWithoutFertility)
                     .append("consumeHeldItems", consumeHeldItems))
             .append(
                 "shinyChance", new JsonBuilder()
+                    .append("useEventTrigger", useShinyEvent)
                     .append("standardMultiplier", shinyChanceMultiplier)
                     .append("masudaMultiplier", masudaMultiplier)
                     .append("crystalMultiplier", crystalMultiplier))
@@ -160,14 +122,7 @@ public class Options {
                 "breedingRules", new JsonBuilder()
                     .append("inheritMovesFromBothParents", inheritEggMovesFromBothParents)
                     .append("ticksPerEggCycle", pointsPerEggCycle)
-                    .append("showEggTooltip", showEggTooltip))
-            .append(
-                "incubators", new JsonBuilder()
-                    .append("copper", copper.toJson())
-                    .append("iron", iron.toJson())
-                    .append("gold", gold.toJson())
-                    .append("diamond", diamond.toJson())
-                    .append("netherite", netherite.toJson()));
+                    .append("showEggTooltip", showEggTooltip));
 
         try (FileWriter writer = new FileWriter(FILE)) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
@@ -199,12 +154,12 @@ public class Options {
 
                 reader.getObjectAsReader("competitiveMode").ifPresent(competitiveMode -> {
                     competitiveMode.getBoolean("useCompetitiveMode").ifPresent(val -> competitiveBreeding = val);
-                    competitiveMode.getInteger("maxFertility").ifPresent(val -> maxFertility = val);
                     competitiveMode.getBoolean("allowBreedingWithoutFertility").ifPresent(val -> allowBreedingWithoutFertility = val);
                     competitiveMode.getBoolean("consumeHeldItems").ifPresent(val -> consumeHeldItems = val);
                 });
 
                 reader.getObjectAsReader("shinyChance").ifPresent(shinyChance -> {
+                    shinyChance.getBoolean("useEventTrigger").ifPresent(val -> useShinyEvent = val);;
                     shinyChance.getFloat("standardMultiplier").ifPresent(val -> shinyChanceMultiplier = val);
                     shinyChance.getFloat("masudaMultiplier").ifPresent(val -> masudaMultiplier = val);
                     shinyChance.getFloat("crystalMultiplier").ifPresent(val -> crystalMultiplier = val);
@@ -215,14 +170,6 @@ public class Options {
                     breedingRules.getInteger("ticksPerEggCycle").ifPresent(val -> pointsPerEggCycle = val);
                     breedingRules.getBoolean("showEggTooltip").ifPresent(val -> showEggTooltip = val);
                 });
-
-                reader.getObjectAsReader("incubators").ifPresent(incubators -> {
-                    incubators.getObject("copper").ifPresent(val -> copper = IncubatorSettings.fromJson(val));
-                    incubators.getObject("iron").ifPresent(val -> iron = IncubatorSettings.fromJson(val));
-                    incubators.getObject("gold").ifPresent(val -> gold = IncubatorSettings.fromJson(val));
-                    incubators.getObject("diamond").ifPresent(val -> diamond = IncubatorSettings.fromJson(val));
-                    incubators.getObject("netherite").ifPresent(val -> netherite = IncubatorSettings.fromJson(val));
-                });
             }
         }
         catch (FileNotFoundException e) {
@@ -232,26 +179,5 @@ public class Options {
             DaycarePlusServer.LOGGER.error("Error reading Daycare+ config: ", e);
         }
         save();
-    }
-
-    public record IncubatorSettings(int capacity, int eggsToTick) {
-        public static IncubatorSettings fromJson (JsonObject json) {
-            int capacity = 1;
-            int eggs = 1;
-            if (json.has("capacity")) {
-                capacity = json.getAsJsonPrimitive("capacity").getAsInt();
-            }
-            if (json.has("eggsToTickSimultaneously")) {
-                eggs = json.getAsJsonPrimitive("eggsToTickSimultaneously").getAsInt();
-            }
-            return new IncubatorSettings(capacity, eggs);
-        }
-
-        public JsonObject toJson () {
-            JsonObject json = new JsonObject();
-            json.addProperty("capacity", this.capacity);
-            json.addProperty("eggsToTickSimultaneously", this.eggsToTick);
-            return json;
-        }
     }
 }
