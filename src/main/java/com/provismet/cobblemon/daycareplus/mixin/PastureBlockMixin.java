@@ -38,7 +38,7 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
             if (!(world.getBlockEntity(basePos) instanceof PokemonPastureBlockEntity pastureBlockEntity)) return;
 
             boolean isOwner = pastureBlockEntity.getOwnerId() != null && pastureBlockEntity.getOwnerId().toString().equals(player.getUuid().toString());
-            if (serverPlayer.getMainHandStack().isIn(DPItemTags.INCUBATORS) && isOwner) {
+            if (serverPlayer.getMainHandStack().isIn(DPItemTags.BYPASS_DAYCARE_OPEN) && isOwner) {
                 cir.setReturnValue(ActionResult.PASS);
                 return;
             }

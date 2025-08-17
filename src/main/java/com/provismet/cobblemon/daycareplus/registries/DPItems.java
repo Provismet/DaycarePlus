@@ -21,6 +21,7 @@ public abstract class DPItems {
             new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData, PolymerResourcePackUtils.requestModel(vanillaItem, DaycarePlusServer.identifier("pokemon_egg_shiny").withPrefixedPath("item/")))
     );
     public static final FertilityBoosterItem FERTILITY_CANDY = register("fertility_candy", FertilityBoosterItem::new);
+    public static final DaycareSparkItem DAYCARE_SPARK = register("daycare_spark", DaycareSparkItem::new);
 
     public static final IncubatorItem COPPER_INCUBATOR = registerIncubator("copper_incubator", IncubatorType.ofMain("copper"));
     public static final IncubatorItem IRON_INCUBATOR = registerIncubator("iron_incubator", IncubatorType.ofMain("iron"));

@@ -77,6 +77,41 @@ public class PastureExtension {
         return BreedingUtils.getOffspring(parent1, parent2);
     }
 
+    public void produceEgg (PotentialPokemonProperties potentialEgg) {
+        PlayerEntity owner = null;
+        if (this.blockEntity.getOwnerId() != null && this.blockEntity.getWorld() != null) {
+            owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
+        }
+
+        PokemonProperties properties = potentialEgg.createPokemonProperties();
+        if (DaycarePlusOptions.doCompetitiveBreeding()) {
+            FertilityProperty.decrement(potentialEgg.getPrimary());
+            FertilityProperty.decrement(potentialEgg.getSecondary());
+
+            if (DaycarePlusOptions.shouldConsumeHeldItems()) {
+                if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getPrimary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
+                    potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true);
+                }
+                if (potentialEgg.getSecondary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getSecondary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
+                    potentialEgg.getSecondary().swapHeldItem(ItemStack.EMPTY, true);
+                }
+            }
+
+            int lower = Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary()));
+            properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, lower));
+        }
+
+        if (owner instanceof ServerPlayerEntity serverPlayer) {
+            CobblemonEvents.COLLECT_EGG.emit(new CollectEggEvent(properties, potentialEgg.getPrimary(), potentialEgg.getSecondary(), serverPlayer));
+        }
+        DaycarePlusEvents.PRE_EGG_PRODUCED.invoker().beforeItemCreated(properties);
+
+        ItemStack egg = DPItems.POKEMON_EGG.createEggItem(properties);
+        DaycarePlusEvents.POST_EGG_PRODUCED.invoker().afterItemCreated(egg);
+
+        ((PastureContainer)(Object)this.blockEntity).add(egg);
+    }
+
     public void tick () {
         if (this.blockEntity.getWorld() instanceof ServerWorld world) {
             if (world.getTime() % 20 == 0) {
@@ -110,39 +145,11 @@ public class PastureExtension {
 
                 Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();
                 if (optionalEgg.isPresent()) {
-                    PotentialPokemonProperties potentialEgg = optionalEgg.get();
                     if (owner != null) {
                         if (eggAttempts == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
                         else ++calculatedEggs;
                     }
-
-                    PokemonProperties properties = potentialEgg.createPokemonProperties();
-                    if (DaycarePlusOptions.doCompetitiveBreeding()) {
-                        FertilityProperty.decrement(potentialEgg.getPrimary());
-                        FertilityProperty.decrement(potentialEgg.getSecondary());
-
-                        if (DaycarePlusOptions.shouldConsumeHeldItems()) {
-                            if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getPrimary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
-                                potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true);
-                            }
-                            if (potentialEgg.getSecondary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getSecondary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
-                                potentialEgg.getSecondary().swapHeldItem(ItemStack.EMPTY, true);
-                            }
-                        }
-
-                        int lower = Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary()));
-                        properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, lower));
-                    }
-
-                    if (owner instanceof ServerPlayerEntity serverPlayer) {
-                        CobblemonEvents.COLLECT_EGG.emit(new CollectEggEvent(properties, potentialEgg.getPrimary(), potentialEgg.getSecondary(), serverPlayer));
-                    }
-                    DaycarePlusEvents.PRE_EGG_PRODUCED.invoker().beforeItemCreated(properties);
-
-                    ItemStack egg = DPItems.POKEMON_EGG.createEggItem(properties);
-                    DaycarePlusEvents.POST_EGG_PRODUCED.invoker().afterItemCreated(egg);
-
-                    ((PastureContainer)(Object)this.blockEntity).add(egg);
+                    this.produceEgg(optionalEgg.get());
                 }
             }
 

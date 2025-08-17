@@ -39,6 +39,8 @@ public class LanguageGenerator extends LilyLanguageProvider {
 
         translationBuilder.add(DPItems.FERTILITY_CANDY, "Fertility Candy");
         translationBuilder.add(DPItems.FERTILITY_CANDY.getTranslationKey() + ".tooltip", "Increases a Pokémon's fertility by 1");
+        translationBuilder.add(DPItems.DAYCARE_SPARK, "Daycare Spark");
+        translationBuilder.add(DPItems.DAYCARE_SPARK.getTranslationKey() + ".tooltip", "Forces a daycare to immediately produce an egg");
         translationBuilder.add("message.overlay.daycareplus.fertility_boosted", "Your %1$s now has %2$s fertility.");
 
         // Egg Bag
@@ -61,6 +63,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
 
         // Daycare
         translationBuilder.add("gui.title.daycareplus.daycare", "Daycare");
+        translationBuilder.add("message.chat.daycareplus.not_daycare", "This daycare is inactive.");
         translationBuilder.add("message.chat.daycareplus.egg_produced", "Your daycare has produced an egg.");
         translationBuilder.add("message.chat.daycareplus.single_egg_produced", "Your daycare produced %1$s egg while you were away.");
         translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");

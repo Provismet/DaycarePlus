@@ -1,0 +1,9 @@
+{
+  "values": [
+    {
+      "id": "#daycareplus:incubators",
+      "required": false
+    },
+    "daycareplus:daycare_spark"
+  ]
+}

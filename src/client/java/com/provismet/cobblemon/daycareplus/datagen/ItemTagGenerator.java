@@ -52,6 +52,10 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(DPItems.DIAMOND_EGG_BAG)
             .add(DPItems.NETHERITE_EGG_BAG);
 
+        this.getOrCreateTagBuilder(DPItemTags.BYPASS_DAYCARE_OPEN)
+            .addOptionalTag(DPItemTags.INCUBATORS)
+            .add(DPItems.DAYCARE_SPARK);
+
         this.getOrCreateTagBuilder(DPItemTags.GUI)
             .add(DPIconItems.INFO)
             .add(DPIconItems.LEFT)

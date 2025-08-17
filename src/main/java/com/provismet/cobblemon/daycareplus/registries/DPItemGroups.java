@@ -16,6 +16,7 @@ public abstract class DPItemGroups {
             entries.add(DPItems.DIAMOND_INCUBATOR);
             entries.add(DPItems.NETHERITE_INCUBATOR);
             entries.add(DPItems.FERTILITY_CANDY);
+            entries.add(DPItems.DAYCARE_SPARK);
         })
         .build();
 
