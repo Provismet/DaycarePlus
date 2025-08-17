@@ -164,7 +164,7 @@ public class PokemonEggItem extends PolymerItem {
 
     // Exists for mixin convenience.
     private MutableText getTooltipAbilityName (PokemonProperties properties) {
-        return Text.literal(StringFormatting.titleCase(properties.getAbility())).styled(Styles.WHITE_NO_ITALICS);
+        return Text.translatable("cobblemon.ability." + properties.getAbility()).styled(Styles.WHITE_NO_ITALICS);
     }
 
     public int getRemainingSteps (ItemStack stack) {
@@ -198,6 +198,7 @@ public class PokemonEggItem extends PolymerItem {
 
             CobblemonEvents.HATCH_EGG_PRE.emit(new HatchEggEvent.Pre(properties, player));
             Pokemon pokemon = properties.create(player);
+            pokemon.getAbility().setForced$common(false);
             player.sendMessage(Text.translatable("message.overlay.daycareplus.egg.hatch"), true);
             PlayerExtensionsKt.party(player).add(pokemon);
             CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(properties, player));

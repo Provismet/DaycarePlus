@@ -125,11 +125,12 @@ public interface DaycareGUI {
             eggData.add(
                 Text.translatable("property.daycareplus.species").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(tile.getSpecies().getTranslatedName().styled(Styles.WHITE_NO_ITALICS)),
                 Text.translatable("property.daycareplus.form").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(tile.getForm().getName()).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(String.join(", ", offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getName).map(StringFormatting::titleCase).toList())).styled(Styles.WHITE_NO_ITALICS)),
-                Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append((offspring.get().getPossibleNatures().isEmpty() ? Text.literal("?") : offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).map(Text::translatable).reduce(Text.literal(""), (nature1, nature2) -> nature1.getString().isEmpty() ? nature2 : nature1.append(", ").append(nature2))).styled(Styles.WHITE_NO_ITALICS))
+                Text.translatable("property.daycareplus.ability").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(listOfTranslatable(Text.literal(", ").styled(Styles.WHITE_NO_ITALICS), Styles.WHITE_NO_ITALICS, offspring.get().getPossibleAbilities().stream().map(AbilityTemplate::getDisplayName).toArray(String[]::new))),
+                Text.translatable("property.daycareplus.nature").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append((offspring.get().getPossibleNatures().isEmpty() ? Text.literal("?").styled(Styles.WHITE_NO_ITALICS) : listOfTranslatable(Text.literal(",").styled(Styles.WHITE_NO_ITALICS), Styles.WHITE_NO_ITALICS, offspring.get().getPossibleNatures().stream().map(Nature::getDisplayName).toArray(String[]::new))))
             );
             if (props.getMoves() != null && !props.getMoves().isEmpty()) {
-                eggData.add(Text.translatable("property.daycareplus.moves").styled(Styles.formattedNoItalics(Formatting.YELLOW)).append(Text.literal(String.join(", ", props.getMoves().stream().map(StringFormatting::titleCase).toList())).styled(Styles.WHITE_NO_ITALICS)));
+                eggData.add(Text.translatable("property.daycareplus.moves").styled(Styles.formattedNoItalics(Formatting.YELLOW))
+                    .append(listOfTranslatable(Text.literal(", ").styled(Styles.WHITE_NO_ITALICS), Styles.WHITE_NO_ITALICS, props.getMoves().stream().map(move -> "cobblemon.move." + move).toArray(String[]::new))));
             }
             eggData.add(
                 Text.empty(),
@@ -243,5 +244,14 @@ public interface DaycareGUI {
     private static Text formatProperty (String translationKey, UnaryOperator<Style> style, MutableText value) {
         return Text.translatable(translationKey).styled(style)
             .append(value.styled(Styles.WHITE_NO_ITALICS));
+    }
+
+    private static Text listOfTranslatable (Text separator, UnaryOperator<Style> style, String... translatables) {
+        MutableText text = Text.empty();
+        for (int i = 0; i < translatables.length; ++i) {
+            text = text.append(Text.translatable(translatables[i]).styled(style));
+            if (i < translatables.length - 1) text = text.append(separator);
+        }
+        return text;
     }
 }
