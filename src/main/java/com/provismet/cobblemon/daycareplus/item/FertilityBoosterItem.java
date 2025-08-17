@@ -33,7 +33,7 @@ public class FertilityBoosterItem extends PolymerItem implements PokemonSelectin
 
     @Override
     public void appendTooltip (ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.translatable(DPItems.FERTILITY_CANDY.getTranslationKey() + ".tooltip").styled(Styles.GRAY_NO_ITALICS));
+        tooltip.add(Text.translatable(this.getTranslationKey() + ".tooltip").styled(Styles.GRAY_NO_ITALICS));
     }
 
     @Nullable
