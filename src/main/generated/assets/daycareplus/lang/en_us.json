@@ -1,5 +1,6 @@
 {
   "daycareplus.ui.fertility.level": "Fertility",
+  "gui.button.daycareplus.boosts_remaining": "Twin Boosts Remaining: %1$s",
   "gui.button.daycareplus.eggs_held": "%1$s/%2$s eggs held",
   "gui.button.daycareplus.info": "Info",
   "gui.button.daycareplus.info.tooltip.1": "The daycare attempt to produce an egg periodically.",
@@ -33,6 +34,8 @@
   "item.cobblemon.power_lens.breeding": "This parent will pass on its Sp.Attack IV to the child.",
   "item.cobblemon.power_weight.breeding": "This parent will pass on its HP IV to the child.",
   "item.daycareplus.copper_incubator": "Copper Incubator",
+  "item.daycareplus.daycare_booster": "Dizygotic Booster",
+  "item.daycareplus.daycare_booster.tooltip": "Adds an extra egg to the next %1$s daycare cycles",
   "item.daycareplus.daycare_spark": "Daycare Spark",
   "item.daycareplus.daycare_spark.tooltip": "Forces a daycare to immediately produce an egg",
   "item.daycareplus.diamond_egg_bag": "Diamond Egg Bag",
@@ -57,6 +60,7 @@
   "message.chat.daycareplus.not_daycare": "This daycare is inactive.",
   "message.chat.daycareplus.single_egg_produced": "Your daycare produced %1$s egg while you were away.",
   "message.overlay.daycareplus.egg.hatch": "Your egg hatched.",
+  "message.overlay.daycareplus.egg_boosted": "Your daycare now has %1$s boosts.",
   "message.overlay.daycareplus.fertility_boosted": "Your %1$s now has %2$s fertility.",
   "message.overlay.daycareplus.incubator.claimed": "This is now your incubator.",
   "message.overlay.daycareplus.incubator.collection.plural": "Collected %1$s eggs.",

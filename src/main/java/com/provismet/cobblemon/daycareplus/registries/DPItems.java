@@ -1,6 +1,7 @@
 package com.provismet.cobblemon.daycareplus.registries;
 
 import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.item.DaycareBoosterItem;
 import com.provismet.cobblemon.daycareplus.item.DaycareSparkItem;
 import com.provismet.cobblemon.daycareplus.item.EggBagItem;
 import com.provismet.cobblemon.daycareplus.item.IncubatorItem;
@@ -25,6 +26,7 @@ public abstract class DPItems {
     );
     public static final FertilityBoosterItem FERTILITY_CANDY = register("fertility_candy", FertilityBoosterItem::new);
     public static final DaycareSparkItem DAYCARE_SPARK = register("daycare_spark", DaycareSparkItem::new);
+    public static final DaycareBoosterItem DAYCARE_BOOSTER = register("daycare_booster", (settings, vanillaItem, modelData) -> new DaycareBoosterItem(settings.component(DPItemDataComponents.BOOST_AMOUNT, 5), vanillaItem, modelData));
 
     public static final IncubatorItem COPPER_INCUBATOR = registerIncubator("copper_incubator", IncubatorType.ofMain("copper"));
     public static final IncubatorItem IRON_INCUBATOR = registerIncubator("iron_incubator", IncubatorType.ofMain("iron"));

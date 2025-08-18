@@ -54,7 +54,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
         this.getOrCreateTagBuilder(DPItemTags.BYPASS_DAYCARE_OPEN)
             .addOptionalTag(DPItemTags.INCUBATORS)
-            .add(DPItems.DAYCARE_SPARK);
+            .add(DPItems.DAYCARE_SPARK)
+            .add(DPItems.DAYCARE_BOOSTER);
 
         this.getOrCreateTagBuilder(DPItemTags.GUI)
             .add(DPIconItems.INFO)

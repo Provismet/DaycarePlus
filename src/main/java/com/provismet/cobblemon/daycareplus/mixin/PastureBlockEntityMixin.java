@@ -50,6 +50,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Unique private PastureExtension extension;
     @Unique private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(DaycarePlusOptions.getPastureInventorySize(), ItemStack.EMPTY);
     @Unique private GuiElement eggCounter = DaycareGUI.createEggButton(this);
+    @Unique private GuiElement boostCounter = DaycareGUI.createBoostButton(this);
 
     @Override
     public PastureExtension getExtension () {
@@ -94,7 +95,13 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Override
     public GuiElement getEggCounterButton () {
         this.updateEggCounter();
-        return eggCounter;
+        return this.eggCounter;
+    }
+
+    @Override
+    public GuiElement getBoostCounterButton () {
+        this.updateBoostCounter();
+        return this.boostCounter;
     }
 
     @Override
@@ -114,6 +121,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
                 this.inventory.set(i, stack.copyAndEmpty());
                 this.markDirty();
                 this.updateEggCounter();
+                this.updateBoostCounter();
                 break;
             }
         }
@@ -189,6 +197,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
         this.inventory.set(slot, stack);
         this.markDirty();
         this.updateEggCounter();
+        this.updateBoostCounter();
     }
 
     @Override
@@ -206,6 +215,11 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Unique
     private void updateEggCounter () {
         this.eggCounter.getItemStack().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.eggs_held", this.count(), this.size()).styled(Styles.WHITE_NO_ITALICS));
+    }
+
+    @Unique
+    private void updateBoostCounter () {
+        this.boostCounter.getItemStack().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.boosts_remaining", this.getExtension() != null ? this.getExtension().getBoosts() : 0).styled(Styles.WHITE_NO_ITALICS));
     }
 
     @Inject(method = "TICKER$lambda$14", at = @At("HEAD"))
@@ -234,7 +248,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
             }
 
             if (imixin.getExtension() == null) {
-                imixin.setExtension(new PastureExtension(pasture, Long.MAX_VALUE, imixin.getBreederUUID()));
+                imixin.setExtension(new PastureExtension(pasture, Long.MAX_VALUE, imixin.getBreederUUID(), 0));
             }
             imixin.getExtension().tick();
         }
@@ -252,6 +266,10 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
         if (this.extension != null) breederNbt.putLong("prevTick", this.extension.getPrevTime());
         else if (this.world != null) breederNbt.putLong("prevTick", this.world.getTime());
         else breederNbt.putLong("prevTick", Long.MAX_VALUE);
+
+        if (this.extension != null) breederNbt.putInt("boosts", this.extension.getBoosts());
+        else breederNbt.putInt("boosts", 0);
+
         Inventories.writeNbt(breederNbt, this.inventory, registryLookup);
 
         nbt.put("daycarePlus", breederNbt);
@@ -266,9 +284,11 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
             if (this.isBreeder) {
                 long prevTick = Long.MAX_VALUE;
+                int boosts = 0;
                 if (daycareNbt.contains("prevTick")) prevTick = daycareNbt.getLong("prevTick");
+                if (daycareNbt.contains("boosts")) boosts = daycareNbt.getInt("boosts");
 
-                this.extension = new PastureExtension((PokemonPastureBlockEntity)(Object)this, prevTick, this.breederUuid);
+                this.extension = new PastureExtension((PokemonPastureBlockEntity)(Object)this, prevTick, this.breederUuid, boosts);
             }
 
             this.inventory = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);

@@ -23,4 +23,5 @@ public interface IMixinPastureBlockEntity extends PastureContainer {
     void setBreederUUID (UUID uuid);
 
     GuiElement getEggCounterButton ();
+    GuiElement getBoostCounterButton ();
 }

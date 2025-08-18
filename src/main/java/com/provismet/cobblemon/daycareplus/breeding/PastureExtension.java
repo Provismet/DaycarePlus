@@ -29,11 +29,13 @@ public class PastureExtension {
     private final UUID uuid;
     private final PokemonPastureBlockEntity blockEntity;
     private long prevTime;
+    private int boosts;
 
-    public PastureExtension (PokemonPastureBlockEntity blockEntity, long prevTime, UUID uuid) {
+    public PastureExtension (PokemonPastureBlockEntity blockEntity, long prevTime, UUID uuid, int boosts) {
         this.blockEntity = blockEntity;
         this.prevTime = prevTime;
         this.uuid = uuid;
+        this.boosts = boosts;
     }
 
     private void tryApplyMirrorHerb (Pokemon potentialHolder, Pokemon other) {
@@ -67,6 +69,14 @@ public class PastureExtension {
 
     public long getPrevTime () {
         return this.prevTime;
+    }
+
+    public int getBoosts () {
+        return this.boosts;
+    }
+
+    public void setBoosts (int boosts) {
+        this.boosts = boosts;
     }
 
     public Optional<PotentialPokemonProperties> predictEgg () {
@@ -143,13 +153,20 @@ public class PastureExtension {
                 if (world.getRandom().nextDouble() > DaycarePlusOptions.getSuccessRatePerEggAttempt()) continue;
                 applyMirrorHerb = true;
 
-                Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();
-                if (optionalEgg.isPresent()) {
-                    if (owner != null) {
-                        if (eggAttempts == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
-                        else ++calculatedEggs;
+                int eggsToProduce = 1;
+                if (this.boosts > 0) {
+                    eggsToProduce = 2;
+                    --this.boosts;
+                }
+                for (int j = 0; j < eggsToProduce; ++j) {
+                    Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();
+                    if (optionalEgg.isPresent()) {
+                        if (owner != null) {
+                            if (eggAttempts == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
+                            else ++calculatedEggs;
+                        }
+                        this.produceEgg(optionalEgg.get());
                     }
-                    this.produceEgg(optionalEgg.get());
                 }
             }
 

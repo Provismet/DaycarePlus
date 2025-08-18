@@ -19,7 +19,6 @@ import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
-import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import eu.pb4.sgui.api.elements.GuiElement;
@@ -70,6 +69,7 @@ public interface DaycareGUI {
             .build();
 
         GuiElement eggCounter = mixinPasture.getEggCounterButton();
+        GuiElement boostCounter = mixinPasture.getBoostCounterButton();
 
         Pokemon parent1 = null;
         Pokemon parent2 = null;
@@ -189,6 +189,10 @@ public interface DaycareGUI {
         for (int i = 0; i < gui.getVirtualSize(); ++i) {
             gui.setSlot(i, filler);
         }
+
+        if (mixinPasture.getExtension() != null && mixinPasture.getExtension().getBoosts() > 0) {
+            gui.setSlot(5, boostCounter);
+        }
         gui.setSlot(6, eggCounter);
         gui.setSlot(7, openPasture);
         gui.setSlot(8, infoButton);
@@ -204,6 +208,13 @@ public interface DaycareGUI {
         return GuiElementBuilder.from(DPItems.POKEMON_EGG.getDefaultStack())
             .hideDefaultTooltip()
             .setName(Text.translatable("gui.button.daycareplus.eggs_held", mixinPasture.count(), mixinPasture.size()).styled(Styles.WHITE_NO_ITALICS))
+            .build();
+    }
+
+    static GuiElement createBoostButton (IMixinPastureBlockEntity mixinPasture) {
+        return GuiElementBuilder.from(DPItems.DAYCARE_BOOSTER.getDefaultStack())
+            .hideDefaultTooltip()
+            .setName(Text.translatable("gui.button.daycareplus.boosts_remaining", mixinPasture.getExtension() != null ? mixinPasture.getExtension().getBoosts() : 0).styled(Styles.WHITE_NO_ITALICS))
             .build();
     }
 
