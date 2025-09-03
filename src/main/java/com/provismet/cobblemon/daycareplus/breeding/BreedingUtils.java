@@ -140,6 +140,8 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
     @Override
     public void reload (ResourceManager manager) {
+        // Dynamic Registries probably make more sense in practice, but that would require passing Dynamic Registry managers all over this class.
+
         PRE_EVO_OVERRIDES.clear();
         FORM_PROPERTY_OVERRIDES.clear();
 
