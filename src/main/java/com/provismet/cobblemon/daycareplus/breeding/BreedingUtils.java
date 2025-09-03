@@ -141,6 +141,7 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
     @Override
     public void reload (ResourceManager manager) {
         PRE_EVO_OVERRIDES.clear();
+        FORM_PROPERTY_OVERRIDES.clear();
 
         Map<Identifier, Resource> overrides = manager.findResources("overrides/preevolutions", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusMain.MODID) && identifier.getPath().endsWith(".json"));
         for (Map.Entry<Identifier, Resource> entry : overrides.entrySet()) {
