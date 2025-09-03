@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.registries;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.item.PolymerItem;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
@@ -18,7 +18,7 @@ public abstract class DPIconItems {
     public static final PolymerItem TAKE_ALL = register("take_all", PolymerItem::new);
 
     private static <T extends PolymerItem> T register (String name, DPItems.ItemConstructor<T> constructor) {
-        Identifier itemId = DaycarePlusServer.identifier(name);
+        Identifier itemId = DaycarePlusMain.identifier(name);
         PolymerModelData model = PolymerResourcePackUtils.requestModel(Items.FLINT, itemId.withPrefixedPath("item/"));
         return Registry.register(Registries.ITEM, itemId, constructor.apply(new Item.Settings(), Items.FLINT, model));
     }

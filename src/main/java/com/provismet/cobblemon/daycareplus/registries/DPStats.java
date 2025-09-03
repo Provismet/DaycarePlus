@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.registries;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import eu.pb4.polymer.core.api.other.PolymerStat;
 import net.minecraft.stat.StatFormatter;
 import net.minecraft.text.Text;
@@ -11,7 +11,7 @@ public abstract class DPStats {
     public static final Identifier EGGS_COLLECTED = register("eggs_collected", Text.translatable("stat.daycareplus.eggs_collected"));
 
     private static Identifier register (String name, Text displayName) {
-        return PolymerStat.registerStat(DaycarePlusServer.identifier(name), displayName, StatFormatter.DEFAULT);
+        return PolymerStat.registerStat(DaycarePlusMain.identifier(name), displayName, StatFormatter.DEFAULT);
     }
 
     public static void init () {}

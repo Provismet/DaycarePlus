@@ -18,11 +18,8 @@
 	"icon": "assets/daycareplus/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"client": [
-			"com.provismet.cobblemon.daycareplus.DaycarePlusClient"
-		],
-		"server": [
-			"com.provismet.cobblemon.daycareplus.DaycarePlusServer"
+		"main": [
+			"com.provismet.cobblemon.daycareplus.DaycarePlusMain"
 		],
 		"fabric-datagen": [
 			"com.provismet.cobblemon.daycareplus.datagen.DaycarePlusDatagen"
@@ -37,6 +34,9 @@
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*",
-		"cobblemon": "*"
+		"cobblemon": "*",
+        "lilylib": "*",
+        "polymer-core": "*",
+        "polymer-common": "*"
 	}
 }

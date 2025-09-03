@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.registries;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.item.DaycareBoosterItem;
 import com.provismet.cobblemon.daycareplus.item.DaycareSparkItem;
 import com.provismet.cobblemon.daycareplus.item.EggBagItem;
@@ -22,7 +22,7 @@ import java.util.function.Function;
 public abstract class DPItems {
     public static final PokemonEggItem POKEMON_EGG = register("pokemon_egg",
         (settings, vanillaItem, modelData) ->
-            new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData, PolymerResourcePackUtils.requestModel(vanillaItem, DaycarePlusServer.identifier("pokemon_egg_shiny").withPrefixedPath("item/")))
+            new PokemonEggItem(settings.maxCount(1).maxDamage(100), vanillaItem, modelData, PolymerResourcePackUtils.requestModel(vanillaItem, DaycarePlusMain.identifier("pokemon_egg_shiny").withPrefixedPath("item/")))
     );
     public static final FertilityBoosterItem FERTILITY_CANDY = register("fertility_candy", FertilityBoosterItem::new);
     public static final DaycareSparkItem DAYCARE_SPARK = register("daycare_spark", DaycareSparkItem::new);
@@ -46,7 +46,7 @@ public abstract class DPItems {
     public static final EggBagItem NETHERITE_EGG_BAG = registerBag("netherite_egg_bag", NETHERITE_INCUBATOR);
 
     private static <T extends PolymerItem> T register (String name, ItemConstructor<T> constructor) {
-        Identifier itemId = DaycarePlusServer.identifier(name);
+        Identifier itemId = DaycarePlusMain.identifier(name);
         PolymerModelData model = PolymerResourcePackUtils.requestModel(Items.IRON_NUGGET, itemId.withPrefixedPath("item/"));
         return Registry.register(Registries.ITEM, itemId, constructor.apply(new Item.Settings(), Items.IRON_NUGGET, model));
     }
@@ -57,7 +57,7 @@ public abstract class DPItems {
     }
 
     private static IncubatorItem registerIncubator (String name, IncubatorType incubatorType, Function<Item.Settings, Item.Settings> settingsModifier) {
-        PolymerModelData eggModel = PolymerResourcePackUtils.requestModel(Items.IRON_NUGGET, DaycarePlusServer.identifier(name).withPrefixedPath("item/").withSuffixedPath("_full"));
+        PolymerModelData eggModel = PolymerResourcePackUtils.requestModel(Items.IRON_NUGGET, DaycarePlusMain.identifier(name).withPrefixedPath("item/").withSuffixedPath("_full"));
         return register(name, (settings, vanillaItem, modelData) -> new IncubatorItem(
             settingsModifier.apply(settings)
                 .maxCount(1)

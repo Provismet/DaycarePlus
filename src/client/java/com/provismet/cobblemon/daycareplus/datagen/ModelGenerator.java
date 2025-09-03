@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -40,8 +40,8 @@ public class ModelGenerator extends FabricModelProvider {
 
         generated.accept(DPItems.POKEMON_EGG);
         Models.GENERATED.upload(
-            DaycarePlusServer.identifier("item/pokemon_egg_shiny"),
-            TextureMap.layer0(DaycarePlusServer.identifier("item/pokemon_egg_shiny")),
+            DaycarePlusMain.identifier("item/pokemon_egg_shiny"),
+            TextureMap.layer0(DaycarePlusMain.identifier("item/pokemon_egg_shiny")),
             itemModelGenerator.writer
         );
         generated.accept(DPItems.FERTILITY_CANDY);

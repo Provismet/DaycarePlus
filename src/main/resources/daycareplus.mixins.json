@@ -2,7 +2,7 @@
     "required": true,
     "package": "com.provismet.cobblemon.daycareplus.mixin",
     "compatibilityLevel": "JAVA_21",
-    "server": [
+    "mixins": [
         "PastureBlockEntityMixin",
         "PastureBlockMixin",
         "SpeciesFeaturesMixin"

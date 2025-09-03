@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.registries;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.text.Text;
@@ -22,6 +22,6 @@ public abstract class DPItemGroups {
         .build();
 
     public static void register () {
-        PolymerItemGroupUtils.registerPolymerItemGroup(DaycarePlusServer.identifier("item_group"), DP_ITEMS);
+        PolymerItemGroupUtils.registerPolymerItemGroup(DaycarePlusMain.identifier("item_group"), DP_ITEMS);
     }
 }

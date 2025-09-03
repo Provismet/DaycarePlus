@@ -7,7 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -67,9 +67,9 @@ public class IncubatorCollection implements Iterable<Map.Entry<String, EggStorag
                 writer.write(jsonString);
             }
             catch (IOException e) {
-                DaycarePlusServer.LOGGER.error("Failed to save incubator data for uuid: {}", ownerUUID);
-                DaycarePlusServer.LOGGER.error("Incubator JSON: {}", jsonString);
-                DaycarePlusServer.LOGGER.error("Stack Trace: ", e);
+                DaycarePlusMain.LOGGER.error("Failed to save incubator data for uuid: {}", ownerUUID);
+                DaycarePlusMain.LOGGER.error("Incubator JSON: {}", jsonString);
+                DaycarePlusMain.LOGGER.error("Stack Trace: ", e);
             }
         });
     }
@@ -95,8 +95,8 @@ public class IncubatorCollection implements Iterable<Map.Entry<String, EggStorag
 
         }
         catch (Exception e) {
-            DaycarePlusServer.LOGGER.error("Failed to read incubator file {}", savePath.toAbsolutePath());
-            DaycarePlusServer.LOGGER.error("Stack Trace: ", e);
+            DaycarePlusMain.LOGGER.error("Failed to read incubator file {}", savePath.toAbsolutePath());
+            DaycarePlusMain.LOGGER.error("Stack Trace: ", e);
         }
     }
 

@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.lilylib.util.json.JsonBuilder;
 import com.provismet.lilylib.util.json.JsonReader;
 
@@ -69,10 +69,10 @@ public class IncubatorTiers {
             }
         }
         catch (FileNotFoundException e) {
-            DaycarePlusServer.LOGGER.info("No incubator config found, creating default.");
+            DaycarePlusMain.LOGGER.info("No incubator config found, creating default.");
         }
         catch (Exception e) {
-            DaycarePlusServer.LOGGER.error("Error reading Daycare+ incubator config: ", e);
+            DaycarePlusMain.LOGGER.error("Error reading Daycare+ incubator config: ", e);
         }
         save();
     }
@@ -88,7 +88,7 @@ public class IncubatorTiers {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
         }
         catch (IOException e) {
-            DaycarePlusServer.LOGGER.error("Error whilst saving config: ", e);
+            DaycarePlusMain.LOGGER.error("Error whilst saving config: ", e);
         }
     }
 

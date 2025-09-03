@@ -13,8 +13,8 @@ import com.provismet.cobblemon.daycareplus.registries.DPPokemonProperties;
 import com.provismet.cobblemon.daycareplus.registries.DPStats;
 import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
-import net.fabricmc.api.DedicatedServerModInitializer;
 
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-public class DaycarePlusServer implements DedicatedServerModInitializer {
+public class DaycarePlusMain implements ModInitializer {
 	public static final String MODID = "daycareplus";
 	public static final Logger LOGGER = LoggerFactory.getLogger("Daycare+");
 
@@ -35,7 +35,7 @@ public class DaycarePlusServer implements DedicatedServerModInitializer {
 	}
 
 	@Override
-	public void onInitializeServer () {
+	public void onInitialize () {
 		DaycarePlusOptions.load();
 		IncubatorTiers.load();
 
@@ -46,7 +46,6 @@ public class DaycarePlusServer implements DedicatedServerModInitializer {
 		DPItemDataComponents.init();
 		DPItemGroups.register();
 		DPStats.init();
-		DPPokemonProperties.register();
 		DPCommands.register();
 
 		CobblemonEventHandler.register();
@@ -74,7 +73,7 @@ public class DaycarePlusServer implements DedicatedServerModInitializer {
 					initializer.getEntrypoint().onInitialize();
 				}
 				catch (Throwable e) {
-					DaycarePlusServer.LOGGER.error("Daycare+ failed to initialise sidemod entrypoint from {} due to errors provided by it:", initializer.getProvider().getMetadata().getName(), e);
+					DaycarePlusMain.LOGGER.error("Daycare+ failed to initialise sidemod entrypoint from {} due to errors provided by it:", initializer.getProvider().getMetadata().getName(), e);
 				}
 			}
 		);

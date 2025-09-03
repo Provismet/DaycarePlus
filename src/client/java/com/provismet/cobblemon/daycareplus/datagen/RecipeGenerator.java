@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.item.EggBagItem;
 import com.provismet.cobblemon.daycareplus.item.IncubatorItem;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
@@ -33,11 +33,11 @@ public class RecipeGenerator extends FabricRecipeProvider {
             .criterion(FabricRecipeProvider.hasItem(DPItems.POKEMON_EGG), FabricRecipeProvider.conditionsFromItem(DPItems.POKEMON_EGG))
             .offerTo(recipeExporter); // Unlock the recipe after collecting an egg.
 
-        this.convert(DPItems.LEATHER_EGG_BAG, DPItems.COPPER_INCUBATOR).offerTo(recipeExporter, DaycarePlusServer.identifier("copper_convert"));
-        this.convert(DPItems.IRON_EGG_BAG, DPItems.IRON_INCUBATOR).offerTo(recipeExporter, DaycarePlusServer.identifier("iron_convert"));
-        this.convert(DPItems.GOLD_EGG_BAG, DPItems.GOLD_INCUBATOR).offerTo(recipeExporter, DaycarePlusServer.identifier("gold_convert"));
-        this.convert(DPItems.DIAMOND_EGG_BAG, DPItems.DIAMOND_INCUBATOR).offerTo(recipeExporter, DaycarePlusServer.identifier("diamond_convert"));
-        this.convert(DPItems.NETHERITE_EGG_BAG, DPItems.NETHERITE_INCUBATOR).offerTo(recipeExporter, DaycarePlusServer.identifier("netherite_convert"));
+        this.convert(DPItems.LEATHER_EGG_BAG, DPItems.COPPER_INCUBATOR).offerTo(recipeExporter, DaycarePlusMain.identifier("copper_convert"));
+        this.convert(DPItems.IRON_EGG_BAG, DPItems.IRON_INCUBATOR).offerTo(recipeExporter, DaycarePlusMain.identifier("iron_convert"));
+        this.convert(DPItems.GOLD_EGG_BAG, DPItems.GOLD_INCUBATOR).offerTo(recipeExporter, DaycarePlusMain.identifier("gold_convert"));
+        this.convert(DPItems.DIAMOND_EGG_BAG, DPItems.DIAMOND_INCUBATOR).offerTo(recipeExporter, DaycarePlusMain.identifier("diamond_convert"));
+        this.convert(DPItems.NETHERITE_EGG_BAG, DPItems.NETHERITE_INCUBATOR).offerTo(recipeExporter, DaycarePlusMain.identifier("netherite_convert"));
 
         this.incubator(DPItems.IRON_INCUBATOR, Items.IRON_BLOCK, DPItems.COPPER_INCUBATOR).offerTo(recipeExporter);
         this.incubator(DPItems.GOLD_INCUBATOR, Items.GOLD_BLOCK, DPItems.IRON_INCUBATOR).offerTo(recipeExporter); // Non-linear progression.

@@ -13,7 +13,7 @@ import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
 import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
@@ -135,14 +135,14 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
     @Override
     public Identifier getFabricId () {
-        return DaycarePlusServer.identifier("reload_listener");
+        return DaycarePlusMain.identifier("reload_listener");
     }
 
     @Override
     public void reload (ResourceManager manager) {
         PRE_EVO_OVERRIDES.clear();
 
-        Map<Identifier, Resource> overrides = manager.findResources("overrides/preevolutions", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusServer.MODID) && identifier.getPath().endsWith(".json"));
+        Map<Identifier, Resource> overrides = manager.findResources("overrides/preevolutions", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusMain.MODID) && identifier.getPath().endsWith(".json"));
         for (Map.Entry<Identifier, Resource> entry : overrides.entrySet()) {
             try (InputStream stream = entry.getValue().getInputStream()) {
                 String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
@@ -150,14 +150,14 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
                 PreEvoFormOverride resolved = dataResult.getOrThrow().getFirst();
 
                 PRE_EVO_OVERRIDES.put(resolved.species(), resolved);
-                DaycarePlusServer.LOGGER.info("Registered evolution override: {}", resolved);
+                DaycarePlusMain.LOGGER.info("Registered evolution override: {}", resolved);
             }
             catch (Throwable e) {
-                DaycarePlusServer.LOGGER.error("DaycarePlus encountered an error whilst parsing override file {}: ", entry.getKey(), e);
+                DaycarePlusMain.LOGGER.error("DaycarePlus encountered an error whilst parsing override file {}: ", entry.getKey(), e);
             }
         }
 
-        Map<Identifier, Resource> forms = manager.findResources("overrides/forms", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusServer.MODID) && identifier.getPath().endsWith(".json"));
+        Map<Identifier, Resource> forms = manager.findResources("overrides/forms", identifier -> Objects.equals(identifier.getNamespace(), DaycarePlusMain.MODID) && identifier.getPath().endsWith(".json"));
         for (Map.Entry<Identifier, Resource> entry : forms.entrySet()) {
             try (InputStream stream = entry.getValue().getInputStream()) {
                 String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
@@ -166,10 +166,10 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
                 String formId = entry.getKey().getPath().replace("overrides/forms", "").replace("/", "").replace(".json", "");
                 FORM_PROPERTY_OVERRIDES.put(formId, resolved);
-                DaycarePlusServer.LOGGER.info("Registered form property override: {} -> {}", formId, resolved);
+                DaycarePlusMain.LOGGER.info("Registered form property override: {} -> {}", formId, resolved);
             }
             catch (Throwable e) {
-                DaycarePlusServer.LOGGER.error("DaycarePlus encountered an error whilst parsing form property file file {}: ", entry.getKey(), e);
+                DaycarePlusMain.LOGGER.error("DaycarePlus encountered an error whilst parsing form property file file {}: ", entry.getKey(), e);
             }
         }
     }

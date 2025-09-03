@@ -1,6 +1,6 @@
 package com.provismet.cobblemon.daycareplus.api;
 
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.breeding.FormPropertiesOverride;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.data.DataOutput;
@@ -39,7 +39,7 @@ public abstract class FormPropertiesOverrideProvider implements DataProvider {
                     new FormPropertiesOverride(entry.getValue()),
                     this.output
                         .resolvePath(DataOutput.OutputType.DATA_PACK)
-                        .resolve(DaycarePlusServer.MODID)
+                        .resolve(DaycarePlusMain.MODID)
                         .resolve("overrides")
                         .resolve("forms")
                         .resolve(entry.getKey() + ".json")

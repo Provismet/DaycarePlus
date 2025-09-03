@@ -1,7 +1,7 @@
 package com.provismet.cobblemon.daycareplus.config;
 
 import com.google.gson.GsonBuilder;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.lilylib.util.json.JsonBuilder;
 import com.provismet.lilylib.util.json.JsonReader;
 
@@ -128,7 +128,7 @@ public class DaycarePlusOptions {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
         }
         catch (IOException e) {
-            DaycarePlusServer.LOGGER.error("Error whilst saving config: ", e);
+            DaycarePlusMain.LOGGER.error("Error whilst saving config: ", e);
         }
     }
 
@@ -173,10 +173,10 @@ public class DaycarePlusOptions {
             }
         }
         catch (FileNotFoundException e) {
-            DaycarePlusServer.LOGGER.info("No config found, creating default.");
+            DaycarePlusMain.LOGGER.info("No config found, creating default.");
         }
         catch (Exception e) {
-            DaycarePlusServer.LOGGER.error("Error reading Daycare+ config: ", e);
+            DaycarePlusMain.LOGGER.error("Error reading Daycare+ config: ", e);
         }
         save();
     }

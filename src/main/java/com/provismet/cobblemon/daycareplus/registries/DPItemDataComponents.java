@@ -1,7 +1,7 @@
 package com.provismet.cobblemon.daycareplus.registries;
 
 import com.mojang.serialization.Codec;
-import com.provismet.cobblemon.daycareplus.DaycarePlusServer;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.item.component.IncubatorOwner;
 import com.provismet.cobblemon.daycareplus.item.component.IncubatorType;
 import eu.pb4.polymer.core.api.other.PolymerComponent;
@@ -23,7 +23,7 @@ public abstract class DPItemDataComponents {
     public static final ComponentType<Integer> BOOST_AMOUNT = register("boost_amount", builder -> builder.codec(Codecs.NONNEGATIVE_INT).packetCodec(PacketCodecs.INTEGER));
 
     private static <T> ComponentType<T> register (String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
-        ComponentType<T> component = Registry.register(Registries.DATA_COMPONENT_TYPE, DaycarePlusServer.identifier(name), builderOperator.apply(ComponentType.builder()).build());
+        ComponentType<T> component = Registry.register(Registries.DATA_COMPONENT_TYPE, DaycarePlusMain.identifier(name), builderOperator.apply(ComponentType.builder()).build());
         PolymerComponent.registerDataComponent(component);
         return component;
     }
