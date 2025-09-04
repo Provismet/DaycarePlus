@@ -26,7 +26,10 @@
         ],
 		"fabric-datagen": [
 			"com.provismet.cobblemon.daycareplus.datagen.DaycarePlusDatagen"
-		]
+		],
+        "modmenu": [
+            "com.provismet.cobblemon.daycareplus.config.menu.DPModMenuHook"
+        ]
 	},
 	"mixins": [
 		"daycareplus.mixins.json",

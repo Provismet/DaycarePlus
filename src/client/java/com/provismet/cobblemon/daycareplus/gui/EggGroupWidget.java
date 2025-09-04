@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.client.CobblemonResources;
 import com.cobblemon.mod.common.client.render.RenderHelperKt;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
+import com.provismet.cobblemon.daycareplus.config.ClientOptions;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -38,7 +39,7 @@ public class EggGroupWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget (DrawContext context, int mouseX, int mouseY, float delta) {
-        if (this.eggGroups.isEmpty()) return;
+        if (this.eggGroups.isEmpty() || !ClientOptions.shouldShowEggGroupsInPC()) return;
 
         Identifier texture;
         if (this.isHovered()) texture = collapsed ? TEXTURE_COLLAPSED_HOVERED : TEXTURE_HOVERED;
@@ -132,5 +133,10 @@ public class EggGroupWidget extends ClickableWidget {
     @Override
     public boolean isNarratable () {
         return false;
+    }
+
+    @Override
+    public boolean isHovered () {
+        return super.isHovered() && ClientOptions.shouldShowEggGroupsInPC();
     }
 }

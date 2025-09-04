@@ -148,6 +148,14 @@ public class LanguageGenerator extends LilyLanguageProvider {
         this.eggGroup(translationBuilder, EggGroup.WATER_3, "Water 3");
         this.eggGroup(translationBuilder, EggGroup.UNDISCOVERED, "Undiscovered");
         this.eggGroup(translationBuilder, EggGroup.DITTO, "Ditto");
+
+        // Menu
+        translationBuilder.add("title.daycareplus.config", "Daycare+");
+        translationBuilder.add("category.daycareplus.general", "General");
+        translationBuilder.add("entry.daycareplus.display.feature", "Display Egg Groups In Summary");
+        translationBuilder.add("entry.daycareplus.display.tooltip", "Show Egg Group Icon In Summary");
+        translationBuilder.add("entry.daycareplus.display.pc", "Display Egg Group Panel In PC");
+        translationBuilder.add("entry.daycareplus.display.pc.offset", "PC Egg Group Panel Y-Offset");
     }
 
     private void eggGroup (TranslationBuilder builder, EggGroup group, String name) {

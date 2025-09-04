@@ -4,11 +4,11 @@ import com.cobblemon.mod.common.api.gui.GuiUtilsKt;
 import com.cobblemon.mod.common.api.pokemon.egg.EggGroup;
 import com.cobblemon.mod.common.client.gui.summary.Summary;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.provismet.cobblemon.daycareplus.config.ClientOptions;
 import com.provismet.cobblemon.daycareplus.util.DPResources;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,6 +39,8 @@ public abstract class SummaryMixin extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void renderEggIcon (DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo info) {
+        if (!ClientOptions.shouldShowEggGroupsTooltip()) return;
+
         int x = super.width - 285;
         int y = super.height + 36;
 

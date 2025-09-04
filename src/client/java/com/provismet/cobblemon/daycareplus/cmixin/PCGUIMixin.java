@@ -36,7 +36,7 @@ public abstract class PCGUIMixin extends Screen {
         if (!ClientOptions.shouldShowEggGroupsInPC() || this.previewPokemon == null) return;
 
         this.eggGroupWidget.setX((super.width - PCGUI.BASE_WIDTH) / 2 - EggGroupWidget.WIDTH + 2);
-        this.eggGroupWidget.setY(super.height / 2 + 68);
+        this.eggGroupWidget.setY(super.height / 2 + ClientOptions.getPcEggGroupPanelYOffset());
         this.eggGroupWidget.setPokemon(this.previewPokemon);
     }
 }
