@@ -21,12 +21,19 @@
 		"main": [
 			"com.provismet.cobblemon.daycareplus.DaycarePlusMain"
 		],
+        "client": [
+            "com.provismet.cobblemon.daycareplus.DaycarePlusClient"
+        ],
 		"fabric-datagen": [
 			"com.provismet.cobblemon.daycareplus.datagen.DaycarePlusDatagen"
 		]
 	},
 	"mixins": [
-		"daycareplus.mixins.json"
+		"daycareplus.mixins.json",
+        {
+            "environment": "client",
+            "config": "daycareplus.client.mixins.json"
+        }
 	],
 	"accessWidener": "daycareplus.accesswidener",
 	"depends": {

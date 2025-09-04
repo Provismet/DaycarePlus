@@ -1,12 +1,14 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
 import com.cobblemon.mod.common.CobblemonItems;
+import com.cobblemon.mod.common.api.pokemon.egg.EggGroup;
 import com.provismet.cobblemon.daycareplus.registries.DPIconItems;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.lilylib.datagen.provider.LilyLanguageProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.registry.RegistryWrapper;
 
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 public class LanguageGenerator extends LilyLanguageProvider {
@@ -121,10 +123,34 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("property.daycareplus.shiny", "Shiny Chance: ");
         translationBuilder.add("property.daycareplus.fertility", "Fertility: ");
         translationBuilder.add("property.daycareplus.unbreedable", "Unbreedable");
+
+        // Stat Summary
         translationBuilder.add("daycareplus.ui.fertility.level", "Fertility");
+        translationBuilder.add("daycareplus.ui.egg_group", "Egg Groups");
 
         // Stats
         translationBuilder.add("stat.daycareplus.eggs_hatched", "Pokémon Eggs Hatched");
         translationBuilder.add("stat.daycareplus.eggs_collected", "Pokémon Eggs Produced");
+
+        // Egg Groups
+        this.eggGroup(translationBuilder, EggGroup.AMORPHOUS, "Amorphous");
+        this.eggGroup(translationBuilder, EggGroup.BUG, "Bug");
+        this.eggGroup(translationBuilder, EggGroup.DRAGON, "Dragon");
+        this.eggGroup(translationBuilder, EggGroup.FAIRY, "Fairy");
+        this.eggGroup(translationBuilder, EggGroup.FIELD, "Field");
+        this.eggGroup(translationBuilder, EggGroup.FLYING, "Flying");
+        this.eggGroup(translationBuilder, EggGroup.GRASS, "Grass");
+        this.eggGroup(translationBuilder, EggGroup.HUMAN_LIKE, "Human-Like");
+        this.eggGroup(translationBuilder, EggGroup.MINERAL, "Mineral");
+        this.eggGroup(translationBuilder, EggGroup.MONSTER, "Monster");
+        this.eggGroup(translationBuilder, EggGroup.WATER_1, "Water 1");
+        this.eggGroup(translationBuilder, EggGroup.WATER_2, "Water 2");
+        this.eggGroup(translationBuilder, EggGroup.WATER_3, "Water 3");
+        this.eggGroup(translationBuilder, EggGroup.UNDISCOVERED, "Undiscovered");
+        this.eggGroup(translationBuilder, EggGroup.DITTO, "Ditto");
+    }
+
+    private void eggGroup (TranslationBuilder builder, EggGroup group, String name) {
+        builder.add("daycareplus.group." + group.name().toLowerCase(Locale.ROOT), name);
     }
 }

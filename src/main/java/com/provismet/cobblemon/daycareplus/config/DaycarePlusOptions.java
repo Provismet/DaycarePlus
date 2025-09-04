@@ -4,14 +4,17 @@ import com.google.gson.GsonBuilder;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.lilylib.util.json.JsonBuilder;
 import com.provismet.lilylib.util.json.JsonReader;
+import net.fabricmc.loader.api.FabricLoader;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class DaycarePlusOptions {
-    private static final String FILE = "./config/daycareplus/config.json";
+    private static final Path FILE = FabricLoader.getInstance().getConfigDir()
+        .resolve("daycareplus")
+        .resolve("server-config.json");
 
     // Egg Production
     private static long ticksPerEggAttempt = 12000;
@@ -101,82 +104,79 @@ public class DaycarePlusOptions {
     public static void save () {
         JsonBuilder builder = new JsonBuilder()
             .append(
-                "eggProduction", new JsonBuilder()
-                    .append("ticksPerEggAttempt", ticksPerEggAttempt)
-                    .append("successRatePerEggAttempt", successRatePerEggAttempt)
-                    .append("pastureInventorySize", pastureInventorySize)
-                    .append("maxPasturesPerPlayer", maxPasturesPerPlayer)
-                    .append("showShinyChance", showShinyChance))
+                "egg_production", new JsonBuilder()
+                    .append("ticks_per_egg_attempt", ticksPerEggAttempt)
+                    .append("success_rate_per_egg_attempt", successRatePerEggAttempt)
+                    .append("pasture_inventory_size", pastureInventorySize)
+                    .append("max_pastures_per_player", maxPasturesPerPlayer)
+                    .append("show_shiny_chance", showShinyChance))
             .append(
-                "competitiveMode", new JsonBuilder()
-                    .append("useCompetitiveMode", competitiveBreeding)
-                    .append("allowBreedingWithoutFertility", allowBreedingWithoutFertility)
-                    .append("consumeHeldItems", consumeHeldItems))
+                "competitive_mode", new JsonBuilder()
+                    .append("use_competitive_mode", competitiveBreeding)
+                    .append("allow_breeding_without_fertility", allowBreedingWithoutFertility)
+                    .append("consume_held_items", consumeHeldItems))
             .append(
-                "shinyChance", new JsonBuilder()
-                    .append("useEventTrigger", useShinyEvent)
-                    .append("standardMultiplier", shinyChanceMultiplier)
-                    .append("masudaMultiplier", masudaMultiplier)
-                    .append("crystalMultiplier", crystalMultiplier))
+                "shiny_chance", new JsonBuilder()
+                    .append("use_event_trigger", useShinyEvent)
+                    .append("standard_multiplier", shinyChanceMultiplier)
+                    .append("masuda_multiplier", masudaMultiplier)
+                    .append("crystal_multiplier", crystalMultiplier))
             .append(
-                "breedingRules", new JsonBuilder()
-                    .append("inheritMovesFromBothParents", inheritEggMovesFromBothParents)
-                    .append("ticksPerEggCycle", pointsPerEggCycle)
-                    .append("showEggTooltip", showEggTooltip));
+                "breeding_rules", new JsonBuilder()
+                    .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
+                    .append("ticks_per_egg_cycle", pointsPerEggCycle)
+                    .append("show_egg_tooltip", showEggTooltip));
 
-        try (FileWriter writer = new FileWriter(FILE)) {
+        try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
         }
         catch (IOException e) {
-            DaycarePlusMain.LOGGER.error("Error whilst saving config: ", e);
+            DaycarePlusMain.LOGGER.error("Error whilst saving Daycare+ server-config.json: ", e);
         }
     }
 
     public static void load () {
-        File file = new File(FILE);
-        File folder = file.getParentFile();
-        if (!folder.exists()) folder.mkdirs();
-
-        if (!file.exists()) {
+        if (!FILE.toFile().exists()) {
             save();
+            return;
         }
 
         try {
-            JsonReader reader = JsonReader.file(file);
+            JsonReader reader = JsonReader.file(FILE.toFile());
             if (reader != null) {
-                reader.getObjectAsReader("eggProduction").ifPresent(eggProduction -> {
-                    eggProduction.getInteger("ticksPerEggAttempt").ifPresent(val -> ticksPerEggAttempt = val);
-                    eggProduction.getDouble("successRatePerEggAttempt").ifPresent(val -> successRatePerEggAttempt = val);
-                    eggProduction.getInteger("pastureInventorySize").ifPresent(val -> pastureInventorySize = val);
-                    eggProduction.getInteger("maxPasturesPerPlayer").ifPresent(val -> maxPasturesPerPlayer = val);
-                    eggProduction.getBoolean("showShinyChance").ifPresent(val -> showShinyChance = val);
+                reader.getObjectAsReader("egg_production").ifPresent(eggProduction -> {
+                    eggProduction.getInteger("ticks_per_egg_attempt").ifPresent(val -> ticksPerEggAttempt = val);
+                    eggProduction.getDouble("success_rate_per_egg_attempt").ifPresent(val -> successRatePerEggAttempt = val);
+                    eggProduction.getInteger("pasture_inventory_size").ifPresent(val -> pastureInventorySize = val);
+                    eggProduction.getInteger("max_pastures_per_player").ifPresent(val -> maxPasturesPerPlayer = val);
+                    eggProduction.getBoolean("show_shiny_chance").ifPresent(val -> showShinyChance = val);
                 });
 
-                reader.getObjectAsReader("competitiveMode").ifPresent(competitiveMode -> {
-                    competitiveMode.getBoolean("useCompetitiveMode").ifPresent(val -> competitiveBreeding = val);
-                    competitiveMode.getBoolean("allowBreedingWithoutFertility").ifPresent(val -> allowBreedingWithoutFertility = val);
-                    competitiveMode.getBoolean("consumeHeldItems").ifPresent(val -> consumeHeldItems = val);
+                reader.getObjectAsReader("competitive_mode").ifPresent(competitiveMode -> {
+                    competitiveMode.getBoolean("use_competitive_mode").ifPresent(val -> competitiveBreeding = val);
+                    competitiveMode.getBoolean("allow_breeding_without_fertility").ifPresent(val -> allowBreedingWithoutFertility = val);
+                    competitiveMode.getBoolean("consume_held_items").ifPresent(val -> consumeHeldItems = val);
                 });
 
-                reader.getObjectAsReader("shinyChance").ifPresent(shinyChance -> {
-                    shinyChance.getBoolean("useEventTrigger").ifPresent(val -> useShinyEvent = val);;
-                    shinyChance.getFloat("standardMultiplier").ifPresent(val -> shinyChanceMultiplier = val);
-                    shinyChance.getFloat("masudaMultiplier").ifPresent(val -> masudaMultiplier = val);
-                    shinyChance.getFloat("crystalMultiplier").ifPresent(val -> crystalMultiplier = val);
+                reader.getObjectAsReader("shiny_chance").ifPresent(shinyChance -> {
+                    shinyChance.getBoolean("use_event_trigger").ifPresent(val -> useShinyEvent = val);
+                    shinyChance.getFloat("standard_multiplier").ifPresent(val -> shinyChanceMultiplier = val);
+                    shinyChance.getFloat("masuda_multiplier").ifPresent(val -> masudaMultiplier = val);
+                    shinyChance.getFloat("crystal_multiplier").ifPresent(val -> crystalMultiplier = val);
                 });
 
-                reader.getObjectAsReader("breedingRules").ifPresent(breedingRules -> {
-                    breedingRules.getBoolean("inheritMovesFromBothParents").ifPresent(val -> inheritEggMovesFromBothParents = val);
-                    breedingRules.getInteger("ticksPerEggCycle").ifPresent(val -> pointsPerEggCycle = val);
-                    breedingRules.getBoolean("showEggTooltip").ifPresent(val -> showEggTooltip = val);
+                reader.getObjectAsReader("breeding_rules").ifPresent(breedingRules -> {
+                    breedingRules.getBoolean("inherit_moves_from_both_parents").ifPresent(val -> inheritEggMovesFromBothParents = val);
+                    breedingRules.getInteger("ticks_per_egg_cycle").ifPresent(val -> pointsPerEggCycle = val);
+                    breedingRules.getBoolean("show_egg_tooltip").ifPresent(val -> showEggTooltip = val);
                 });
             }
         }
         catch (FileNotFoundException e) {
-            DaycarePlusMain.LOGGER.info("No config found, creating default.");
+            DaycarePlusMain.LOGGER.info("No Daycare+ server config found, creating default.");
         }
         catch (Exception e) {
-            DaycarePlusMain.LOGGER.error("Error reading Daycare+ config: ", e);
+            DaycarePlusMain.LOGGER.error("Error reading Daycare+ server-config.json: ", e);
         }
         save();
     }

@@ -6,20 +6,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.lilylib.util.json.JsonBuilder;
-import com.provismet.lilylib.util.json.JsonReader;
+import net.fabricmc.loader.api.FabricLoader;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 public class IncubatorTiers {
-    private static final String FILE = "./config/daycareplus/incubators.json";
+    private static final Path FILE = FabricLoader.getInstance().getConfigDir()
+        .resolve("daycareplus")
+        .resolve("incubators.json");
     private static final Map<String, IncubatorSettings> settings = new HashMap<>();
 
     // Incubator defaults
@@ -38,38 +40,31 @@ public class IncubatorTiers {
     }
 
     public static void load () {
-        File file = new File(FILE);
-        File folder = file.getParentFile();
-        if (!folder.exists()) folder.mkdirs();
-
         settings.putIfAbsent("copper", COPPER);
         settings.putIfAbsent("iron", IRON);
         settings.putIfAbsent("gold", GOLD);
         settings.putIfAbsent("diamond", DIAMOND);
         settings.putIfAbsent("netherite", NETHERITE);
 
-        if (!file.exists()) {
+        if (!FILE.toFile().exists()) {
             save();
         }
 
         try {
-            JsonReader reader = JsonReader.file(file);
-            if (reader != null) {
-                JsonElement element = JsonParser.parseReader(new FileReader(file));
-                if (!(element instanceof JsonObject json)) {
-                    save();
-                    return;
-                }
+            JsonElement element = JsonParser.parseReader(new FileReader(FILE.toFile()));
+            if (!(element instanceof JsonObject json)) {
+                save();
+                return;
+            }
 
-                for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                    if (entry.getValue() instanceof JsonObject jsonObject) {
-                        settings.put(entry.getKey(), IncubatorSettings.fromJson(jsonObject));
-                    }
+            for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+                if (entry.getValue() instanceof JsonObject jsonObject) {
+                    settings.put(entry.getKey(), IncubatorSettings.fromJson(jsonObject));
                 }
             }
         }
         catch (FileNotFoundException e) {
-            DaycarePlusMain.LOGGER.info("No incubator config found, creating default.");
+            DaycarePlusMain.LOGGER.info("No Daycare+ incubator config found, creating default.");
         }
         catch (Exception e) {
             DaycarePlusMain.LOGGER.error("Error reading Daycare+ incubator config: ", e);
@@ -84,7 +79,7 @@ public class IncubatorTiers {
             builder.append(entry.getKey(), entry.getValue().toJson());
         }
 
-        try (FileWriter writer = new FileWriter(FILE)) {
+        try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
         }
         catch (IOException e) {
@@ -99,8 +94,8 @@ public class IncubatorTiers {
             if (json.has("capacity")) {
                 capacity = json.getAsJsonPrimitive("capacity").getAsInt();
             }
-            if (json.has("eggsToTickSimultaneously")) {
-                eggs = json.getAsJsonPrimitive("eggsToTickSimultaneously").getAsInt();
+            if (json.has("eggs_to_tick_simultaneously")) {
+                eggs = json.getAsJsonPrimitive("eggs_to_tick_simultaneously").getAsInt();
             }
             return new IncubatorSettings(capacity, eggs);
         }
@@ -108,7 +103,7 @@ public class IncubatorTiers {
         public JsonObject toJson () {
             JsonObject json = new JsonObject();
             json.addProperty("capacity", this.capacity);
-            json.addProperty("eggsToTickSimultaneously", this.eggsToTick);
+            json.addProperty("eggs_to_tick_simultaneously", this.eggsToTick);
             return json;
         }
     }
