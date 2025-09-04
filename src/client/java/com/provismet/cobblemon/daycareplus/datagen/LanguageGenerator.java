@@ -28,12 +28,6 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPItems.DIAMOND_INCUBATOR, "Diamond Incubator");
         translationBuilder.add(DPItems.NETHERITE_INCUBATOR, "Netherite Incubator");
 
-        translationBuilder.add(DPItems.LEATHER_EGG_BAG, "Leather Egg Bag");
-        translationBuilder.add(DPItems.IRON_EGG_BAG, "Iron Egg Bag");
-        translationBuilder.add(DPItems.GOLD_EGG_BAG, "Gold Egg Bag");
-        translationBuilder.add(DPItems.DIAMOND_EGG_BAG, "Diamond Egg Bag");
-        translationBuilder.add(DPItems.NETHERITE_EGG_BAG, "Netherite Egg Bag");
-
         translationBuilder.add(DPIconItems.INFO, "Info");
         translationBuilder.add(DPIconItems.LEFT, "Left");
         translationBuilder.add(DPIconItems.RIGHT, "Right");

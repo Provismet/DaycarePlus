@@ -54,12 +54,6 @@ public class ModelGenerator extends FabricModelProvider {
         incubator.accept(DPItems.DIAMOND_INCUBATOR);
         incubator.accept(DPItems.NETHERITE_INCUBATOR);
 
-        generated.accept(DPItems.LEATHER_EGG_BAG);
-        generated.accept(DPItems.IRON_EGG_BAG);
-        generated.accept(DPItems.GOLD_EGG_BAG);
-        generated.accept(DPItems.DIAMOND_EGG_BAG);
-        generated.accept(DPItems.NETHERITE_EGG_BAG);
-
         generated.accept(DPIconItems.INFO);
         generated.accept(DPIconItems.LEFT);
         generated.accept(DPIconItems.RIGHT);

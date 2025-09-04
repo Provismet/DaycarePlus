@@ -45,12 +45,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(DPItems.IRON_INCUBATOR)
             .add(DPItems.GOLD_INCUBATOR)
             .add(DPItems.DIAMOND_INCUBATOR)
-            .add(DPItems.NETHERITE_INCUBATOR)
-            .add(DPItems.LEATHER_EGG_BAG)
-            .add(DPItems.IRON_EGG_BAG)
-            .add(DPItems.GOLD_EGG_BAG)
-            .add(DPItems.DIAMOND_EGG_BAG)
-            .add(DPItems.NETHERITE_EGG_BAG);
+            .add(DPItems.NETHERITE_INCUBATOR);
 
         this.getOrCreateTagBuilder(DPItemTags.BYPASS_DAYCARE_OPEN)
             .addOptionalTag(DPItemTags.INCUBATORS)

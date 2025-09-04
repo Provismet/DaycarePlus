@@ -3,7 +3,6 @@ package com.provismet.cobblemon.daycareplus.registries;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.item.DaycareBoosterItem;
 import com.provismet.cobblemon.daycareplus.item.DaycareSparkItem;
-import com.provismet.cobblemon.daycareplus.item.EggBagItem;
 import com.provismet.cobblemon.daycareplus.item.IncubatorItem;
 import com.provismet.cobblemon.daycareplus.item.FertilityBoosterItem;
 import com.provismet.cobblemon.daycareplus.item.PokemonEggItem;
@@ -34,26 +33,10 @@ public abstract class DPItems {
     public static final IncubatorItem DIAMOND_INCUBATOR = registerIncubator("diamond_incubator", IncubatorType.ofMain("diamond"));
     public static final IncubatorItem NETHERITE_INCUBATOR = registerIncubator("netherite_incubator", IncubatorType.ofMain("netherite"), Item.Settings::fireproof);
 
-    @Deprecated
-    public static final EggBagItem LEATHER_EGG_BAG = registerBag("leather_egg_bag", COPPER_INCUBATOR);
-    @Deprecated
-    public static final EggBagItem IRON_EGG_BAG = registerBag("iron_egg_bag", IRON_INCUBATOR);
-    @Deprecated
-    public static final EggBagItem GOLD_EGG_BAG = registerBag("gold_egg_bag", GOLD_INCUBATOR);
-    @Deprecated
-    public static final EggBagItem DIAMOND_EGG_BAG = registerBag("diamond_egg_bag", DIAMOND_INCUBATOR);
-    @Deprecated
-    public static final EggBagItem NETHERITE_EGG_BAG = registerBag("netherite_egg_bag", NETHERITE_INCUBATOR);
-
     private static <T extends PolymerItem> T register (String name, ItemConstructor<T> constructor) {
         Identifier itemId = DaycarePlusMain.identifier(name);
         PolymerModelData model = PolymerResourcePackUtils.requestModel(Items.IRON_NUGGET, itemId.withPrefixedPath("item/"));
         return Registry.register(Registries.ITEM, itemId, constructor.apply(new Item.Settings(), Items.IRON_NUGGET, model));
-    }
-
-    @Deprecated
-    private static EggBagItem registerBag (String name, Item to) {
-        return register(name, (settings, vanillaItem, modelData) -> new EggBagItem(settings, vanillaItem, modelData, to));
     }
 
     private static IncubatorItem registerIncubator (String name, IncubatorType incubatorType, Function<Item.Settings, Item.Settings> settingsModifier) {
