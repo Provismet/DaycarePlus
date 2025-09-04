@@ -12,7 +12,8 @@
 	],
 	"contact": {
 		"homepage": "https://github.com/Provismet/DaycarePlus",
-		"sources": "https://github.com/Provismet/DaycarePlus"
+		"sources": "https://github.com/Provismet/DaycarePlus",
+        "issues": "https://github.com/Provismet/DaycarePlus/issues"
 	},
 	"license": "Lily License - Server v1.0",
 	"icon": "assets/daycareplus/icon.png",
@@ -48,5 +49,12 @@
         "lilylib": "*",
         "polymer-core": "*",
         "polymer-common": "*"
-	}
+	},
+    "custom": {
+        "modmenu": {
+            "links": {
+                "wiki.lilylib.link": "https://github.com/Provismet/DaycarePlus/wiki"
+            }
+        }
+    }
 }
