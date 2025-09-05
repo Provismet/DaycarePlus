@@ -5,6 +5,8 @@ import com.cobblemon.mod.common.api.pokemon.egg.EggGroup;
 import com.cobblemon.mod.common.client.gui.summary.Summary;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.provismet.cobblemon.daycareplus.config.ClientOptions;
+import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
+import com.provismet.cobblemon.daycareplus.util.ClientEggGroup;
 import com.provismet.cobblemon.daycareplus.util.DPResources;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -61,8 +63,13 @@ public abstract class SummaryMixin extends Screen {
         if (mouseX / SCALE >= x && mouseX / SCALE <= x + LENGTH && mouseY / SCALE >= y && mouseY / SCALE <= y + LENGTH) {
             List<Text> tooltip = new ArrayList<>();
             tooltip.add(Text.translatable("daycareplus.ui.egg_group").styled(style -> style.withBold(true)));
-            for (EggGroup group : this.selectedPokemon.getForm().getEggGroups()) {
-                tooltip.add(Text.translatable("daycareplus.group." + group.name().toLowerCase(Locale.ROOT)).styled(style -> style.withBold(false)));
+            if (BreedableProperty.get(this.selectedPokemon)) {
+                for (EggGroup group : ClientEggGroup.getGroups(this.selectedPokemon)) {
+                    tooltip.add(Text.translatable("daycareplus.group." + group.name().toLowerCase(Locale.ROOT)).styled(style -> style.withBold(false)));
+                }
+            }
+            else {
+                tooltip.add(Text.translatable("property.daycareplus.unbreedable"));
             }
             context.drawTooltip(MinecraftClient.getInstance().textRenderer, tooltip, mouseX, mouseY);
         }

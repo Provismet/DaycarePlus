@@ -6,9 +6,11 @@ import com.provismet.cobblemon.daycareplus.command.DPCommands;
 import com.provismet.cobblemon.daycareplus.config.IncubatorTiers;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.handler.CobblemonEventHandler;
+import com.provismet.cobblemon.daycareplus.networking.callback.PacketCallbacksC2S;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItemGroups;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
+import com.provismet.cobblemon.daycareplus.registries.DPPayloads;
 import com.provismet.cobblemon.daycareplus.registries.DPStats;
 import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
@@ -46,6 +48,8 @@ public class DaycarePlusMain implements ModInitializer {
 		DPItemGroups.register();
 		DPStats.init();
 		DPCommands.register();
+        DPPayloads.register();
+        PacketCallbacksC2S.register();
 
 		CobblemonEventHandler.register();
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BreedingUtils());

@@ -8,6 +8,8 @@ import com.cobblemon.mod.common.client.render.RenderHelperKt;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.config.ClientOptions;
+import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
+import com.provismet.cobblemon.daycareplus.util.ClientEggGroup;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -32,6 +34,7 @@ public class EggGroupWidget extends ClickableWidget {
     private static boolean collapsed = false;
 
     private Set<EggGroup> eggGroups = Set.of();
+    private boolean breedable = true;
 
     public EggGroupWidget (int x, int y) {
         super(x, y, WIDTH, HEIGHT, Text.translatable("daycareplus.ui.egg_group"));
@@ -39,7 +42,7 @@ public class EggGroupWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget (DrawContext context, int mouseX, int mouseY, float delta) {
-        if (this.eggGroups.isEmpty() || !ClientOptions.shouldShowEggGroupsInPC()) return;
+        if ((this.eggGroups.isEmpty() && this.breedable) || !ClientOptions.shouldShowEggGroupsInPC()) return;
 
         Identifier texture;
         if (this.isHovered()) texture = collapsed ? TEXTURE_COLLAPSED_HOVERED : TEXTURE_HOVERED;
@@ -71,7 +74,22 @@ public class EggGroupWidget extends ClickableWidget {
         );
 
         // Render egg groups
-        if (this.eggGroups.size() == 1) {
+        if (!this.breedable) {
+            RenderHelperKt.drawScaledText(
+                context,
+                CobblemonResources.INSTANCE.getDEFAULT_LARGE(),
+                Text.translatable("property.daycareplus.unbreedable"),
+                this.getX() + 34, this.getY() + 15,
+                0.8f,
+                1f,
+                Integer.MAX_VALUE,
+                Colors.WHITE,
+                true,
+                true,
+                mouseX, mouseY
+            );
+        }
+        else if (this.eggGroups.size() == 1) {
             String eggGroup = this.eggGroups
                 .stream()
                 .reduce(EggGroup.UNDISCOVERED, (group1, group2) -> group2).name().toLowerCase(Locale.ROOT);
@@ -122,7 +140,8 @@ public class EggGroupWidget extends ClickableWidget {
     }
 
     public void setPokemon (Pokemon pokemon) {
-        this.eggGroups = pokemon.getForm().getEggGroups();
+        this.eggGroups = ClientEggGroup.getGroups(pokemon);
+        this.breedable = BreedableProperty.get(pokemon);
     }
 
     @Override

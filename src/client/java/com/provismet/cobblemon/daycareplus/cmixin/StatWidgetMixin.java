@@ -8,6 +8,8 @@ import com.cobblemon.mod.common.client.render.RenderHelperKt;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
+import com.provismet.cobblemon.daycareplus.util.ClientEggGroup;
 import com.provismet.cobblemon.daycareplus.util.DPResources;
 import com.provismet.cobblemon.daycareplus.config.ClientOptions;
 import net.minecraft.client.gui.DrawContext;
@@ -73,13 +75,19 @@ public abstract class StatWidgetMixin extends SoundlessWidget {
             pMouseY
         );
 
-        MutableText eggGroups = this.pokemon.getForm().getEggGroups()
-            .stream()
-            .map(group -> Text.translatable("daycareplus.group." + group.name().toLowerCase(Locale.ROOT)))
-            .reduce(Text.empty(), (existingText, groupName) -> {
-                if (existingText.getString().isEmpty()) return groupName;
-                return existingText.append(" - ").append(groupName);
-            });
+        MutableText eggGroups;
+        if (BreedableProperty.get(this.pokemon)) {
+            eggGroups = ClientEggGroup.getGroups(this.pokemon)
+                .stream()
+                .map(group -> Text.translatable("daycareplus.group." + group.name().toLowerCase(Locale.ROOT)))
+                .reduce(Text.empty(), (existingText, groupName) -> {
+                    if (existingText.getString().isEmpty()) return groupName;
+                    return existingText.append(" - ").append(groupName);
+                });
+        }
+        else {
+            eggGroups = Text.translatable("property.daycareplus.unbreedable");
+        }
 
         RenderHelperKt.drawScaledText(
             context,
