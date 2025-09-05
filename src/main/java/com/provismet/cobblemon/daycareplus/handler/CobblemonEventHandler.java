@@ -12,6 +12,9 @@ public abstract class CobblemonEventHandler {
     public static void register () {
         CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.NORMAL, CobblemonEventHandler::postHatch);
         CobblemonEvents.COLLECT_EGG.subscribe(Priority.NORMAL, CobblemonEventHandler::postCollect);
+    }
+
+    public static void registerEarly () {
         CobblemonEvents.POKEMON_PROPERTY_INITIALISED.subscribe(Priority.NORMAL, CobblemonEventHandler::initialiseProperties);
     }
 

@@ -9,7 +9,6 @@ import com.provismet.cobblemon.daycareplus.handler.CobblemonEventHandler;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItemGroups;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
-import com.provismet.cobblemon.daycareplus.registries.DPPokemonProperties;
 import com.provismet.cobblemon.daycareplus.registries.DPStats;
 import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
