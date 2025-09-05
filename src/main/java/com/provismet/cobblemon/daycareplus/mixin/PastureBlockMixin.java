@@ -59,9 +59,20 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
                 DaycareGUI.create(pastureBlockEntity, mixinPasture, serverPlayer, state, hit).open();
                 cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
             }
-            else if (!mixinPasture.shouldSkipIntro() && pastureBlockEntity.getTetheredPokemon().isEmpty() && pastureBlockEntity.getOwnerId() == player.getUuid()) {
-                IntroGUI.create(mixinPasture, serverPlayer).open();
-                cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
+            else if (!mixinPasture.shouldSkipIntro()) {
+                if (isOwner) {
+                    if (pastureBlockEntity.getTetheredPokemon().isEmpty()) {
+                        IntroGUI.create(mixinPasture, serverPlayer).open();
+                        cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
+                    }
+                    else {
+                        mixinPasture.setSkipIntroDialogue(true);
+                    }
+                }
+                else {
+                    player.sendMessage(Text.translatable("message.overlay.daycareplus.not_owner").formatted(Formatting.RED), true);
+                    cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
+                }
             }
         }
     }
