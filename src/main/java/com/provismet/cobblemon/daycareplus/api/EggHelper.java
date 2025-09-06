@@ -5,7 +5,12 @@ import net.minecraft.item.ItemStack;
 
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public class EggHelper {
+    /**
+     * @param stack A potential egg item.
+     * @return Whether or not this item represents a Pokémon Egg.
+     */
     public static boolean isEgg (ItemStack stack) {
         return tryGetEgg(stack).isPresent();
     }
