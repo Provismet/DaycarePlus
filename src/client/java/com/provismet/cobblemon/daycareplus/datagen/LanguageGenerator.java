@@ -49,6 +49,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("message.overlay.daycareplus.incubator.stolen", "This is not your incubator!");
         translationBuilder.add("message.overlay.daycareplus.incubator.typeless", "This incubator has no tier data!");
         translationBuilder.add("message.overlay.daycareplus.incubator.claimed", "This is now your incubator.");
+        translationBuilder.add("message.overlay.daycareplus.incubator.no_storage", "No egg storage found, open your incubator to bind it!");
         translationBuilder.add("tooltip.daycareplus.incubator.eggs_held", "Eggs Held: %1$s/%2$s");
         translationBuilder.add("gui.title.daycareplus.incubator", "Incubator");
         translationBuilder.add("gui.button.daycareplus.prev", "Previous");

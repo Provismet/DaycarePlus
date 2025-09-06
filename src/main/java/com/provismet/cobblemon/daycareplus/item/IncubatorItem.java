@@ -95,7 +95,7 @@ public class IncubatorItem extends PolymerItem {
     public ActionResult useOnBlock (ItemUsageContext context) {
         Block block = context.getWorld().getBlockState(context.getBlockPos()).getBlock();
 
-        if (block instanceof PastureBlock pastureBlock) {
+        if (block instanceof PastureBlock pastureBlock && context.getPlayer() instanceof ServerPlayerEntity player) {
             BlockPos pasturePos = pastureBlock.getBasePosition(context.getWorld().getBlockState(context.getBlockPos()), context.getBlockPos());
 
             if (context.getWorld().getBlockEntity(pasturePos) instanceof IMixinPastureBlockEntity daycare) {
@@ -105,14 +105,14 @@ public class IncubatorItem extends PolymerItem {
                     List<ItemStack> eggs = daycare.withdraw(remainingSlots);
                     eggs.forEach(storage.get()::addCopyAndEmpty);
 
-                    if (context.getPlayer() instanceof ServerPlayerEntity player) {
-                        this.playInsertSound(player);
-                        if (eggs.size() == 1)
-                            player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.singular", eggs.size()), true);
-                        else
-                            player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.plural", eggs.size()), true);
-                    }
+                    this.playInsertSound(player);
+                    if (eggs.size() == 1) player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.singular", eggs.size()), true);
+                    else player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.plural", eggs.size()), true);
+
                     return ActionResult.SUCCESS;
+                }
+                else {
+                    player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.no_storage"), true);
                 }
             }
         }

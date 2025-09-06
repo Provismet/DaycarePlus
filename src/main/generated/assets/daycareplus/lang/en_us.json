@@ -82,6 +82,7 @@
   "message.overlay.daycareplus.incubator.collection.plural": "Collected %1$s eggs.",
   "message.overlay.daycareplus.incubator.collection.singular": "Collected %1$s egg.",
   "message.overlay.daycareplus.incubator.creative": "Incubators cannot be used in creative mode!",
+  "message.overlay.daycareplus.incubator.no_storage": "No egg storage found, open your incubator to bind it!",
   "message.overlay.daycareplus.incubator.stolen": "This is not your incubator!",
   "message.overlay.daycareplus.incubator.typeless": "This incubator has no tier data!",
   "message.overlay.daycareplus.limit_reached": "You cannot activate anymore daycares, limit reached.",
