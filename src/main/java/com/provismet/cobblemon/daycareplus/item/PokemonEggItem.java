@@ -29,7 +29,6 @@ import java.util.Optional;
 
 public class PokemonEggItem extends PolymerItem implements PokemonEggProviderItem {
     private static final int TICKS_PER_MINUTE = 60 * 20;
-    private static final int DEFAULT_STEPS = 7200;
 
     private final PolymerModelData shiny;
 
@@ -141,11 +140,11 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
     }
 
     public int getRemainingSteps (ItemStack stack) {
-        return stack.getOrDefault(DPItemDataComponents.EGG_STEPS, DEFAULT_STEPS);
+        return stack.getOrDefault(DPItemDataComponents.EGG_STEPS, PokemonEgg.DEFAULT_STEPS);
     }
 
     public int getMaxSteps (ItemStack stack) {
-        return stack.getOrDefault(DPItemDataComponents.MAX_EGG_STEPS, DEFAULT_STEPS);
+        return stack.getOrDefault(DPItemDataComponents.MAX_EGG_STEPS, PokemonEgg.DEFAULT_STEPS);
     }
 
     @Override
