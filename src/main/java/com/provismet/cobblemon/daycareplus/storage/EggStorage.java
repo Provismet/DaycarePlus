@@ -3,9 +3,8 @@ package com.provismet.cobblemon.daycareplus.storage;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.provismet.cobblemon.daycareplus.api.EggHelper;
+import com.provismet.cobblemon.daycareplus.api.PokemonEgg;
 import com.provismet.cobblemon.daycareplus.config.IncubatorTiers;
-import com.provismet.cobblemon.daycareplus.item.PokemonEggItem;
-import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -17,15 +16,15 @@ import java.util.Optional;
 public class EggStorage {
     public static final Codec<EggStorage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.STRING.fieldOf("tier").forGetter(EggStorage::getTier),
-        PokemonEggItem.CODEC.listOf().fieldOf("storage").forGetter(EggStorage::getStorage)
+        PokemonEgg.CODEC.listOf().fieldOf("storage").forGetter(EggStorage::getStorage)
     ).apply(instance, EggStorage::new));
 
-    private final List<ItemStack> storage;
+    private final List<PokemonEgg> storage;
     private int capacity;
     private int eggsToTick;
     private String tier;
 
-    public EggStorage (String tier, List<ItemStack> eggs) {
+    public EggStorage (String tier, List<PokemonEgg> eggs) {
         this.storage = new LinkedList<>(eggs);
         this.tier = tier;
 
@@ -70,7 +69,7 @@ public class EggStorage {
         return this.eggsToTick;
     }
 
-    public List<ItemStack> getStorage () {
+    public List<PokemonEgg> getStorage () {
         return this.storage;
     }
 
@@ -91,21 +90,20 @@ public class EggStorage {
         });
     }
 
-    public ItemStack withdraw (int index) {
-        if (index >= this.storage.size()) return ItemStack.EMPTY;
-        return this.storage.remove(index).copyAndEmpty();
+    public void remove (int index) {
+        if (index < this.storage.size() && index >= 0) this.storage.remove(index);
     }
 
-    public ItemStack get (int index) {
+    public ItemStack getItem (int index) {
         if (index >= this.storage.size()) return ItemStack.EMPTY;
-        return this.storage.get(index);
+        return this.storage.get(index).getItem();
     }
 
     public void tick (int stepsToProcess, ServerPlayerEntity player) {
         for (int i = 0; i < this.eggsToTick && i < this.storage.size(); ++i) {
-            DPItems.POKEMON_EGG.decrementEggSteps(this.storage.get(i), stepsToProcess, player);
+            this.storage.get(i).decrementEggSteps(stepsToProcess, player);
         }
-        this.storage.removeIf(ItemStack::isEmpty);
+        this.storage.removeIf(PokemonEgg::isHatched);
     }
 
     public void tryUpgradeTo (String tier) {

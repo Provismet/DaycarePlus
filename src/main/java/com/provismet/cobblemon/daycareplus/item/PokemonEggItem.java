@@ -1,23 +1,14 @@
 package com.provismet.cobblemon.daycareplus.item;
 
-import com.cobblemon.mod.common.Cobblemon;
-import com.cobblemon.mod.common.api.events.CobblemonEvents;
-import com.cobblemon.mod.common.api.events.pokemon.HatchEggEvent;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
-import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.IVs;
-import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.pokemon.Species;
-import com.cobblemon.mod.common.util.PlayerExtensionsKt;
-import com.cobblemon.mod.common.util.ResourceLocationExtensionsKt;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.provismet.cobblemon.daycareplus.api.PokemonEgg;
+import com.provismet.cobblemon.daycareplus.api.PokemonEggProviderItem;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
-import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
@@ -30,31 +21,14 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class PokemonEggItem extends PolymerItem {
-    public static final Codec<ItemStack> CODEC = Codec.lazyInitialized(() -> RecordCodecBuilder.create(instance -> instance.group(
-        Codec.STRING.optionalFieldOf("pokemon").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.POKEMON_PROPERTIES))),
-        Codec.INT.optionalFieldOf("steps").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.EGG_STEPS))),
-        Codec.INT.optionalFieldOf("max_steps").forGetter(stack -> Optional.ofNullable(stack.get(DPItemDataComponents.MAX_EGG_STEPS)))
-    ).apply(instance, (pokemonProperties, steps, maxSteps) -> {
-        if (pokemonProperties.isEmpty()) return ItemStack.EMPTY;
-        if (steps.isEmpty() || maxSteps.isEmpty()) return DPItems.POKEMON_EGG.createEggItem(PokemonProperties.Companion.parse(pokemonProperties.get()));
-
-        ItemStack stack = DPItems.POKEMON_EGG.getDefaultStack();
-        stack.set(DPItemDataComponents.POKEMON_PROPERTIES, pokemonProperties.get());
-        stack.set(DPItemDataComponents.EGG_STEPS, steps.get());
-        stack.set(DPItemDataComponents.MAX_EGG_STEPS, maxSteps.get());
-        return stack;
-    })));
-
+public class PokemonEggItem extends PolymerItem implements PokemonEggProviderItem {
     private static final int TICKS_PER_MINUTE = 60 * 20;
-    private static final int DEFAULT_STEPS = 7200;
 
     private final PolymerModelData shiny;
 
@@ -64,23 +38,21 @@ public class PokemonEggItem extends PolymerItem {
     }
 
     public ItemStack createEggItem (PokemonProperties properties) {
-        ItemStack stack = DPItems.POKEMON_EGG.getDefaultStack();
-        stack.set(DPItemDataComponents.POKEMON_PROPERTIES, properties.asString(" "));
+        return new PokemonEgg(properties).getItem();
+    }
 
-        if (properties.getSpecies() != null) {
-            Identifier speciesId = ResourceLocationExtensionsKt.asIdentifierDefaultingNamespace(properties.getSpecies(), Cobblemon.MODID);
-            Species species = PokemonSpecies.INSTANCE.getByIdentifier(speciesId);
-            if (species != null) {
-                stack.set(DPItemDataComponents.EGG_STEPS, DaycarePlusOptions.getEggPoints(species.getEggCycles()));
-                stack.set(DPItemDataComponents.MAX_EGG_STEPS, DaycarePlusOptions.getEggPoints(species.getEggCycles()));
-            }
-            else {
-                stack.set(DPItemDataComponents.EGG_STEPS, DEFAULT_STEPS);
-                stack.set(DPItemDataComponents.MAX_EGG_STEPS, DEFAULT_STEPS);
-            }
-        }
+    @Override
+    public Optional<PokemonEgg> getEgg (ItemStack stack) {
+        String properties = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
+        if (properties == null) return Optional.empty();
 
-        return stack;
+        PokemonEgg egg = new PokemonEgg(
+            properties,
+            this.getMaxSteps(stack),
+            this.getRemainingSteps(stack),
+            false
+        );
+        return Optional.of(egg);
     }
 
     @Override
@@ -168,42 +140,11 @@ public class PokemonEggItem extends PolymerItem {
     }
 
     public int getRemainingSteps (ItemStack stack) {
-        return stack.getOrDefault(DPItemDataComponents.EGG_STEPS, DEFAULT_STEPS);
+        return stack.getOrDefault(DPItemDataComponents.EGG_STEPS, PokemonEgg.DEFAULT_STEPS);
     }
 
     public int getMaxSteps (ItemStack stack) {
-        return stack.getOrDefault(DPItemDataComponents.MAX_EGG_STEPS, DEFAULT_STEPS);
-    }
-
-    public void decrementEggSteps (ItemStack stack, int amount, ServerPlayerEntity player) {
-        int steps = this.getRemainingSteps(stack);
-        steps = Math.max(0, steps - amount);
-        stack.setDamage(MathHelper.lerp(1f - ((float)steps / this.getMaxSteps(stack)), 1, 100));
-
-        if (steps == 0) {
-            boolean playerPartyBusy = PlayerExtensionsKt.isPartyBusy(player) || PlayerExtensionsKt.isInBattle(player);
-            boolean partyHasSpace = PlayerExtensionsKt.party(player).getFirstAvailablePosition() != null || PlayerExtensionsKt.pc(player).getFirstAvailablePosition() != null;
-
-            // Don't waste eggs, only hatch if there is space!
-            if (!playerPartyBusy && partyHasSpace) this.hatch(stack, player);
-        }
-        else stack.set(DPItemDataComponents.EGG_STEPS, steps);
-    }
-
-    public void hatch (ItemStack stack, ServerPlayerEntity player) {
-        String propertiesString = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
-
-        if (propertiesString != null) {
-            PokemonProperties properties = PokemonProperties.Companion.parse(propertiesString);
-
-            CobblemonEvents.HATCH_EGG_PRE.emit(new HatchEggEvent.Pre(properties, player));
-            Pokemon pokemon = properties.create(player);
-            pokemon.getAbility().setForced$common(false);
-            player.sendMessage(Text.translatable("message.overlay.daycareplus.egg.hatch"), true);
-            PlayerExtensionsKt.party(player).add(pokemon);
-            CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(properties, player));
-        }
-        stack.decrement(1);
+        return stack.getOrDefault(DPItemDataComponents.MAX_EGG_STEPS, PokemonEgg.DEFAULT_STEPS);
     }
 
     @Override
