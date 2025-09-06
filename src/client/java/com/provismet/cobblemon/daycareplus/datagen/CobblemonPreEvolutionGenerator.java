@@ -44,12 +44,5 @@ public class CobblemonPreEvolutionGenerator extends PreEvolutionFormOverrideProv
 
         // Paldea
         generator.add("clodsire", "wooper", "paldea");
-
-        /** TODO: Remaining bias forms
-         *     "cyndaquil", (probably don't need)
-         *     "pichu", (probably don't need)
-         *     "oshawott", (probably don't need)
-         *     "rowlet", (probably don't need)
-         */
     }
 }
