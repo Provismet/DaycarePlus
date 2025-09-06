@@ -1,7 +1,6 @@
-# Daycare+
+Daycare+ is a free, open-source, breeding mod for Cobblemon on Fabric. It is fully serverside, meaning players without the mod can still join the server.
 
-Daycare+ is a free, open-source, breeding mod for Cobblemon on Fabric. It works fully serverside, but also works in
-singleplayer and can run on the client.
+If installed on the client, it gives extra utility and can also work entirely in singleplayer too.
 
 ## Features
 ### Pasture Breeding
@@ -42,6 +41,11 @@ All mainline Pokémon, are included in the mod's built-in datapack.
 
 Note: Most Pokémon will work without any special override, this feature exists specifically for fringe cases such as
 Basculegion and Overqwil, where the evolution is conditional on a special form.
+
+### Competitive Breeding
+Mainline breeding mechanics can be overpowered for server economies. Daycare+ offers an alternative system (availabe in the config) called Competitive Breeding.
+
+Inspired by Temtem and PokeMMO, Competitive Breeding limits the number of times a Pokémon can reproduce by enforcing a fertility mechanic. In exchange, the IVs of the offspring are no longer random and are fully deterministic.
 
 ### Compatibility
 Incubators have the ability to convert eggs from other mods into Daycare+ eggs. By default this feature is inactive,
