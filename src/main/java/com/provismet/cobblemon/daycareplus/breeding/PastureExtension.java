@@ -61,7 +61,7 @@ public class PastureExtension {
                 if (alreadyLearnt) continue;
 
                 if (potentialHolder.getMoveSet().add(move.getTemplate().create()) && owner != null) {
-                    owner.sendMessage(Text.translatable("message.chat.daycareplus.move_learnt", potentialHolder.getDisplayName(), move.getDisplayName()));
+                    owner.sendMessage(Text.translatable("message.chat.daycareplus.move_learnt", potentialHolder.getDisplayName(false), move.getDisplayName()));
                 }
             }
         }
@@ -100,10 +100,10 @@ public class PastureExtension {
 
             if (DaycarePlusOptions.shouldConsumeHeldItems()) {
                 if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getPrimary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
-                    potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true);
+                    potentialEgg.getPrimary().swapHeldItem(ItemStack.EMPTY, true, true);
                 }
                 if (potentialEgg.getSecondary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getSecondary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
-                    potentialEgg.getSecondary().swapHeldItem(ItemStack.EMPTY, true);
+                    potentialEgg.getSecondary().swapHeldItem(ItemStack.EMPTY, true, true);
                 }
             }
 

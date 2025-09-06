@@ -4,7 +4,6 @@ import com.cobblemon.mod.common.api.properties.CustomPokemonPropertyType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.properties.BooleanProperty;
-import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ public class BreedableProperty implements CustomPokemonPropertyType<BooleanPrope
 
     private static Unit applyToPokemon (Pokemon pokemon, boolean value) {
         pokemon.getPersistentData().putBoolean(KEY, value);
-        pokemon.getAnyChangeObservable().emit(pokemon);
+        pokemon.onChange(null);
         return Unit.INSTANCE;
     }
 

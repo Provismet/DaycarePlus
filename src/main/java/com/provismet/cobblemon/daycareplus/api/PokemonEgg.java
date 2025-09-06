@@ -129,7 +129,7 @@ public class PokemonEgg {
         pokemon.getAbility().setForced$common(false);
         player.sendMessage(Text.translatable("message.overlay.daycareplus.egg.hatch"), true);
         PlayerExtensionsKt.party(player).add(pokemon);
-        CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(this.pokemonProperties, player));
+        CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(player, pokemon));
         this.hatched = true;
     }
 }
