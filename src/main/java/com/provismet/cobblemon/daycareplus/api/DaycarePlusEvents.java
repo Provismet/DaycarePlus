@@ -17,6 +17,8 @@ public interface DaycarePlusEvents {
 
     /**
      * This event is called on the egg item right after it has been created.
+     * <p>
+     * Also executes whenever PokemonEgg data is serialised back into item form.
      */
     Event<EggProduced.Post> POST_EGG_PRODUCED = EventFactory.createArrayBacked(EggProduced.Post.class, listeners -> stack -> {
         for (EggProduced.Post event : listeners) {

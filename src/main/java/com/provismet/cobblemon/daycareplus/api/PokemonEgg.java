@@ -101,8 +101,9 @@ public class PokemonEgg {
 
         stack.set(DPItemDataComponents.EGG_STEPS, this.steps);
         stack.set(DPItemDataComponents.MAX_EGG_STEPS, this.maxSteps);
-
         if (this.steps < this.maxSteps) stack.setDamage(MathHelper.lerp(1f - ((float)this.steps / this.maxSteps), 1, 100));
+
+        DaycarePlusEvents.POST_EGG_PRODUCED.invoker().afterItemCreated(stack);
         return stack;
     }
 
