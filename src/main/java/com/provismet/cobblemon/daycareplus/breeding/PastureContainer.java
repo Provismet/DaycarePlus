@@ -1,5 +1,6 @@
 package com.provismet.cobblemon.daycareplus.breeding;
 
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
@@ -38,6 +39,6 @@ public interface PastureContainer extends SidedInventory {
 
     @Override
     default boolean canExtract (int slot, ItemStack stack, Direction dir) {
-        return !stack.isEmpty(); // TODO: Make this configurable.
+        return DaycarePlusOptions.shouldAllowHoppers() && !stack.isEmpty();
     }
 }

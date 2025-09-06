@@ -22,6 +22,7 @@ public class DaycarePlusOptions {
     private static int pastureInventorySize = 128;
     private static int maxPasturesPerPlayer = 3;
     private static boolean showShinyChance = true;
+    private static boolean allowHoppers = true;
 
     // Competitive Breeding
     private static boolean competitiveBreeding = false;
@@ -59,6 +60,10 @@ public class DaycarePlusOptions {
 
     public static boolean shouldShowShinyChance () {
         return showShinyChance;
+    }
+
+    public static boolean shouldAllowHoppers () {
+        return allowHoppers;
     }
 
     public static boolean doCompetitiveBreeding () {
@@ -109,7 +114,8 @@ public class DaycarePlusOptions {
                     .append("success_rate_per_egg_attempt", successRatePerEggAttempt)
                     .append("pasture_inventory_size", pastureInventorySize)
                     .append("max_pastures_per_player", maxPasturesPerPlayer)
-                    .append("show_shiny_chance", showShinyChance))
+                    .append("show_shiny_chance", showShinyChance)
+                    .append("allow_hoppers", allowHoppers))
             .append(
                 "competitive_mode", new JsonBuilder()
                     .append("use_competitive_mode", competitiveBreeding)
@@ -150,6 +156,7 @@ public class DaycarePlusOptions {
                     eggProduction.getInteger("pasture_inventory_size").ifPresent(val -> pastureInventorySize = val);
                     eggProduction.getInteger("max_pastures_per_player").ifPresent(val -> maxPasturesPerPlayer = val);
                     eggProduction.getBoolean("show_shiny_chance").ifPresent(val -> showShinyChance = val);
+                    eggProduction.getBoolean("allow_hoppers").ifPresent(val -> allowHoppers = val);
                 });
 
                 reader.getObjectAsReader("competitive_mode").ifPresent(competitiveMode -> {
