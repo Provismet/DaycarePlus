@@ -3,7 +3,7 @@
 	"id": "daycareplus",
 	"version": "${version}",
 	"name": "Daycare+",
-	"description": "A free serverside breeding mod that actually works and respects the game.",
+	"description": "Adds intuitive and customisable breeding to Cobblemon.",
 	"authors": [
 		"Provismet"
 	],
