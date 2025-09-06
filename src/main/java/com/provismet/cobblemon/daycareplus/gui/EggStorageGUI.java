@@ -86,11 +86,11 @@ public class EggStorageGUI extends SimpleGui {
             GuiElement eggButton;
 
             if (storageIndex < this.storage.size()) {
-                eggButton = GuiElementBuilder.from(this.storage.get(this.minSlotDisplayed + i))
+                eggButton = GuiElementBuilder.from(this.storage.getItem(this.minSlotDisplayed + i))
                     .setCallback((index, clickType, action, gui) -> {
-                        ItemStack stack = this.storage.get(storageIndex);
+                        ItemStack stack = this.storage.getItem(storageIndex);
                         if (!stack.isEmpty() && this.player.giveItemStack(stack)) {
-                            this.storage.withdraw(storageIndex);
+                            this.storage.remove(storageIndex);
                             this.player.playSoundToPlayer(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, SoundCategory.PLAYERS, 1f, 1f);
                             this.loadPage();
                         }

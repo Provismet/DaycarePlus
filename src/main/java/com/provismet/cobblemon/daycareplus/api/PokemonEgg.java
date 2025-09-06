@@ -36,7 +36,7 @@ public class PokemonEgg {
     private PokemonProperties pokemonProperties;
     private boolean hatched;
 
-    public PokemonEgg (String pokemonProperties, int maxSteps, int steps, boolean hatched) {
+    public PokemonEgg (String pokemonProperties, int steps, int maxSteps, boolean hatched) {
         this.propertyString = pokemonProperties;
         this.maxSteps = maxSteps;
         this.steps = steps;
@@ -44,7 +44,7 @@ public class PokemonEgg {
         this.pokemonProperties = null;
     }
 
-    public PokemonEgg (PokemonProperties pokemonProperties, int maxSteps, int steps, boolean hatched) {
+    public PokemonEgg (PokemonProperties pokemonProperties, int steps, int maxSteps, boolean hatched) {
         this.pokemonProperties = pokemonProperties;
         this.propertyString = pokemonProperties.asString(" ");
         this.maxSteps = maxSteps;
@@ -101,7 +101,8 @@ public class PokemonEgg {
 
         stack.set(DPItemDataComponents.EGG_STEPS, this.steps);
         stack.set(DPItemDataComponents.MAX_EGG_STEPS, this.maxSteps);
-        stack.setDamage(MathHelper.lerp(1f - ((float)this.steps / this.maxSteps), 1, 100));
+
+        if (this.steps < this.maxSteps) stack.setDamage(MathHelper.lerp(1f - ((float)this.steps / this.maxSteps), 1, 100));
         return stack;
     }
 
