@@ -17,6 +17,7 @@ public class CobblemonFormPropertyGenerator extends FormPropertiesOverrideProvid
         generator.add("galarbias", "region_bias", "galar");
         generator.add("hisuibias", "region_bias", "hisui");
         generator.add("whitestriped", "fish_stripes", "white");
+        generator.add("bluestriped", "fish_stripes", "blue");
 
         // Do not allow mega forms to be inherited.
         generator.add("mega", "mega_evolution", "none");
