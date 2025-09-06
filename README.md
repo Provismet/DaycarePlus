@@ -1,3 +1,9 @@
+<div align=center>
+  
+# Daycare+
+
+</div>
+
 Daycare+ is a free, open-source, breeding mod for Cobblemon on Fabric. It is fully serverside, meaning players without the mod can still join the server.
 
 If installed on the client, it gives extra utility and can also work entirely in singleplayer too.
