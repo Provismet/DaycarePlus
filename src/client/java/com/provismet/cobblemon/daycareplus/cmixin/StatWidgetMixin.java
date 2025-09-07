@@ -40,7 +40,7 @@ public abstract class StatWidgetMixin extends SoundlessWidget {
         method = "renderWidget",
         at = @At(
             value = "INVOKE",
-            target = "Lcom/cobblemon/mod/common/client/gui/summary/widgets/screens/stats/StatWidget;drawFriendship(IILnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/gui/DrawContext;I)V",
+            target = "Lcom/cobblemon/mod/common/client/gui/summary/widgets/screens/stats/StatWidget;drawFullness(IILnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/gui/DrawContext;Lcom/cobblemon/mod/common/pokemon/Pokemon;)V",
             shift = At.Shift.AFTER
         )
     )
