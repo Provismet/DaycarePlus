@@ -12,6 +12,7 @@ import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -36,13 +37,21 @@ public class DaycareSparkItem extends PolymerItem {
 
             if (context.getWorld().getBlockEntity(pasturePos) instanceof IMixinPastureBlockEntity daycare && daycare.shouldBreed()) {
                 Optional<PotentialPokemonProperties> potentialEgg = daycare.getExtension().predictEgg();
-                potentialEgg.ifPresent(properties -> daycare.getExtension().produceEgg(properties));
+                if (potentialEgg.isPresent()) {
+                    daycare.getExtension().produceEgg(potentialEgg.get());
 
-                if (context.getPlayer() != null) {
-                    context.getPlayer().sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
+                    if (context.getPlayer() != null) {
+                        context.getPlayer().sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
+                    }
+                    context.getStack().decrementUnlessCreative(1, context.getPlayer());
+                    return ActionResult.SUCCESS;
                 }
-                context.getStack().decrementUnlessCreative(1, context.getPlayer());
-                return ActionResult.SUCCESS;
+                else {
+                    if (context.getPlayer() != null) {
+                        context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.spark_failure").formatted(Formatting.RED), true);
+                    }
+                    return ActionResult.FAIL;
+                }
             }
             if (context.getPlayer() != null) {
                 context.getPlayer().sendMessage(Text.translatable("message.chat.daycareplus.not_daycare"));

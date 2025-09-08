@@ -87,6 +87,7 @@
   "message.overlay.daycareplus.incubator.typeless": "This incubator has no tier data!",
   "message.overlay.daycareplus.limit_reached": "You cannot activate anymore daycares, limit reached.",
   "message.overlay.daycareplus.not_owner": "This is not your daycare.",
+  "message.overlay.daycareplus.spark_failure": "This daycare lacks compatible parents!",
   "property.daycareplus.ability": "Ability: ",
   "property.daycareplus.attack": "Attack: ",
   "property.daycareplus.defence": "Defence: ",

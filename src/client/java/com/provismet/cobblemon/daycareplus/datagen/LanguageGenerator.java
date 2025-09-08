@@ -37,6 +37,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPItems.FERTILITY_CANDY.getTranslationKey() + ".tooltip", "Increases a Pokémon's fertility by 1");
         translationBuilder.add(DPItems.DAYCARE_SPARK, "Daycare Spark");
         translationBuilder.add(DPItems.DAYCARE_SPARK.getTranslationKey() + ".tooltip", "Forces a daycare to immediately produce an egg");
+        translationBuilder.add("message.overlay.daycareplus.spark_failure", "This daycare lacks compatible parents!");
         translationBuilder.add(DPItems.DAYCARE_BOOSTER, "Dizygotic Booster");
         translationBuilder.add(DPItems.DAYCARE_BOOSTER.getTranslationKey() + ".tooltip", "Adds an extra egg to the next %1$s daycare cycles");
         translationBuilder.add("message.overlay.daycareplus.fertility_boosted", "Your %1$s now has %2$s fertility.");
