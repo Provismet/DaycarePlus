@@ -45,7 +45,7 @@
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*",
-		"cobblemon": "*",
+		"cobblemon": ">=1.6.1 <1.7.0",
         "lilylib": "*",
         "polymer-core": "*",
         "polymer-common": "*"
