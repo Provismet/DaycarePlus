@@ -19,9 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class IncubatorTiers {
-    private static final Path FILE = FabricLoader.getInstance().getConfigDir()
-        .resolve("daycareplus")
-        .resolve("incubators.json");
+    private static final Path FILE = DaycarePlusOptions.getConfigFolder().resolve("incubators.json");
     private static final Map<String, IncubatorSettings> settings = new HashMap<>();
 
     // Incubator defaults

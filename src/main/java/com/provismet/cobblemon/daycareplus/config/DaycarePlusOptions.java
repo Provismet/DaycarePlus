@@ -9,12 +9,23 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DaycarePlusOptions {
-    private static final Path FILE = FabricLoader.getInstance().getConfigDir()
-        .resolve("daycareplus")
-        .resolve("server-config.json");
+    public static Path getConfigFolder () {
+        Path directory = FabricLoader.getInstance().getConfigDir().resolve("daycareplus");
+        if (!Files.exists(directory)) {
+            try {
+                Files.createDirectories(directory);
+            } catch (IOException e) {
+                throw new RuntimeException("Error creating Daycare+ config directory: ", e);
+            }
+        }
+        return directory;
+    }
+
+    private static final Path FILE = getConfigFolder().resolve("server-config.json");
 
     // Egg Production
     private static long ticksPerEggAttempt = 12000;
