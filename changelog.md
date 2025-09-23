@@ -1,2 +1,2 @@
 ## Bugfixes
-- Daycare Sparks no longer activate and get lost when used on Daycares without valid parents.
+- Now correctly creates the `config/daycareplus` folder for storing the settings.
