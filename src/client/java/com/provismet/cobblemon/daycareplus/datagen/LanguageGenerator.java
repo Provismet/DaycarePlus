@@ -41,7 +41,10 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPItems.DAYCARE_BOOSTER, "Dizygotic Booster");
         translationBuilder.add(DPItems.DAYCARE_BOOSTER.getTranslationKey() + ".tooltip", "Adds an extra egg to the next %1$s daycare cycles");
         translationBuilder.add("message.overlay.daycareplus.fertility_boosted", "Your %1$s now has %2$s fertility.");
-        translationBuilder.add("message.overlay.daycareplus.egg_boosted", "Your daycare now has %1$s boosts.");
+        translationBuilder.add("message.overlay.daycareplus.egg_boosted", "Your daycare now has %1$s twin boosts.");
+        translationBuilder.add(DPItems.SHINY_BOOSTER, "Sparkling Booster");
+        translationBuilder.add(DPItems.SHINY_BOOSTER.getTranslationKey() + ".tooltip", "Adds extra shiny odds to the next %1$s daycare cycles");
+        translationBuilder.add("message.overlay.daycareplus.egg_shiny_boosted", "Your daycare now has %1$s shiny boosts.");
 
         // Egg Bag
         translationBuilder.add("message.overlay.daycareplus.incubator.collection.singular", "Collected %1$s egg.");
@@ -70,7 +73,9 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");
         translationBuilder.add("message.chat.daycareplus.move_learnt", "Your %1$s learnt %2$s while in the daycare.");
         translationBuilder.add("message.overlay.daycareplus.not_owner", "This is not your daycare.");
-        translationBuilder.add("gui.button.daycareplus.boosts_remaining", "Twin Boosts Remaining: %1$s");
+        translationBuilder.add("gui.button.daycareplus.twin_boosts_remaining", "Twin Boosts Remaining: %1$s");
+        translationBuilder.add("gui.button.daycareplus.shiny_boosts_remaining", "Shiny Boosts Remaining: %1$s");
+        translationBuilder.add("gui.button.daycareplus.shiny_boost_rate", "Non-shiny eggs have a %1$s%% chance to become shiny!");
         translationBuilder.add("gui.button.daycareplus.open_pasture", "Open Pasture");
         translationBuilder.add("gui.button.daycareplus.info", "Info");
         translationBuilder.add("gui.button.daycareplus.info.tooltip.1", "The daycare attempt to produce an egg periodically.");

@@ -16,6 +16,7 @@ import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -29,13 +30,26 @@ public class PastureExtension {
     private final UUID uuid;
     private final PokemonPastureBlockEntity blockEntity;
     private long prevTime;
-    private int boosts;
+    private int twinBoosts;
+    private int shinyBoosts;
 
-    public PastureExtension (PokemonPastureBlockEntity blockEntity, long prevTime, UUID uuid, int boosts) {
+    public PastureExtension (PokemonPastureBlockEntity blockEntity, long prevTime, UUID uuid, int twinBoosts, int shinyBoosts) {
         this.blockEntity = blockEntity;
         this.prevTime = prevTime;
         this.uuid = uuid;
-        this.boosts = boosts;
+        this.twinBoosts = twinBoosts;
+        this.shinyBoosts = shinyBoosts;
+    }
+
+    public static PastureExtension fromNBT (PokemonPastureBlockEntity blockEntity, UUID uuid, NbtCompound nbt) {
+        long prevTick = Long.MAX_VALUE;
+        int boosts = 0;
+        int shinyBoosts = 0;
+        if (nbt.contains("prevTick")) prevTick = nbt.getLong("prevTick");
+        if (nbt.contains("boosts")) boosts = nbt.getInt("boosts");
+        if (nbt.contains("shinyBoosts")) shinyBoosts = nbt.getInt("shinyBoosts");
+
+        return new PastureExtension(blockEntity, prevTick, uuid, boosts, shinyBoosts);
     }
 
     private void tryApplyMirrorHerb (Pokemon potentialHolder, Pokemon other) {
@@ -71,12 +85,20 @@ public class PastureExtension {
         return this.prevTime;
     }
 
-    public int getBoosts () {
-        return this.boosts;
+    public int getTwinBoosts () {
+        return this.twinBoosts;
     }
 
-    public void setBoosts (int boosts) {
-        this.boosts = boosts;
+    public void setTwinBoosts (int twinBoosts) {
+        this.twinBoosts = twinBoosts;
+    }
+
+    public int getShinyBoosts () {
+        return this.shinyBoosts;
+    }
+
+    public void setShinyBoosts (int shinyBoosts) {
+        this.shinyBoosts = shinyBoosts;
     }
 
     public Optional<PotentialPokemonProperties> predictEgg () {
@@ -94,6 +116,11 @@ public class PastureExtension {
         }
 
         PokemonProperties properties = potentialEgg.createPokemonProperties();
+        if (this.shinyBoosts > 0 && Boolean.FALSE.equals(properties.getShiny())) {
+            --this.shinyBoosts;
+            if (Math.random() < DaycarePlusOptions.getShinyBoosterRate()) properties.setShiny(true);
+        }
+
         if (DaycarePlusOptions.doCompetitiveBreeding()) {
             FertilityProperty.decrement(potentialEgg.getPrimary());
             FertilityProperty.decrement(potentialEgg.getSecondary());
@@ -154,9 +181,9 @@ public class PastureExtension {
                 applyMirrorHerb = true;
 
                 int eggsToProduce = 1;
-                if (this.boosts > 0) {
+                if (this.twinBoosts > 0) {
                     eggsToProduce = 2;
-                    --this.boosts;
+                    --this.twinBoosts;
                 }
                 for (int j = 0; j < eggsToProduce; ++j) {
                     Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();

@@ -37,6 +37,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -69,7 +70,8 @@ public interface DaycareGUI {
             .build();
 
         GuiElement eggCounter = mixinPasture.getEggCounterButton();
-        GuiElement boostCounter = mixinPasture.getBoostCounterButton();
+        GuiElement twinBoostCounter = mixinPasture.getTwinBoostCounterButton();
+        GuiElement shinyBoostCounter = mixinPasture.getShinyBoostCounterButton();
 
         Pokemon parent1 = null;
         Pokemon parent2 = null;
@@ -190,8 +192,16 @@ public interface DaycareGUI {
             gui.setSlot(i, filler);
         }
 
-        if (mixinPasture.getExtension() != null && mixinPasture.getExtension().getBoosts() > 0) {
-            gui.setSlot(5, boostCounter);
+        if (mixinPasture.getExtension() != null) {
+            if (mixinPasture.getExtension().getTwinBoosts() > 0) {
+                gui.setSlot(0, twinBoostCounter);
+                if (mixinPasture.getExtension().getShinyBoosts() > 0) {
+                    gui.setSlot(1, shinyBoostCounter);
+                }
+            }
+            else if (mixinPasture.getExtension().getShinyBoosts() > 0) {
+                gui.setSlot(0, shinyBoostCounter);
+            }
         }
         gui.setSlot(6, eggCounter);
         gui.setSlot(7, openPasture);
@@ -211,10 +221,18 @@ public interface DaycareGUI {
             .build();
     }
 
-    static GuiElement createBoostButton (IMixinPastureBlockEntity mixinPasture) {
+    static GuiElement createTwinBoostButton (IMixinPastureBlockEntity mixinPasture) {
         return GuiElementBuilder.from(DPItems.DAYCARE_BOOSTER.getDefaultStack())
             .hideDefaultTooltip()
-            .setName(Text.translatable("gui.button.daycareplus.boosts_remaining", mixinPasture.getExtension() != null ? mixinPasture.getExtension().getBoosts() : 0).styled(Styles.WHITE_NO_ITALICS))
+            .setName(Text.translatable("gui.button.daycareplus.twin_boosts_remaining", mixinPasture.getExtension() != null ? mixinPasture.getExtension().getTwinBoosts() : 0).styled(Styles.WHITE_NO_ITALICS))
+            .build();
+    }
+
+    static GuiElement createShinyBoostButton (IMixinPastureBlockEntity mixinPasture) {
+        return GuiElementBuilder.from(DPItems.SHINY_BOOSTER.getDefaultStack())
+            .hideDefaultTooltip()
+            .setName(Text.translatable("gui.button.daycareplus.shiny_boosts_remaining", mixinPasture.getExtension() != null ? mixinPasture.getExtension().getTwinBoosts() : 0).styled(Styles.WHITE_NO_ITALICS))
+            .setLore(List.of(Text.translatable("gui.button.daycareplus.shiny_boost_rate", DaycarePlusOptions.getShinyBoosterRate() * 100).styled(Styles.GRAY_NO_ITALICS)))
             .build();
     }
 

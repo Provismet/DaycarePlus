@@ -38,6 +38,7 @@ public class DaycarePlusOptions {
     private static float masudaMultiplier = 2;
     private static float crystalMultiplier = 1;
     private static boolean useShinyEvent = true;
+    private static double shinyBoosterRate = 0.05;
 
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
@@ -90,6 +91,10 @@ public class DaycarePlusOptions {
         return useShinyEvent;
     }
 
+    public static double getShinyBoosterRate () {
+        return shinyBoosterRate;
+    }
+
     public static float getShinyChanceMultiplier () {
         return shinyChanceMultiplier;
     }
@@ -126,7 +131,8 @@ public class DaycarePlusOptions {
                     .append("use_event_trigger", useShinyEvent)
                     .append("standard_multiplier", shinyChanceMultiplier)
                     .append("masuda_multiplier", masudaMultiplier)
-                    .append("crystal_multiplier", crystalMultiplier))
+                    .append("crystal_multiplier", crystalMultiplier)
+                    .append("shiny_booster_rate", shinyBoosterRate))
             .append(
                 "breeding_rules", new JsonBuilder()
                     .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
@@ -170,6 +176,7 @@ public class DaycarePlusOptions {
                     shinyChance.getFloat("standard_multiplier").ifPresent(val -> shinyChanceMultiplier = val);
                     shinyChance.getFloat("masuda_multiplier").ifPresent(val -> masudaMultiplier = val);
                     shinyChance.getFloat("crystal_multiplier").ifPresent(val -> crystalMultiplier = val);
+                    shinyChance.getDouble("shiny_booster_rate").ifPresent(val -> shinyBoosterRate = val);
                 });
 
                 reader.getObjectAsReader("breeding_rules").ifPresent(breedingRules -> {
