@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DaycarePlusOptions {
-    public static Path getConfigFolder () {
+    public static Path getConfigFolder() {
         Path directory = FabricLoader.getInstance().getConfigDir().resolve("daycareplus");
         if (!Files.exists(directory)) {
             try {
@@ -39,6 +39,7 @@ public class DaycarePlusOptions {
     private static boolean competitiveBreeding = false;
     private static boolean allowBreedingWithoutFertility = false;
     private static boolean consumeHeldItems = true;
+    private static boolean eggsInheritFertility = true;
 
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
@@ -53,106 +54,110 @@ public class DaycarePlusOptions {
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
 
-    public static long getTicksPerEggAttempt () {
+    public static long getTicksPerEggAttempt() {
         return ticksPerEggAttempt;
     }
 
-    public static double getSuccessRatePerEggAttempt () {
+    public static double getSuccessRatePerEggAttempt() {
         return successRatePerEggAttempt;
     }
 
-    public static int getPastureInventorySize () {
+    public static int getPastureInventorySize() {
         return pastureInventorySize;
     }
 
-    public static int getMaxPasturesPerPlayer () {
+    public static int getMaxPasturesPerPlayer() {
         return maxPasturesPerPlayer;
     }
 
-    public static boolean shouldShowShinyChance () {
+    public static boolean shouldShowShinyChance() {
         return showShinyChance;
     }
 
-    public static boolean shouldAllowHoppers () {
+    public static boolean shouldAllowHoppers() {
         return allowHoppers;
     }
 
-    public static boolean doCompetitiveBreeding () {
+    public static boolean doCompetitiveBreeding() {
         return competitiveBreeding;
     }
 
-    public static boolean shouldAllowBreedingWithoutFertility () {
+    public static boolean shouldAllowBreedingWithoutFertility() {
         return allowBreedingWithoutFertility;
     }
 
-    public static boolean shouldConsumeHeldItems () {
+    public static boolean shouldConsumeHeldItems() {
         return consumeHeldItems;
     }
 
-    public static int getEggPoints (int eggCycles) {
+    public static boolean shouldEggsInheritFertility() {
+        return eggsInheritFertility;
+    }
+
+    public static int getEggPoints(int eggCycles) {
         return pointsPerEggCycle * eggCycles;
     }
 
-    public static boolean shouldShowEggTooltip () {
+    public static boolean shouldShowEggTooltip() {
         return showEggTooltip;
     }
 
-    public static boolean shouldUseShinyChanceEvent () {
+    public static boolean shouldUseShinyChanceEvent() {
         return useShinyEvent;
     }
 
-    public static float getShinyChanceMultiplier () {
+    public static float getShinyChanceMultiplier() {
         return shinyChanceMultiplier;
     }
 
-    public static float getMasudaMultiplier () {
+    public static float getMasudaMultiplier() {
         return masudaMultiplier;
     }
 
-    public static float getCrystalMultiplier () {
+    public static float getCrystalMultiplier() {
         return crystalMultiplier;
     }
 
-    public static boolean doGen6EggMoves () {
+    public static boolean doGen6EggMoves() {
         return inheritEggMovesFromBothParents;
     }
 
-    public static void save () {
+    public static void save() {
         JsonBuilder builder = new JsonBuilder()
-            .append(
-                "egg_production", new JsonBuilder()
-                    .append("ticks_per_egg_attempt", ticksPerEggAttempt)
-                    .append("success_rate_per_egg_attempt", successRatePerEggAttempt)
-                    .append("pasture_inventory_size", pastureInventorySize)
-                    .append("max_pastures_per_player", maxPasturesPerPlayer)
-                    .append("show_shiny_chance", showShinyChance)
-                    .append("allow_hoppers", allowHoppers))
-            .append(
-                "competitive_mode", new JsonBuilder()
-                    .append("use_competitive_mode", competitiveBreeding)
-                    .append("allow_breeding_without_fertility", allowBreedingWithoutFertility)
-                    .append("consume_held_items", consumeHeldItems))
-            .append(
-                "shiny_chance", new JsonBuilder()
-                    .append("use_event_trigger", useShinyEvent)
-                    .append("standard_multiplier", shinyChanceMultiplier)
-                    .append("masuda_multiplier", masudaMultiplier)
-                    .append("crystal_multiplier", crystalMultiplier))
-            .append(
-                "breeding_rules", new JsonBuilder()
-                    .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
-                    .append("ticks_per_egg_cycle", pointsPerEggCycle)
-                    .append("show_egg_tooltip", showEggTooltip));
+                .append(
+                        "egg_production", new JsonBuilder()
+                                .append("ticks_per_egg_attempt", ticksPerEggAttempt)
+                                .append("success_rate_per_egg_attempt", successRatePerEggAttempt)
+                                .append("pasture_inventory_size", pastureInventorySize)
+                                .append("max_pastures_per_player", maxPasturesPerPlayer)
+                                .append("show_shiny_chance", showShinyChance)
+                                .append("allow_hoppers", allowHoppers))
+                .append(
+                        "competitive_mode", new JsonBuilder()
+                                .append("use_competitive_mode", competitiveBreeding)
+                                .append("allow_breeding_without_fertility", allowBreedingWithoutFertility)
+                                .append("consume_held_items", consumeHeldItems)
+                                .append("eggs_inherit_fertility", eggsInheritFertility))
+                .append(
+                        "shiny_chance", new JsonBuilder()
+                                .append("use_event_trigger", useShinyEvent)
+                                .append("standard_multiplier", shinyChanceMultiplier)
+                                .append("masuda_multiplier", masudaMultiplier)
+                                .append("crystal_multiplier", crystalMultiplier))
+                .append(
+                        "breeding_rules", new JsonBuilder()
+                                .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
+                                .append("ticks_per_egg_cycle", pointsPerEggCycle)
+                                .append("show_egg_tooltip", showEggTooltip));
 
         try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             DaycarePlusMain.LOGGER.error("Error whilst saving Daycare+ server-config.json: ", e);
         }
     }
 
-    public static void load () {
+    public static void load() {
         if (!FILE.toFile().exists()) {
             save();
             return;
@@ -174,6 +179,7 @@ public class DaycarePlusOptions {
                     competitiveMode.getBoolean("use_competitive_mode").ifPresent(val -> competitiveBreeding = val);
                     competitiveMode.getBoolean("allow_breeding_without_fertility").ifPresent(val -> allowBreedingWithoutFertility = val);
                     competitiveMode.getBoolean("consume_held_items").ifPresent(val -> consumeHeldItems = val);
+                    competitiveMode.getBoolean("eggs_inherit_fertility").ifPresent(val -> eggsInheritFertility = val);
                 });
 
                 reader.getObjectAsReader("shiny_chance").ifPresent(shinyChance -> {
@@ -189,11 +195,9 @@ public class DaycarePlusOptions {
                     breedingRules.getBoolean("show_egg_tooltip").ifPresent(val -> showEggTooltip = val);
                 });
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             DaycarePlusMain.LOGGER.info("No Daycare+ server config found, creating default.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             DaycarePlusMain.LOGGER.error("Error reading Daycare+ server-config.json: ", e);
         }
         save();

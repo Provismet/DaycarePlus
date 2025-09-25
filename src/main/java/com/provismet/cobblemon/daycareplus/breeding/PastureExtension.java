@@ -31,14 +31,14 @@ public class PastureExtension {
     private long prevTime;
     private int boosts;
 
-    public PastureExtension (PokemonPastureBlockEntity blockEntity, long prevTime, UUID uuid, int boosts) {
+    public PastureExtension(PokemonPastureBlockEntity blockEntity, long prevTime, UUID uuid, int boosts) {
         this.blockEntity = blockEntity;
         this.prevTime = prevTime;
         this.uuid = uuid;
         this.boosts = boosts;
     }
 
-    private void tryApplyMirrorHerb (Pokemon potentialHolder, Pokemon other) {
+    private void tryApplyMirrorHerb(Pokemon potentialHolder, Pokemon other) {
         if (!potentialHolder.heldItem().isOf(CobblemonItems.MIRROR_HERB)) return;
         PlayerEntity owner = null;
         if (this.blockEntity.getOwnerId() != null && this.blockEntity.getWorld() != null) {
@@ -67,19 +67,19 @@ public class PastureExtension {
         }
     }
 
-    public long getPrevTime () {
+    public long getPrevTime() {
         return this.prevTime;
     }
 
-    public int getBoosts () {
+    public int getBoosts() {
         return this.boosts;
     }
 
-    public void setBoosts (int boosts) {
+    public void setBoosts(int boosts) {
         this.boosts = boosts;
     }
 
-    public Optional<PotentialPokemonProperties> predictEgg () {
+    public Optional<PotentialPokemonProperties> predictEgg() {
         if (this.blockEntity.getTetheredPokemon().size() != 2) return Optional.empty();
         Pokemon parent1 = this.blockEntity.getTetheredPokemon().getFirst().getPokemon();
         Pokemon parent2 = this.blockEntity.getTetheredPokemon().getLast().getPokemon();
@@ -87,7 +87,7 @@ public class PastureExtension {
         return BreedingUtils.getOffspring(parent1, parent2);
     }
 
-    public void produceEgg (PotentialPokemonProperties potentialEgg) {
+    public void produceEgg(PotentialPokemonProperties potentialEgg) {
         PlayerEntity owner = null;
         if (this.blockEntity.getOwnerId() != null && this.blockEntity.getWorld() != null) {
             owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
@@ -107,8 +107,11 @@ public class PastureExtension {
                 }
             }
 
-            int lower = Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary()));
-            properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, lower));
+            int eggFertility = DaycarePlusOptions.shouldEggsInheritFertility() ?
+                    Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary())) :
+                    FertilityProperty.getMax();
+
+            properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, eggFertility));
         }
 
         if (owner instanceof ServerPlayerEntity serverPlayer) {
@@ -119,20 +122,20 @@ public class PastureExtension {
         ItemStack egg = DPItems.POKEMON_EGG.createEggItem(properties);
         DaycarePlusEvents.POST_EGG_PRODUCED.invoker().afterItemCreated(egg);
 
-        ((PastureContainer)(Object)this.blockEntity).add(egg);
+        ((PastureContainer) (Object) this.blockEntity).add(egg);
     }
 
-    public void tick () {
+    public void tick() {
         if (this.blockEntity.getWorld() instanceof ServerWorld world) {
             if (world.getTime() % 20 == 0) {
                 world.spawnParticles(
-                    ParticleTypes.HEART,
-                    this.blockEntity.getPos().getX() + 0.5,
-                    this.blockEntity.getPos().getY() + 1.5,
-                    this.blockEntity.getPos().getZ() + 0.5,
-                    1,
-                    0, 0, 0,
-                    0
+                        ParticleTypes.HEART,
+                        this.blockEntity.getPos().getX() + 0.5,
+                        this.blockEntity.getPos().getY() + 1.5,
+                        this.blockEntity.getPos().getZ() + 0.5,
+                        1,
+                        0, 0, 0,
+                        0
                 );
             }
 
@@ -140,7 +143,8 @@ public class PastureExtension {
             this.prevTime = world.getTime();
             long eggAttempts = ticksToProcess / DaycarePlusOptions.getTicksPerEggAttempt();
 
-            if ((world.getTime() + this.uuid.getLeastSignificantBits()) % DaycarePlusOptions.getTicksPerEggAttempt() == 0) ++eggAttempts;
+            if ((world.getTime() + this.uuid.getLeastSignificantBits()) % DaycarePlusOptions.getTicksPerEggAttempt() == 0)
+                ++eggAttempts;
 
             int calculatedEggs = 0;
             PlayerEntity owner = null;
@@ -162,7 +166,8 @@ public class PastureExtension {
                     Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();
                     if (optionalEgg.isPresent()) {
                         if (owner != null) {
-                            if (eggAttempts == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
+                            if (eggAttempts == 1)
+                                owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
                             else ++calculatedEggs;
                         }
                         this.produceEgg(optionalEgg.get());
@@ -182,8 +187,10 @@ public class PastureExtension {
 
             calculatedEggs = MathHelper.clamp(calculatedEggs, 0, DaycarePlusOptions.getPastureInventorySize());
             if (calculatedEggs > 0 && owner != null) {
-                if (calculatedEggs == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.single_egg_produced", calculatedEggs));
-                else owner.sendMessage(Text.translatable("message.chat.daycareplus.multiple_egg_produced", calculatedEggs));
+                if (calculatedEggs == 1)
+                    owner.sendMessage(Text.translatable("message.chat.daycareplus.single_egg_produced", calculatedEggs));
+                else
+                    owner.sendMessage(Text.translatable("message.chat.daycareplus.multiple_egg_produced", calculatedEggs));
             }
         }
     }
