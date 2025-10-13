@@ -39,6 +39,7 @@ public class DaycarePlusOptions {
     private static boolean competitiveBreeding = false;
     private static boolean allowBreedingWithoutFertility = false;
     private static boolean consumeHeldItems = true;
+    private static boolean eggsInheritFertility = true;
 
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
@@ -89,6 +90,10 @@ public class DaycarePlusOptions {
         return consumeHeldItems;
     }
 
+    public static boolean shouldEggsInheritFertility () {
+        return eggsInheritFertility;
+    }
+
     public static int getEggPoints (int eggCycles) {
         return pointsPerEggCycle * eggCycles;
     }
@@ -131,7 +136,8 @@ public class DaycarePlusOptions {
                 "competitive_mode", new JsonBuilder()
                     .append("use_competitive_mode", competitiveBreeding)
                     .append("allow_breeding_without_fertility", allowBreedingWithoutFertility)
-                    .append("consume_held_items", consumeHeldItems))
+                    .append("consume_held_items", consumeHeldItems)
+                    .append("eggs_inherit_fertility", eggsInheritFertility))
             .append(
                 "shiny_chance", new JsonBuilder()
                     .append("use_event_trigger", useShinyEvent)
@@ -174,6 +180,7 @@ public class DaycarePlusOptions {
                     competitiveMode.getBoolean("use_competitive_mode").ifPresent(val -> competitiveBreeding = val);
                     competitiveMode.getBoolean("allow_breeding_without_fertility").ifPresent(val -> allowBreedingWithoutFertility = val);
                     competitiveMode.getBoolean("consume_held_items").ifPresent(val -> consumeHeldItems = val);
+                    competitiveMode.getBoolean("eggs_inherit_fertility").ifPresent(val -> eggsInheritFertility = val);
                 });
 
                 reader.getObjectAsReader("shiny_chance").ifPresent(shinyChance -> {

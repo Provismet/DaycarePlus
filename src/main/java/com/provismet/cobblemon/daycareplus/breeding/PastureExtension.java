@@ -107,8 +107,11 @@ public class PastureExtension {
                 }
             }
 
-            int lower = Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary()));
-            properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, lower));
+            int eggFertility = DaycarePlusOptions.shouldEggsInheritFertility() ?
+                    Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary())) :
+                    FertilityProperty.getMax();
+
+            properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, eggFertility));
         }
 
         if (owner instanceof ServerPlayerEntity serverPlayer) {

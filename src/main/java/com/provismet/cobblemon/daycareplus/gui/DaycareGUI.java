@@ -144,7 +144,10 @@ public interface DaycareGUI {
             );
 
             if (DaycarePlusOptions.doCompetitiveBreeding()) {
-                int newFertility = MathHelper.clamp(Math.min(FertilityProperty.get(parent1), FertilityProperty.get(parent2)) - 1, 0, FertilityProperty.getMax());
+                int newFertility = DaycarePlusOptions.shouldEggsInheritFertility() ?
+                        MathHelper.clamp(Math.min(FertilityProperty.get(parent1), FertilityProperty.get(parent2)) - 1, 0, FertilityProperty.getMax()) :
+                        FertilityProperty.getMax();
+
                 eggData.add(
                     Text.empty(),
                     Text.translatable("property.daycareplus.fertility").styled(Styles.formattedNoItalics(Formatting.DARK_GREEN)).append(Text.literal(String.valueOf(newFertility)).styled(Styles.WHITE_NO_ITALICS))
