@@ -216,6 +216,12 @@ public class PotentialPokemonProperties {
             });
         }
 
+        // TODO: These workarounds are dumb, data-driven overrides needs to be expanded to include stuff like this!
+        if ((this.primary.getSpecies().showdownId().equals("pikachu") && this.primary.heldItem().isOf(CobblemonItems.LIGHT_BALL))
+        || (this.secondary.getSpecies().showdownId().equals("pikachu") && this.secondary.heldItem().isOf(CobblemonItems.LIGHT_BALL))) {
+            eggMoves.add("volttackle");
+        }
+
         return eggMoves;
     }
 
