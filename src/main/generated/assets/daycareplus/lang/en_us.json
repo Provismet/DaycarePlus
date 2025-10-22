@@ -43,6 +43,7 @@
   "gui.button.daycareplus.shiny_boost_rate": "Non-shiny eggs have a %1$s%% chance to become shiny!",
   "gui.button.daycareplus.shiny_boosts_remaining": "Shiny Boosts Remaining: %1$s",
   "gui.button.daycareplus.take": "Deposit All",
+  "gui.button.daycareplus.twin_boosts_info": "Each cycle produces an extra egg!",
   "gui.button.daycareplus.twin_boosts_remaining": "Twin Boosts Remaining: %1$s",
   "gui.title.daycareplus.daycare": "Daycare",
   "gui.title.daycareplus.incubator": "Incubator",

@@ -225,6 +225,7 @@ public interface DaycareGUI {
         return GuiElementBuilder.from(DPItems.DAYCARE_BOOSTER.getDefaultStack())
             .hideDefaultTooltip()
             .setName(Text.translatable("gui.button.daycareplus.twin_boosts_remaining", mixinPasture.getExtension() != null ? mixinPasture.getExtension().getTwinBoosts() : 0).styled(Styles.WHITE_NO_ITALICS))
+            .setLore(List.of(Text.translatable("gui.button.daycareplus.twin_boosts_info").styled(Styles.GRAY_NO_ITALICS)))
             .build();
     }
 

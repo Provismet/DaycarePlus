@@ -74,6 +74,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("message.chat.daycareplus.move_learnt", "Your %1$s learnt %2$s while in the daycare.");
         translationBuilder.add("message.overlay.daycareplus.not_owner", "This is not your daycare.");
         translationBuilder.add("gui.button.daycareplus.twin_boosts_remaining", "Twin Boosts Remaining: %1$s");
+        translationBuilder.add("gui.button.daycareplus.twin_boosts_info", "Each cycle produces an extra egg!");
         translationBuilder.add("gui.button.daycareplus.shiny_boosts_remaining", "Shiny Boosts Remaining: %1$s");
         translationBuilder.add("gui.button.daycareplus.shiny_boost_rate", "Non-shiny eggs have a %1$s%% chance to become shiny!");
         translationBuilder.add("gui.button.daycareplus.open_pasture", "Open Pasture");
