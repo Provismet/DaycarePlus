@@ -254,8 +254,8 @@ public class PotentialPokemonProperties {
     }
 
     private void setGender (PokemonProperties properties) {
-        if (this.form.getSpecies().getMaleRatio() < 0) properties.setGender(Gender.GENDERLESS);
-        else if (Math.random() < this.form.getSpecies().getMaleRatio()) properties.setGender(Gender.MALE);
+        if (this.form.getMaleRatio() < 0) properties.setGender(Gender.GENDERLESS);
+        else if (Math.random() < this.form.getMaleRatio()) properties.setGender(Gender.MALE);
         else properties.setGender(Gender.FEMALE);
     }
 
