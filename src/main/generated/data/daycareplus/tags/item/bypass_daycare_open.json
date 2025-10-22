@@ -5,6 +5,7 @@
       "required": false
     },
     "daycareplus:daycare_spark",
-    "daycareplus:daycare_booster"
+    "daycareplus:daycare_booster",
+    "daycareplus:shiny_booster"
   ]
 }

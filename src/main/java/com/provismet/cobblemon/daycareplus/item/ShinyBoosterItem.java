@@ -15,8 +15,8 @@ import net.minecraft.util.ActionResult;
 
 import java.util.List;
 
-public class DaycareBoosterItem extends AbstractDaycareModifierItem {
-    public DaycareBoosterItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData) {
+public class ShinyBoosterItem extends AbstractDaycareModifierItem {
+    public ShinyBoosterItem (Settings settings, Item baseVanillaItem, PolymerModelData modelData) {
         super(settings, baseVanillaItem, modelData);
     }
 
@@ -28,10 +28,10 @@ public class DaycareBoosterItem extends AbstractDaycareModifierItem {
     @Override
     protected ActionResult applyToDaycare (ItemUsageContext context, PokemonPastureBlockEntity pasture, IMixinPastureBlockEntity daycare) {
         PastureExtension extension = daycare.getExtension();
-        extension.setTwinBoosts(this.getBoostAmount(context.getStack()) + extension.getTwinBoosts());
+        extension.setShinyBoosts(this.getBoostAmount(context.getStack()) + extension.getShinyBoosts());
 
         if (context.getPlayer() != null) {
-            context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_boosted", extension.getTwinBoosts()));
+            context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.egg_shiny_boosted", extension.getShinyBoosts()));
         }
         context.getStack().decrementUnlessCreative(1, context.getPlayer());
         return ActionResult.SUCCESS;

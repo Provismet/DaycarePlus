@@ -50,7 +50,8 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     @Unique private PastureExtension extension;
     @Unique private DefaultedList<ItemStack> inventory = DefaultedList.ofSize(DaycarePlusOptions.getPastureInventorySize(), ItemStack.EMPTY);
     @Unique private GuiElement eggCounter = DaycareGUI.createEggButton(this);
-    @Unique private GuiElement boostCounter = DaycareGUI.createBoostButton(this);
+    @Unique private GuiElement twinBoostCounter = DaycareGUI.createTwinBoostButton(this);
+    @Unique private GuiElement shinyBoostCounter = DaycareGUI.createShinyBoostButton(this);
 
     @Override
     public PastureExtension getExtension () {
@@ -99,9 +100,15 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
     }
 
     @Override
-    public GuiElement getBoostCounterButton () {
+    public GuiElement getTwinBoostCounterButton () {
         this.updateBoostCounter();
-        return this.boostCounter;
+        return this.twinBoostCounter;
+    }
+
+    @Override
+    public GuiElement getShinyBoostCounterButton () {
+        this.updateBoostCounter();
+        return this.shinyBoostCounter;
     }
 
     @Override
@@ -219,7 +226,8 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
     @Unique
     private void updateBoostCounter () {
-        this.boostCounter.getItemStack().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.boosts_remaining", this.getExtension() != null ? this.getExtension().getBoosts() : 0).styled(Styles.WHITE_NO_ITALICS));
+        this.twinBoostCounter.getItemStack().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.twin_boosts_remaining", this.getExtension() != null ? this.getExtension().getTwinBoosts() : 0).styled(Styles.WHITE_NO_ITALICS));
+        this.shinyBoostCounter.getItemStack().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.shiny_boosts_remaining", this.getExtension() != null ? this.getExtension().getShinyBoosts() : 0).styled(Styles.WHITE_NO_ITALICS));
     }
 
     @Inject(method = "TICKER$lambda$14", at = @At("HEAD"))
@@ -248,7 +256,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
             }
 
             if (imixin.getExtension() == null) {
-                imixin.setExtension(new PastureExtension(pasture, Long.MAX_VALUE, imixin.getBreederUUID(), 0));
+                imixin.setExtension(new PastureExtension(pasture, Long.MAX_VALUE, imixin.getBreederUUID(), 0, 0));
             }
             imixin.getExtension().tick();
         }
@@ -267,7 +275,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
         else if (this.world != null) breederNbt.putLong("prevTick", this.world.getTime());
         else breederNbt.putLong("prevTick", Long.MAX_VALUE);
 
-        if (this.extension != null) breederNbt.putInt("boosts", this.extension.getBoosts());
+        if (this.extension != null) breederNbt.putInt("boosts", this.extension.getTwinBoosts());
         else breederNbt.putInt("boosts", 0);
 
         Inventories.writeNbt(breederNbt, this.inventory, registryLookup);
@@ -283,12 +291,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
             else this.breederUuid = UUID.randomUUID();
 
             if (this.isBreeder) {
-                long prevTick = Long.MAX_VALUE;
-                int boosts = 0;
-                if (daycareNbt.contains("prevTick")) prevTick = daycareNbt.getLong("prevTick");
-                if (daycareNbt.contains("boosts")) boosts = daycareNbt.getInt("boosts");
-
-                this.extension = new PastureExtension((PokemonPastureBlockEntity)(Object)this, prevTick, this.breederUuid, boosts);
+                this.extension = PastureExtension.fromNBT((PokemonPastureBlockEntity)(Object)this, this.breederUuid, daycareNbt);
             }
 
             this.inventory = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
