@@ -8,6 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.Codecs;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -61,6 +62,7 @@ public record PreEvoFormOverride (Identifier species, Map<String, SimpleForm> ev
         return this.evoMap.containsKey(formId);
     }
 
+    @NotNull
     @Override
     public String toString () {
         String evoMapString = String.join(
@@ -90,6 +92,7 @@ public record PreEvoFormOverride (Identifier species, Map<String, SimpleForm> ev
             return null;
         }
 
+        @NotNull
         @Override
         public String toString () {
             return this.species + " " + this.formId;

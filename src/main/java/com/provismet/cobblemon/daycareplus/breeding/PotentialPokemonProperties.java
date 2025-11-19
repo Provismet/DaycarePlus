@@ -29,6 +29,7 @@ import com.provismet.cobblemon.daycareplus.util.MathExtras;
 import kotlin.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -414,6 +415,7 @@ public class PotentialPokemonProperties {
             return new PotentialIV(forced, possibleIVs);
         }
 
+        @NotNull
         @Override
         public String toString () {
             return String.join(" | ", this.values.stream().map(val -> val == WILDCARD ? "?" : String.valueOf(val)).toList());

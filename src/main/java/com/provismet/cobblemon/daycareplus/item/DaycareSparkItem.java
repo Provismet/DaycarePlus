@@ -1,13 +1,10 @@
 package com.provismet.cobblemon.daycareplus.item;
 
-import com.cobblemon.mod.common.block.PastureBlock;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
@@ -15,7 +12,6 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 import java.util.Optional;

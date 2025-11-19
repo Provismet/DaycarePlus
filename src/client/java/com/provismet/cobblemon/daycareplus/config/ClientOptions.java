@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.lilylib.util.json.JsonBuilder;
 import com.provismet.lilylib.util.json.JsonReader;
-import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
