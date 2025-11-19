@@ -84,6 +84,7 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
         // Special edge case for GameFreak not doing the intelligent thing and merging these back when they had the chance.
         // This would probably be better data-driven, but honestly if you're making a gender-split species then you've already dug your own grave, mate.
+        // TODO: These workarounds are dumb, data-driven overrides needs to be expanded to include stuff like this!
         if (preevo.getSpecies().showdownId().equals("nidoranf") || preevo.getSpecies().showdownId().equals("nidoranm")) {
             Species species = getRandomGenderSpeciesSplit(MiscUtilsKt.cobblemonResource("nidoranm"), MiscUtilsKt.cobblemonResource("nidoranf"), 0.5);
             if (species != null) preevo = PreEvolution.Companion.of(species, species.getFormByShowdownId(preevo.getForm().formOnlyShowdownId()));
@@ -91,6 +92,9 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         else if (preevo.getSpecies().showdownId().equals("volbeat") || preevo.getSpecies().showdownId().equals("illumise")) {
             Species species = getRandomGenderSpeciesSplit(MiscUtilsKt.cobblemonResource("volbeat"), MiscUtilsKt.cobblemonResource("illumise"), 0.5);
             if (species != null) preevo = PreEvolution.Companion.of(species, species.getFormByShowdownId(preevo.getForm().formOnlyShowdownId()));
+        }
+        else if (preevo.getSpecies().showdownId().equals("indeedee")) {
+            preevo = Math.random() > 0.5 ? PreEvolution.Companion.of(preevo.getSpecies(), preevo.getSpecies().getForm(Set.of("female"))) : PreEvolution.Companion.of(preevo.getSpecies(), preevo.getSpecies().getForm(Set.of("male")));
         }
 
         return preevo.getForm();

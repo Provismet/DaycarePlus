@@ -9,12 +9,23 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DaycarePlusOptions {
-    private static final Path FILE = FabricLoader.getInstance().getConfigDir()
-        .resolve("daycareplus")
-        .resolve("server-config.json");
+    public static Path getConfigFolder () {
+        Path directory = FabricLoader.getInstance().getConfigDir().resolve("daycareplus");
+        if (!Files.exists(directory)) {
+            try {
+                Files.createDirectories(directory);
+            } catch (IOException e) {
+                throw new RuntimeException("Error creating Daycare+ config directory: ", e);
+            }
+        }
+        return directory;
+    }
+
+    private static final Path FILE = getConfigFolder().resolve("server-config.json");
 
     // Egg Production
     private static long ticksPerEggAttempt = 12000;
@@ -28,6 +39,7 @@ public class DaycarePlusOptions {
     private static boolean competitiveBreeding = false;
     private static boolean allowBreedingWithoutFertility = false;
     private static boolean consumeHeldItems = true;
+    private static boolean eggsInheritFertility = true;
 
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
@@ -38,6 +50,7 @@ public class DaycarePlusOptions {
     private static float masudaMultiplier = 2;
     private static float crystalMultiplier = 1;
     private static boolean useShinyEvent = true;
+    private static double shinyBoosterRate = 0.05;
 
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
@@ -78,6 +91,10 @@ public class DaycarePlusOptions {
         return consumeHeldItems;
     }
 
+    public static boolean shouldEggsInheritFertility () {
+        return eggsInheritFertility;
+    }
+
     public static int getEggPoints (int eggCycles) {
         return pointsPerEggCycle * eggCycles;
     }
@@ -88,6 +105,10 @@ public class DaycarePlusOptions {
 
     public static boolean shouldUseShinyChanceEvent () {
         return useShinyEvent;
+    }
+
+    public static double getShinyBoosterRate () {
+        return shinyBoosterRate;
     }
 
     public static float getShinyChanceMultiplier () {
@@ -120,13 +141,15 @@ public class DaycarePlusOptions {
                 "competitive_mode", new JsonBuilder()
                     .append("use_competitive_mode", competitiveBreeding)
                     .append("allow_breeding_without_fertility", allowBreedingWithoutFertility)
-                    .append("consume_held_items", consumeHeldItems))
+                    .append("consume_held_items", consumeHeldItems)
+                    .append("eggs_inherit_fertility", eggsInheritFertility))
             .append(
                 "shiny_chance", new JsonBuilder()
                     .append("use_event_trigger", useShinyEvent)
                     .append("standard_multiplier", shinyChanceMultiplier)
                     .append("masuda_multiplier", masudaMultiplier)
-                    .append("crystal_multiplier", crystalMultiplier))
+                    .append("crystal_multiplier", crystalMultiplier)
+                    .append("shiny_booster_rate", shinyBoosterRate))
             .append(
                 "breeding_rules", new JsonBuilder()
                     .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
@@ -163,6 +186,7 @@ public class DaycarePlusOptions {
                     competitiveMode.getBoolean("use_competitive_mode").ifPresent(val -> competitiveBreeding = val);
                     competitiveMode.getBoolean("allow_breeding_without_fertility").ifPresent(val -> allowBreedingWithoutFertility = val);
                     competitiveMode.getBoolean("consume_held_items").ifPresent(val -> consumeHeldItems = val);
+                    competitiveMode.getBoolean("eggs_inherit_fertility").ifPresent(val -> eggsInheritFertility = val);
                 });
 
                 reader.getObjectAsReader("shiny_chance").ifPresent(shinyChance -> {
@@ -170,6 +194,7 @@ public class DaycarePlusOptions {
                     shinyChance.getFloat("standard_multiplier").ifPresent(val -> shinyChanceMultiplier = val);
                     shinyChance.getFloat("masuda_multiplier").ifPresent(val -> masudaMultiplier = val);
                     shinyChance.getFloat("crystal_multiplier").ifPresent(val -> crystalMultiplier = val);
+                    shinyChance.getDouble("shiny_booster_rate").ifPresent(val -> shinyBoosterRate = val);
                 });
 
                 reader.getObjectAsReader("breeding_rules").ifPresent(breedingRules -> {

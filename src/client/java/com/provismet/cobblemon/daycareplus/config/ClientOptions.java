@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public abstract class ClientOptions {
-    private static final Path FILE = FabricLoader.getInstance().getConfigDir()
-        .resolve("daycareplus")
-        .resolve("client-config.json");
+    private static final Path FILE = DaycarePlusOptions.getConfigFolder().resolve("client-config.json");
 
     private static boolean showEggGroupFeature = true;
     private static boolean showEggGroupsInPC = true;

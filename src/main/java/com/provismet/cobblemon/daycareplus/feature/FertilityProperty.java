@@ -37,17 +37,20 @@ public class FertilityProperty {
     }
 
     public static void increment (Pokemon pokemon) {
-        new IntSpeciesFeature(KEY, get(pokemon) + 1).apply(pokemon);
-        update(pokemon);
+        IntSpeciesFeature fertility = new IntSpeciesFeature(KEY, get(pokemon) + 1);
+        fertility.apply(pokemon);
+        update(pokemon, fertility);
     }
 
     public static void decrement (Pokemon pokemon) {
-        new IntSpeciesFeature(KEY, get(pokemon) - 1).apply(pokemon);
-        update(pokemon);
+        IntSpeciesFeature fertility = new IntSpeciesFeature(KEY, get(pokemon) - 1);
+        fertility.apply(pokemon);
+        update(pokemon, fertility);
     }
 
-    public static void update (Pokemon pokemon) {
+    public static void update (Pokemon pokemon, SpeciesFeature feature) {
         if (DaycarePlusOptions.doCompetitiveBreeding()) {
+            pokemon.markFeatureDirty(feature);
             pokemon.notify(new SpeciesFeatureUpdatePacket(
                 () -> pokemon,
                 pokemon.getSpecies().resourceIdentifier,
