@@ -11,8 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = SpeciesFeatures.class, remap = false)
 public abstract class SpeciesFeaturesMixin {
+    // TODO: Change this
     @Inject(method = "getFeature", at = @At("HEAD"), cancellable = true)
-    private void getFertility (String name, CallbackInfoReturnable<SpeciesFeatureProvider<? extends SpeciesFeature>> cir) {
+    private static void getFertility (String name, CallbackInfoReturnable<SpeciesFeatureProvider<? extends SpeciesFeature>> cir) {
         if (name.equalsIgnoreCase("fertility") && !DaycarePlusOptions.doCompetitiveBreeding()) {
             cir.setReturnValue(null);
         }

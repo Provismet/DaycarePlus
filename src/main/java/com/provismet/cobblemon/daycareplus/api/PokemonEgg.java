@@ -59,7 +59,7 @@ public class PokemonEgg {
 
         if (pokemonProperties.getSpecies() != null) {
             Identifier speciesId = ResourceLocationExtensionsKt.asIdentifierDefaultingNamespace(pokemonProperties.getSpecies(), Cobblemon.MODID);
-            Species species = PokemonSpecies.INSTANCE.getByIdentifier(speciesId);
+            Species species = PokemonSpecies.getByIdentifier(speciesId);
             if (species != null) {
                 this.steps = DaycarePlusOptions.getEggPoints(species.getEggCycles());
                 this.maxSteps = this.steps;

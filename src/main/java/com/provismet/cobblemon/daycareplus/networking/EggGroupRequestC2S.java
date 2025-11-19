@@ -26,7 +26,7 @@ public record EggGroupRequestC2S (Identifier species, String form) implements Cu
     }
 
     public FormData getFormData () {
-        Species resolvedSpecies = PokemonSpecies.INSTANCE.getByIdentifier(this.species);
+        Species resolvedSpecies = PokemonSpecies.getByIdentifier(this.species);
         if (resolvedSpecies == null) return null;
         return resolvedSpecies.getFormByName(this.form);
     }

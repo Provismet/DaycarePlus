@@ -38,7 +38,7 @@ public record PreEvoFormOverride (Identifier species, Map<String, SimpleForm> ev
 
     @Nullable
     public PreEvolution getPreEvolution (String currentFormId) {
-        Species species = PokemonSpecies.INSTANCE.getByIdentifier(this.species);
+        Species species = PokemonSpecies.getByIdentifier(this.species);
         if (species == null) return null;
 
 
@@ -83,7 +83,7 @@ public record PreEvoFormOverride (Identifier species, Map<String, SimpleForm> ev
         );
 
         public Species getSpecies () {
-            return PokemonSpecies.INSTANCE.getByIdentifier(this.species);
+            return PokemonSpecies.getByIdentifier(this.species);
         }
 
         public FormData getForm () {

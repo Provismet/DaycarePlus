@@ -230,7 +230,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
         this.shinyBoostCounter.getItemStack().set(DataComponentTypes.CUSTOM_NAME, Text.translatable("gui.button.daycareplus.shiny_boosts_remaining", this.getExtension() != null ? this.getExtension().getShinyBoosts() : 0).styled(Styles.WHITE_NO_ITALICS));
     }
 
-    @Inject(method = "TICKER$lambda$15", at = @At("HEAD"))
+    @Inject(method = "TICKER$lambda$0", at = @At("HEAD"))
     private static void tick (World world, BlockPos pos, BlockState blockState, PokemonPastureBlockEntity pasture, CallbackInfo info) {
         if (world.isClient()) return;
 

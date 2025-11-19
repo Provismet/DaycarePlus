@@ -130,8 +130,8 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
     @Nullable
     private static Species getRandomGenderSpeciesSplit (Identifier male, Identifier female, double maleRatio) {
-        Species maleSpecies = PokemonSpecies.INSTANCE.getByIdentifier(male);
-        Species femaleSpecies = PokemonSpecies.INSTANCE.getByIdentifier(female);
+        Species maleSpecies = PokemonSpecies.getByIdentifier(male);
+        Species femaleSpecies = PokemonSpecies.getByIdentifier(female);
 
         if (Math.random() < maleRatio) return maleSpecies;
         else return femaleSpecies;

@@ -105,16 +105,16 @@ public class PotentialPokemonProperties {
 
     public List<PokeBall> getPossiblePokeBalls () {
         List<PokeBall> balls = new ArrayList<>();
-        Set<PokeBall> illegal = Set.of(PokeBalls.INSTANCE.getMASTER_BALL(), PokeBalls.INSTANCE.getCHERISH_BALL());
+        Set<PokeBall> illegal = Set.of(PokeBalls.getMasterBall(), PokeBalls.getCherishBall());
 
         // Species match, 50/50 chance
         if (this.primary.getSpecies().getName().equalsIgnoreCase(this.secondary.getSpecies().getName())) {
-            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.primary.getCaughtBall());
-            balls.add(illegal.contains(this.secondary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.secondary.getCaughtBall());
+            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.getPokeBall() : this.primary.getCaughtBall());
+            balls.add(illegal.contains(this.secondary.getCaughtBall()) ? PokeBalls.getPokeBall() : this.secondary.getCaughtBall());
         }
         // Take from primary parent
         else {
-            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.primary.getCaughtBall());
+            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.getPokeBall() : this.primary.getCaughtBall());
         }
 
         return balls;
@@ -306,7 +306,7 @@ public class PotentialPokemonProperties {
             else properties.setNature(natures.getLast().getName().toString());
         }
         else {
-            properties.setNature(MathExtras.randomChoice(Natures.INSTANCE.all().stream().toList()).getName().toString());
+            properties.setNature(MathExtras.randomChoice(Natures.all().stream().toList()).getName().toString());
         }
     }
 

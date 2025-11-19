@@ -27,7 +27,7 @@ public class FertilityProperty {
     }
 
     public static int getMax () {
-        SpeciesFeatureProvider<? extends SpeciesFeature> fertilityProvider = GlobalSpeciesFeatures.INSTANCE.getFeature(KEY);
+        SpeciesFeatureProvider<? extends SpeciesFeature> fertilityProvider = GlobalSpeciesFeatures.getFeature(KEY);
         if (fertilityProvider instanceof IntSpeciesFeatureProvider intProvider) {
             return intProvider.getMax();
         }
