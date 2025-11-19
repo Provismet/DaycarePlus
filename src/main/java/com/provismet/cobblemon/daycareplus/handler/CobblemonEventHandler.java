@@ -28,8 +28,7 @@ public abstract class CobblemonEventHandler {
         return Unit.INSTANCE;
     }
 
-    private static Unit initialiseProperties (Unit unit) {
-        DPPokemonProperties.register();
-        return Unit.INSTANCE;
+    private static void initialiseProperties (Unit unit) {
+        CustomPokemonProperty.Companion.register(new BreedableProperty());
     }
 }
