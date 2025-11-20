@@ -37,10 +37,8 @@ public class DaycarePlusMain implements ModInitializer {
 
 	@Override
 	public void onInitialize () {
-		DaycarePlusOptions.load();
 		IncubatorTiers.load();
 
-		PolymerResourcePackUtils.markAsRequired();
 		PolymerResourcePackUtils.addModAssets(MODID);
 
 		DPItems.init();

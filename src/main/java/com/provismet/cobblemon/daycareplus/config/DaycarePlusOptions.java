@@ -40,6 +40,7 @@ public class DaycarePlusOptions {
     private static boolean allowBreedingWithoutFertility = false;
     private static boolean consumeHeldItems = true;
     private static boolean eggsInheritFertility = true;
+    private static int maxFertility = 8;
 
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
@@ -54,6 +55,10 @@ public class DaycarePlusOptions {
 
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
+
+    static {
+        load();
+    }
 
     public static long getTicksPerEggAttempt () {
         return ticksPerEggAttempt;
@@ -93,6 +98,10 @@ public class DaycarePlusOptions {
 
     public static boolean shouldEggsInheritFertility () {
         return eggsInheritFertility;
+    }
+
+    public static int getMaxFertility () {
+        return maxFertility;
     }
 
     public static int getEggPoints (int eggCycles) {
@@ -142,7 +151,8 @@ public class DaycarePlusOptions {
                     .append("use_competitive_mode", competitiveBreeding)
                     .append("allow_breeding_without_fertility", allowBreedingWithoutFertility)
                     .append("consume_held_items", consumeHeldItems)
-                    .append("eggs_inherit_fertility", eggsInheritFertility))
+                    .append("eggs_inherit_fertility", eggsInheritFertility)
+                    .append("max_fertility", maxFertility))
             .append(
                 "shiny_chance", new JsonBuilder()
                     .append("use_event_trigger", useShinyEvent)
@@ -187,6 +197,7 @@ public class DaycarePlusOptions {
                     competitiveMode.getBoolean("allow_breeding_without_fertility").ifPresent(val -> allowBreedingWithoutFertility = val);
                     competitiveMode.getBoolean("consume_held_items").ifPresent(val -> consumeHeldItems = val);
                     competitiveMode.getBoolean("eggs_inherit_fertility").ifPresent(val -> eggsInheritFertility = val);
+                    competitiveMode.getInteger("max_fertility").ifPresent(val -> maxFertility = val);
                 });
 
                 reader.getObjectAsReader("shiny_chance").ifPresent(shinyChance -> {

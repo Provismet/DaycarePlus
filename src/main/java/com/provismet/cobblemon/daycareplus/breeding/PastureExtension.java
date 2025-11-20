@@ -9,9 +9,10 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.feature.IntSpeciesFeature;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
-import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import net.minecraft.entity.player.PlayerEntity;
@@ -122,8 +123,8 @@ public class PastureExtension {
         }
 
         if (DaycarePlusOptions.doCompetitiveBreeding()) {
-            FertilityProperty.decrement(potentialEgg.getPrimary());
-            FertilityProperty.decrement(potentialEgg.getSecondary());
+            FertilityFeature.decrement(potentialEgg.getPrimary());
+            FertilityFeature.decrement(potentialEgg.getSecondary());
 
             if (DaycarePlusOptions.shouldConsumeHeldItems()) {
                 if (potentialEgg.getPrimary().heldItem().isIn(DPItemTags.COMPETITIVE_BREEDING) && !potentialEgg.getPrimary().heldItem().isIn(DPItemTags.NO_CONSUME_BREEDING)) {
@@ -135,10 +136,10 @@ public class PastureExtension {
             }
 
             int eggFertility = DaycarePlusOptions.shouldEggsInheritFertility() ?
-                    Math.min(FertilityProperty.get(potentialEgg.getPrimary()), FertilityProperty.get(potentialEgg.getSecondary())) :
-                    FertilityProperty.getMax();
+                    Math.min(FertilityFeature.get(potentialEgg.getPrimary()), FertilityFeature.get(potentialEgg.getSecondary())) :
+                    FertilityFeature.getMax();
 
-            properties.getCustomProperties().add(new IntSpeciesFeature(FertilityProperty.KEY, eggFertility));
+            properties.getCustomProperties().add(new IntSpeciesFeature(FertilityFeature.KEY, eggFertility));
         }
 
         if (owner instanceof ServerPlayerEntity serverPlayer) {
@@ -154,6 +155,7 @@ public class PastureExtension {
 
     public void tick () {
         if (this.blockEntity.getWorld() instanceof ServerWorld world) {
+
             if (world.getTime() % 20 == 0) {
                 world.spawnParticles(
                     ParticleTypes.HEART,

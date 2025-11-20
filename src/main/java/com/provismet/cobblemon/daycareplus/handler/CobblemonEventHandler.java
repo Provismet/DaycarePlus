@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.api.events.pokemon.CollectEggEvent;
 import com.cobblemon.mod.common.api.events.pokemon.HatchEggEvent;
 import com.cobblemon.mod.common.api.properties.CustomPokemonProperty;
 import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
 import com.provismet.cobblemon.daycareplus.registries.DPStats;
 import kotlin.Unit;
 
@@ -29,5 +30,6 @@ public abstract class CobblemonEventHandler {
 
     private static void initialiseProperties (Unit unit) {
         CustomPokemonProperty.Companion.register(new BreedableProperty());
+        FertilityFeature.register();
     }
 }

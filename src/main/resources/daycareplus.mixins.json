@@ -5,8 +5,7 @@
     "mixins": [
         "CobblemonInitialiserMixin",
         "PastureBlockEntityMixin",
-        "PastureBlockMixin",
-        "SpeciesFeaturesMixin"
+        "PastureBlockMixin"
     ],
     "injectors": {
         "defaultRequire": 1

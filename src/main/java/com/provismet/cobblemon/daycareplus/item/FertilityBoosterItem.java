@@ -6,7 +6,7 @@ import com.cobblemon.mod.common.api.item.PokemonSelectingItem;
 import com.cobblemon.mod.common.battles.pokemon.BattlePokemon;
 import com.cobblemon.mod.common.item.battle.BagItem;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
@@ -40,8 +40,8 @@ public class FertilityBoosterItem extends PolymerItem implements PokemonSelectin
     public TypedActionResult<ItemStack> applyToPokemon (@NotNull ServerPlayerEntity player, @NotNull ItemStack itemStack, @NotNull Pokemon pokemon) {
         if (!this.canUseOnPokemon(itemStack, pokemon)) return TypedActionResult.fail(itemStack);
 
-        FertilityProperty.increment(pokemon);
-        player.sendMessage(Text.translatable("message.overlay.daycareplus.fertility_boosted", pokemon.getDisplayName(false), FertilityProperty.get(pokemon)), true);
+        FertilityFeature.increment(pokemon);
+        player.sendMessage(Text.translatable("message.overlay.daycareplus.fertility_boosted", pokemon.getDisplayName(false), FertilityFeature.get(pokemon)), true);
         itemStack.decrementUnlessCreative(1, player);
         player.playSoundToPlayer(CobblemonSounds.MEDICINE_CANDY_USE, SoundCategory.PLAYERS, 1f, 1f);
         return TypedActionResult.success(itemStack);
@@ -63,7 +63,7 @@ public class FertilityBoosterItem extends PolymerItem implements PokemonSelectin
 
     @Override
     public boolean canUseOnPokemon (@NotNull ItemStack stack, @NotNull Pokemon pokemon) {
-        return DaycarePlusOptions.doCompetitiveBreeding() && FertilityProperty.get(pokemon) < FertilityProperty.getMax();
+        return DaycarePlusOptions.doCompetitiveBreeding() && FertilityFeature.get(pokemon) < FertilityFeature.getMax();
     }
 
     @Override

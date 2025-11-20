@@ -13,7 +13,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.google.common.collect.ImmutableList;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
 import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
-import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
 import com.provismet.cobblemon.daycareplus.breeding.PotentialPokemonProperties;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
@@ -147,8 +147,8 @@ public interface DaycareGUI {
 
             if (DaycarePlusOptions.doCompetitiveBreeding()) {
                 int newFertility = DaycarePlusOptions.shouldEggsInheritFertility() ?
-                        MathHelper.clamp(Math.min(FertilityProperty.get(parent1), FertilityProperty.get(parent2)) - 1, 0, FertilityProperty.getMax()) :
-                        FertilityProperty.getMax();
+                        MathHelper.clamp(Math.min(FertilityFeature.get(parent1), FertilityFeature.get(parent2)) - 1, 0, FertilityFeature.getMax()) :
+                        FertilityFeature.getMax();
 
                 eggData.add(
                     Text.empty(),
@@ -264,7 +264,7 @@ public interface DaycareGUI {
         }
         else if (DaycarePlusOptions.doCompetitiveBreeding()) {
             builder.addLoreLine(Text.empty())
-                .addLoreLine(formatProperty("property.daycareplus.fertility", Styles.formattedNoItalics(Formatting.DARK_GREEN), String.valueOf(FertilityProperty.get(pokemon))));
+                .addLoreLine(formatProperty("property.daycareplus.fertility", Styles.formattedNoItalics(Formatting.DARK_GREEN), String.valueOf(FertilityFeature.get(pokemon))));
         }
 
         return builder.build();
