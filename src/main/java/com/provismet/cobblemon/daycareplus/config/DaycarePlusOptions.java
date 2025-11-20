@@ -56,6 +56,9 @@ public class DaycarePlusOptions {
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
 
+    // Mod Compatibility
+    private static boolean cobblemonSizeVariation = true;
+
     static {
         load();
     }
@@ -136,6 +139,10 @@ public class DaycarePlusOptions {
         return inheritEggMovesFromBothParents;
     }
 
+    public static boolean doCobblemonSizeVariationCompatibility () {
+        return cobblemonSizeVariation;
+    }
+
     public static void save () {
         JsonBuilder builder = new JsonBuilder()
             .append(
@@ -164,7 +171,10 @@ public class DaycarePlusOptions {
                 "breeding_rules", new JsonBuilder()
                     .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
                     .append("ticks_per_egg_cycle", pointsPerEggCycle)
-                    .append("show_egg_tooltip", showEggTooltip));
+                    .append("show_egg_tooltip", showEggTooltip))
+            .append(
+                "compatibility_features", new JsonBuilder()
+                    .append("CobblemonSizeVariation", cobblemonSizeVariation));
 
         try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
@@ -212,6 +222,10 @@ public class DaycarePlusOptions {
                     breedingRules.getBoolean("inherit_moves_from_both_parents").ifPresent(val -> inheritEggMovesFromBothParents = val);
                     breedingRules.getInteger("ticks_per_egg_cycle").ifPresent(val -> pointsPerEggCycle = val);
                     breedingRules.getBoolean("show_egg_tooltip").ifPresent(val -> showEggTooltip = val);
+                });
+
+                reader.getObjectAsReader("compatibility").ifPresent(compatibility -> {
+                    compatibility.getBoolean("cobblemonsizevariation").ifPresent(val -> cobblemonSizeVariation = val);
                 });
             }
         }

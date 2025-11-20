@@ -24,6 +24,7 @@ import com.cobblemon.mod.common.pokemon.Nature;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.pokemon.abilities.HiddenAbilityType;
+import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.util.MathExtras;
 import kotlin.Pair;
@@ -73,6 +74,7 @@ public class PotentialPokemonProperties {
         properties.setFriendship(120);
         properties.updateAspects();
 
+        DaycarePlusEvents.EGG_PROPERTIES_CREATED.invoker().modifyProperties(this.primary, this.secondary, properties);
         return properties;
     }
 
