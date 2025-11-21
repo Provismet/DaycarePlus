@@ -155,7 +155,7 @@ publishMods {
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
-            version = project.mod_version + "-mc" + project.minecraft_version
+            version = project.mod_version + "-mc" + project.minecraft_version + (project.snapshot == "true" ? "-SNAPSHOT" : "")
             artifactId = project.archives_base_name
             from components.java
 		}
