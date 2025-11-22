@@ -24,11 +24,13 @@ import com.cobblemon.mod.common.pokemon.Nature;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.pokemon.abilities.HiddenAbilityType;
+import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.util.MathExtras;
 import kotlin.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +74,7 @@ public class PotentialPokemonProperties {
         properties.setFriendship(120);
         properties.updateAspects();
 
+        DaycarePlusEvents.EGG_PROPERTIES_CREATED.invoker().modifyProperties(this.primary, this.secondary, properties);
         return properties;
     }
 
@@ -104,16 +107,16 @@ public class PotentialPokemonProperties {
 
     public List<PokeBall> getPossiblePokeBalls () {
         List<PokeBall> balls = new ArrayList<>();
-        Set<PokeBall> illegal = Set.of(PokeBalls.INSTANCE.getMASTER_BALL(), PokeBalls.INSTANCE.getCHERISH_BALL());
+        Set<PokeBall> illegal = Set.of(PokeBalls.getMasterBall(), PokeBalls.getCherishBall());
 
         // Species match, 50/50 chance
         if (this.primary.getSpecies().getName().equalsIgnoreCase(this.secondary.getSpecies().getName())) {
-            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.primary.getCaughtBall());
-            balls.add(illegal.contains(this.secondary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.secondary.getCaughtBall());
+            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.getPokeBall() : this.primary.getCaughtBall());
+            balls.add(illegal.contains(this.secondary.getCaughtBall()) ? PokeBalls.getPokeBall() : this.secondary.getCaughtBall());
         }
         // Take from primary parent
         else {
-            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.INSTANCE.getPOKE_BALL() : this.primary.getCaughtBall());
+            balls.add(illegal.contains(this.primary.getCaughtBall()) ? PokeBalls.getPokeBall() : this.primary.getCaughtBall());
         }
 
         return balls;
@@ -305,7 +308,7 @@ public class PotentialPokemonProperties {
             else properties.setNature(natures.getLast().getName().toString());
         }
         else {
-            properties.setNature(MathExtras.randomChoice(Natures.INSTANCE.all().stream().toList()).getName().toString());
+            properties.setNature(MathExtras.randomChoice(Natures.all().stream().toList()).getName().toString());
         }
     }
 
@@ -414,6 +417,7 @@ public class PotentialPokemonProperties {
             return new PotentialIV(forced, possibleIVs);
         }
 
+        @NotNull
         @Override
         public String toString () {
             return String.join(" | ", this.values.stream().map(val -> val == WILDCARD ? "?" : String.valueOf(val)).toList());

@@ -16,7 +16,7 @@ import com.mojang.serialization.JsonOps;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
-import com.provismet.cobblemon.daycareplus.feature.FertilityProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -38,7 +38,7 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
     public static boolean isAllowedToBreed (Pokemon pokemon) {
         return BreedableProperty.get(pokemon)
-            && (!DaycarePlusOptions.doCompetitiveBreeding() || DaycarePlusOptions.shouldAllowBreedingWithoutFertility() || FertilityProperty.get(pokemon) > 0);
+            && (!DaycarePlusOptions.doCompetitiveBreeding() || DaycarePlusOptions.shouldAllowBreedingWithoutFertility() || FertilityFeature.get(pokemon) > 0);
     }
 
     public static boolean canBreed (Pokemon parent1, Pokemon parent2) {
@@ -72,7 +72,7 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
     }
 
     public static boolean parentsHaveFertility (Pokemon parent1, Pokemon parent2) {
-        return FertilityProperty.get(parent1) > 0 && FertilityProperty.get(parent2) > 0;
+        return FertilityFeature.get(parent1) > 0 && FertilityFeature.get(parent2) > 0;
     }
 
     public static FormData getBabyForm (Pokemon parent) {
@@ -130,8 +130,8 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
     @Nullable
     private static Species getRandomGenderSpeciesSplit (Identifier male, Identifier female, double maleRatio) {
-        Species maleSpecies = PokemonSpecies.INSTANCE.getByIdentifier(male);
-        Species femaleSpecies = PokemonSpecies.INSTANCE.getByIdentifier(female);
+        Species maleSpecies = PokemonSpecies.getByIdentifier(male);
+        Species femaleSpecies = PokemonSpecies.getByIdentifier(female);
 
         if (Math.random() < maleRatio) return maleSpecies;
         else return femaleSpecies;

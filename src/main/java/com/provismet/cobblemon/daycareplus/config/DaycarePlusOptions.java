@@ -40,6 +40,7 @@ public class DaycarePlusOptions {
     private static boolean allowBreedingWithoutFertility = false;
     private static boolean consumeHeldItems = true;
     private static boolean eggsInheritFertility = true;
+    private static int maxFertility = 8;
 
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
@@ -54,6 +55,13 @@ public class DaycarePlusOptions {
 
     // Egg Moves
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
+
+    // Mod Compatibility
+    private static boolean cobblemonSizeVariation = true;
+
+    static {
+        load();
+    }
 
     public static long getTicksPerEggAttempt () {
         return ticksPerEggAttempt;
@@ -95,6 +103,10 @@ public class DaycarePlusOptions {
         return eggsInheritFertility;
     }
 
+    public static int getMaxFertility () {
+        return maxFertility;
+    }
+
     public static int getEggPoints (int eggCycles) {
         return pointsPerEggCycle * eggCycles;
     }
@@ -127,6 +139,10 @@ public class DaycarePlusOptions {
         return inheritEggMovesFromBothParents;
     }
 
+    public static boolean doCobblemonSizeVariationCompatibility () {
+        return cobblemonSizeVariation;
+    }
+
     public static void save () {
         JsonBuilder builder = new JsonBuilder()
             .append(
@@ -142,7 +158,8 @@ public class DaycarePlusOptions {
                     .append("use_competitive_mode", competitiveBreeding)
                     .append("allow_breeding_without_fertility", allowBreedingWithoutFertility)
                     .append("consume_held_items", consumeHeldItems)
-                    .append("eggs_inherit_fertility", eggsInheritFertility))
+                    .append("eggs_inherit_fertility", eggsInheritFertility)
+                    .append("max_fertility", maxFertility))
             .append(
                 "shiny_chance", new JsonBuilder()
                     .append("use_event_trigger", useShinyEvent)
@@ -154,7 +171,10 @@ public class DaycarePlusOptions {
                 "breeding_rules", new JsonBuilder()
                     .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
                     .append("ticks_per_egg_cycle", pointsPerEggCycle)
-                    .append("show_egg_tooltip", showEggTooltip));
+                    .append("show_egg_tooltip", showEggTooltip))
+            .append(
+                "compatibility_features", new JsonBuilder()
+                    .append("CobblemonSizeVariation", cobblemonSizeVariation));
 
         try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
@@ -187,6 +207,7 @@ public class DaycarePlusOptions {
                     competitiveMode.getBoolean("allow_breeding_without_fertility").ifPresent(val -> allowBreedingWithoutFertility = val);
                     competitiveMode.getBoolean("consume_held_items").ifPresent(val -> consumeHeldItems = val);
                     competitiveMode.getBoolean("eggs_inherit_fertility").ifPresent(val -> eggsInheritFertility = val);
+                    competitiveMode.getInteger("max_fertility").ifPresent(val -> maxFertility = val);
                 });
 
                 reader.getObjectAsReader("shiny_chance").ifPresent(shinyChance -> {
@@ -201,6 +222,10 @@ public class DaycarePlusOptions {
                     breedingRules.getBoolean("inherit_moves_from_both_parents").ifPresent(val -> inheritEggMovesFromBothParents = val);
                     breedingRules.getInteger("ticks_per_egg_cycle").ifPresent(val -> pointsPerEggCycle = val);
                     breedingRules.getBoolean("show_egg_tooltip").ifPresent(val -> showEggTooltip = val);
+                });
+
+                reader.getObjectAsReader("compatibility").ifPresent(compatibility -> {
+                    compatibility.getBoolean("cobblemonsizevariation").ifPresent(val -> cobblemonSizeVariation = val);
                 });
             }
         }

@@ -4,7 +4,9 @@ import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.cobblemon.mod.common.api.events.pokemon.CollectEggEvent;
 import com.cobblemon.mod.common.api.events.pokemon.HatchEggEvent;
-import com.provismet.cobblemon.daycareplus.registries.DPPokemonProperties;
+import com.cobblemon.mod.common.api.properties.CustomPokemonProperty;
+import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
+import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
 import com.provismet.cobblemon.daycareplus.registries.DPStats;
 import kotlin.Unit;
 
@@ -18,18 +20,16 @@ public abstract class CobblemonEventHandler {
         CobblemonEvents.POKEMON_PROPERTY_INITIALISED.subscribe(Priority.NORMAL, CobblemonEventHandler::initialiseProperties);
     }
 
-    private static Unit postHatch (HatchEggEvent.Post event) {
+    private static void postHatch (HatchEggEvent.Post event) {
         event.getPlayer().incrementStat(DPStats.EGGS_HATCHED);
-        return Unit.INSTANCE;
     }
 
-    private static Unit postCollect (CollectEggEvent event) {
+    private static void postCollect (CollectEggEvent event) {
         event.getPlayer().incrementStat(DPStats.EGGS_COLLECTED);
-        return Unit.INSTANCE;
     }
 
-    private static Unit initialiseProperties (Unit unit) {
-        DPPokemonProperties.register();
-        return Unit.INSTANCE;
+    private static void initialiseProperties (Unit unit) {
+        CustomPokemonProperty.Companion.register(new BreedableProperty());
+        FertilityFeature.register();
     }
 }

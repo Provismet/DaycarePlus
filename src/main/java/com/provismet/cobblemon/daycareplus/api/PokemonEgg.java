@@ -59,7 +59,7 @@ public class PokemonEgg {
 
         if (pokemonProperties.getSpecies() != null) {
             Identifier speciesId = ResourceLocationExtensionsKt.asIdentifierDefaultingNamespace(pokemonProperties.getSpecies(), Cobblemon.MODID);
-            Species species = PokemonSpecies.INSTANCE.getByIdentifier(speciesId);
+            Species species = PokemonSpecies.getByIdentifier(speciesId);
             if (species != null) {
                 this.steps = DaycarePlusOptions.getEggPoints(species.getEggCycles());
                 this.maxSteps = this.steps;
@@ -129,7 +129,7 @@ public class PokemonEgg {
         pokemon.getAbility().setForced$common(false);
         player.sendMessage(Text.translatable("message.overlay.daycareplus.egg.hatch"), true);
         PlayerExtensionsKt.party(player).add(pokemon);
-        CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(this.pokemonProperties, player));
+        CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(player, pokemon));
         this.hatched = true;
     }
 }

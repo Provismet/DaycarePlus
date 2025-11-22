@@ -1,6 +1,7 @@
 package com.provismet.cobblemon.daycareplus.api;
 
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
+import com.cobblemon.mod.common.pokemon.Pokemon;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.item.ItemStack;
@@ -26,6 +27,12 @@ public interface DaycarePlusEvents {
         }
     });
 
+    Event<EggPropertiesCreated> EGG_PROPERTIES_CREATED = EventFactory.createArrayBacked(EggPropertiesCreated.class, listeners -> (primary, secondary, properties) -> {
+        for (EggPropertiesCreated event : listeners) {
+            event.modifyProperties(primary, secondary, properties);
+        }
+    });
+
     interface EggProduced {
         @FunctionalInterface
         interface Pre {
@@ -36,5 +43,10 @@ public interface DaycarePlusEvents {
         interface Post {
             void afterItemCreated (ItemStack stack);
         }
+    }
+
+    @FunctionalInterface
+    interface EggPropertiesCreated {
+        void modifyProperties (Pokemon primary, Pokemon secondary, PokemonProperties properties);
     }
 }

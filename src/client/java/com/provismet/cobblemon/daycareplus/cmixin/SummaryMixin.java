@@ -34,7 +34,7 @@ public abstract class SummaryMixin extends Screen {
     }
 
     @Shadow
-    public Pokemon selectedPokemon;
+    private Pokemon selectedPokemon;
 
     @Shadow @Final
     private static float SCALE;
@@ -43,8 +43,8 @@ public abstract class SummaryMixin extends Screen {
     private void renderEggIcon (DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo info) {
         if (!ClientOptions.shouldShowEggGroupsTooltip()) return;
 
-        int x = super.width - 285;
-        int y = super.height + 36;
+        int x = super.width - 325;
+        int y = super.height + 132;
 
         GuiUtilsKt.blitk(
             context.getMatrices(),
@@ -71,7 +71,10 @@ public abstract class SummaryMixin extends Screen {
             else {
                 tooltip.add(Text.translatable("property.daycareplus.unbreedable"));
             }
+            context.getMatrices().push();
+            context.getMatrices().translate(0, 0, 1001);
             context.drawTooltip(MinecraftClient.getInstance().textRenderer, tooltip, mouseX, mouseY);
+            context.getMatrices().pop();
         }
     }
 }

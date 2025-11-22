@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -62,8 +63,9 @@ public class IncubatorCollection implements Iterable<Map.Entry<String, EggStorag
         DataResult<JsonElement> result = CODEC.encodeStart(JsonOps.INSTANCE, this);
         result.ifSuccess(json -> {
             String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(json);
-            savePath.toFile().getParentFile().mkdirs();
+
             try (FileWriter writer = new FileWriter(savePath.toFile())) {
+                Files.createDirectories(savePath.getParent());
                 writer.write(jsonString);
             }
             catch (IOException e) {
