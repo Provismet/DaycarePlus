@@ -64,11 +64,12 @@ public class IncubatorCollection implements Iterable<Map.Entry<String, EggStorag
         result.ifSuccess(json -> {
             String jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(json);
 
-            try (FileWriter writer = new FileWriter(savePath.toFile())) {
+            try {
                 Files.createDirectories(savePath.getParent());
-                writer.write(jsonString);
-            }
-            catch (IOException e) {
+                try (FileWriter writer = new FileWriter(savePath.toFile())) {
+                    writer.write(jsonString);
+                }
+            } catch (IOException e) {
                 DaycarePlusMain.LOGGER.error("Failed to save incubator data for uuid: {}", ownerUUID);
                 DaycarePlusMain.LOGGER.error("Incubator JSON: {}", jsonString);
                 DaycarePlusMain.LOGGER.error("Stack Trace: ", e);
