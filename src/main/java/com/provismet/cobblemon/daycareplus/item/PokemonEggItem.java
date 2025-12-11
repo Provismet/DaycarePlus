@@ -48,8 +48,8 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
 
         PokemonEgg egg = new PokemonEgg(
             properties,
-            this.getMaxSteps(stack),
             this.getRemainingSteps(stack),
+            this.getMaxSteps(stack),
             false
         );
         return Optional.of(egg);
