@@ -194,6 +194,8 @@ public class IncubatorItem extends PolymerItem {
     @Override
     public void inventoryTick (ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (entity instanceof ServerPlayerEntity player && player.age % 20 == 0) {
+            if (!this.isOwnedBy(stack, player)) return;
+
             for (int i = slot + 1; i < player.getInventory().main.size(); ++i) {
                 if (player.getInventory().main.get(i).isIn(DPItemTags.INCUBATORS)) return;
             }
