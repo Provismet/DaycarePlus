@@ -3,6 +3,7 @@ package com.provismet.cobblemon.daycareplus.item;
 import com.cobblemon.mod.common.block.PastureBlock;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
+import com.provismet.cobblemon.daycareplus.api.EggHelper;
 import com.provismet.cobblemon.daycareplus.gui.EggStorageGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.IncubatorOwner;
@@ -13,9 +14,14 @@ import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import com.provismet.cobblemon.daycareplus.util.tag.DPItemTags;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
@@ -28,12 +34,14 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -48,54 +56,68 @@ public class IncubatorItem extends PolymerItem {
 
     @Override
     public TypedActionResult<ItemStack> use (World world, PlayerEntity user, Hand hand) {
+        if (!(user instanceof ServerPlayerEntity serverPlayer)) return super.use(world, user, hand);
         ItemStack stack = user.getStackInHand(hand);
+
+        // Handle containers
+        if (serverPlayer.isSneaking()) {
+            HitResult result = serverPlayer.raycast(serverPlayer.getAttributeValue(EntityAttributes.PLAYER_BLOCK_INTERACTION_RANGE), 0, false);
+            if (result.getType() == HitResult.Type.BLOCK) {
+                BlockPos pos = BlockPos.ofFloored(result.getPos());
+                BlockState state = world.getBlockState(pos);
+                if (state.hasBlockEntity() && world.getBlockEntity(pos) instanceof LockableContainerBlockEntity) {
+                    return TypedActionResult.success(stack);
+                }
+            }
+        }
 
         if (user.isCreative()) {
             user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.creative").formatted(Formatting.RED), true);
             return TypedActionResult.fail(stack);
         }
 
-        if (user instanceof ServerPlayerEntity serverPlayer) {
-            if (stack.get(DPItemDataComponents.INCUBATOR_OWNER) == null) {
-                stack.set(DPItemDataComponents.INCUBATOR_OWNER, new IncubatorOwner(serverPlayer));
-                user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.claimed"), true);
-                return TypedActionResult.success(stack);
+        if (stack.get(DPItemDataComponents.INCUBATOR_OWNER) == null) {
+            stack.set(DPItemDataComponents.INCUBATOR_OWNER, new IncubatorOwner(serverPlayer));
+            user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.claimed"), true);
+            return TypedActionResult.success(stack);
+        }
+        else if (this.isOwnedBy(stack, serverPlayer)) {
+            IncubatorType incubatorType = stack.get(DPItemDataComponents.INCUBATOR_TYPE);
+            if (incubatorType == null) {
+                user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.typeless").formatted(Formatting.RED), true);
+                return TypedActionResult.fail(stack);
             }
-            else if (this.isOwnedBy(stack, serverPlayer)) {
-                IncubatorType incubatorType = stack.get(DPItemDataComponents.INCUBATOR_TYPE);
-                if (incubatorType == null) {
-                    user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.typeless").formatted(Formatting.RED), true);
-                    return TypedActionResult.fail(stack);
-                }
 
-                IncubatorCollection collection = IncubatorCollection.getOrCreate(serverPlayer);
-                Optional<EggStorage> currentStorage = collection.get(incubatorType.type());
-                if (currentStorage.isPresent()) {
-                    currentStorage.get().tryUpgradeTo(incubatorType.tier());
-                }
-                else {
-                    EggStorage storage = EggStorage.fromSettings(incubatorType.tier());
-
-                    if (storage != null) {
-                        collection.put(incubatorType.type(), storage);
-                    }
-                }
-                EggStorageGUI gui = EggStorageGUI.create(serverPlayer, incubatorType.type());
-                if (gui != null) gui.open();
+            IncubatorCollection collection = IncubatorCollection.getOrCreate(serverPlayer);
+            Optional<EggStorage> currentStorage = collection.get(incubatorType.type());
+            if (currentStorage.isPresent()) {
+                currentStorage.get().tryUpgradeTo(incubatorType.tier());
             }
             else {
-                user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.stolen").formatted(Formatting.RED), true);
-                return TypedActionResult.fail(user.getStackInHand(hand));
+                EggStorage storage = EggStorage.fromSettings(incubatorType.tier());
+
+                if (storage != null) {
+                    collection.put(incubatorType.type(), storage);
+                }
             }
+            EggStorageGUI gui = EggStorageGUI.create(serverPlayer, incubatorType.type());
+            if (gui != null) gui.open();
         }
+        else {
+            user.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.stolen").formatted(Formatting.RED), true);
+            return TypedActionResult.fail(user.getStackInHand(hand));
+        }
+
         return TypedActionResult.success(user.getStackInHand(hand));
     }
 
     @Override
     public ActionResult useOnBlock (ItemUsageContext context) {
-        Block block = context.getWorld().getBlockState(context.getBlockPos()).getBlock();
+        if (!(context.getPlayer() instanceof ServerPlayerEntity player)) return super.useOnBlock(context);
 
-        if (block instanceof PastureBlock pastureBlock && context.getPlayer() instanceof ServerPlayerEntity player) {
+        BlockState blockState = context.getWorld().getBlockState(context.getBlockPos());
+
+        if (blockState.getBlock() instanceof PastureBlock pastureBlock) {
             BlockPos pasturePos = pastureBlock.getBasePosition(context.getWorld().getBlockState(context.getBlockPos()), context.getBlockPos());
 
             if (context.getWorld().getBlockEntity(pasturePos) instanceof IMixinPastureBlockEntity daycare) {
@@ -113,7 +135,46 @@ public class IncubatorItem extends PolymerItem {
                 }
                 else {
                     player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.no_storage"), true);
+                    return  ActionResult.FAIL;
                 }
+            }
+        }
+        else if (blockState.getBlock() instanceof BlockEntityProvider && context.getWorld().getBlockEntity(context.getBlockPos()) instanceof LockableContainerBlockEntity container && player.isSneaking()) {
+            Optional<EggStorage> storage = this.getStorage(context.getStack());
+
+            if (!container.checkUnlocked(player)) {
+                return ActionResult.FAIL;
+            }
+            else if (storage.isPresent()) {
+                int remainingSlots = storage.get().getCapacity() - storage.get().size();
+                int addedEggs = 0;
+                if (remainingSlots > 0) {
+                    Inventory containerInventory = container;
+                    if (blockState.getBlock() instanceof ChestBlock chest) { // Double chests count as 2 separate inventories, so it needs special handling.
+                        containerInventory = Objects.requireNonNullElse(ChestBlock.getInventory(chest, blockState, context.getWorld(), context.getBlockPos(), true), container);
+                    }
+
+                    for (int i = 0; i < containerInventory.size(); ++i) {
+                        if (remainingSlots <= 0) break;
+
+                        ItemStack stack = containerInventory.getStack(i);
+                        if (EggHelper.isEgg(stack)) {
+                            storage.get().addCopyAndEmpty(containerInventory.removeStack(i, 1));
+                            --remainingSlots;
+                            ++addedEggs;
+                        }
+                    }
+
+                    this.playInsertSound(player);
+                    if (addedEggs == 1) player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.singular", addedEggs), true);
+                    else player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.collection.plural", addedEggs), true);
+
+                    return ActionResult.SUCCESS;
+                }
+            }
+            else {
+                player.sendMessage(Text.translatable("message.overlay.daycareplus.incubator.no_storage"), true);
+                return ActionResult.FAIL;
             }
         }
         return super.useOnBlock(context);
