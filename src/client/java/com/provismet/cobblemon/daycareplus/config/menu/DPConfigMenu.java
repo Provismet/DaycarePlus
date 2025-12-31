@@ -29,7 +29,7 @@ public class DPConfigMenu {
             .build()
         );
 
-        general.addEntry(entryBuilder.startBooleanToggle(Text.translatable("entry.daycareplus.display.pc"), ClientOptions.shouldShowEggGroupsInPC())
+        general.addEntry(entryBuilder.startBooleanToggle(Text.translatable("entry.daycareplus.display.groups.pc"), ClientOptions.shouldShowEggGroupsInPC())
             .setDefaultValue(true)
             .setSaveConsumer(ClientOptions::setShowEggGroupsInPC)
             .build()
@@ -38,6 +38,12 @@ public class DPConfigMenu {
         general.addEntry(entryBuilder.startIntSlider(Text.translatable("entry.daycareplus.display.pc.offset"), ClientOptions.getPcEggGroupPanelYOffset(), -100, 100)
             .setDefaultValue(68)
             .setSaveConsumer(ClientOptions::setPcEggGroupPanelYOffset)
+            .build()
+        );
+
+        general.addEntry(entryBuilder.startBooleanToggle(Text.translatable("entry.daycareplus.display.trainer.pc"), ClientOptions.shouldShowOriginalTrainerInPC())
+            .setDefaultValue(true)
+            .setSaveConsumer(ClientOptions::setShowOriginalTrainerInPC)
             .build()
         );
 

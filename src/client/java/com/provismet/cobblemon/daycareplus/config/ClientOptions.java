@@ -17,6 +17,7 @@ public abstract class ClientOptions {
     private static boolean showEggGroupsInPC = true;
     private static int pcEggGroupPanelYOffset = 68;
     private static boolean showEggGroupsTooltip = false;
+    private static boolean showOTInPC = true;
 
     public static boolean shouldShowEggGroupsFeature () {
         return showEggGroupFeature;
@@ -34,6 +35,10 @@ public abstract class ClientOptions {
         return pcEggGroupPanelYOffset;
     }
 
+    public static boolean shouldShowOriginalTrainerInPC () {
+        return showOTInPC;
+    }
+
     public static void setShowEggGroupFeature (boolean value) {
         showEggGroupFeature = value;
     }
@@ -48,6 +53,10 @@ public abstract class ClientOptions {
 
     public static void setPcEggGroupPanelYOffset (int offset) {
         pcEggGroupPanelYOffset = offset;
+    }
+
+    public static void setShowOriginalTrainerInPC (boolean value) {
+        showOTInPC = value;
     }
 
     public static void load () {
@@ -67,6 +76,7 @@ public abstract class ClientOptions {
             reader.getBoolean("show_egg_groups_in_pc").ifPresent(val -> showEggGroupsInPC = val);
             reader.getBoolean("show_egg_group_tooltip_button").ifPresent(val -> showEggGroupsTooltip = val);
             reader.getInteger("pc_egg_group_y-offset").ifPresent(val -> pcEggGroupPanelYOffset = val);
+            reader.getBoolean("show_ot_in_pc").ifPresent(val -> showOTInPC = val);
         }
         catch (FileNotFoundException e) {
             DaycarePlusMain.LOGGER.info("No Daycare+ client config found, creating default.");
@@ -83,7 +93,8 @@ public abstract class ClientOptions {
             .append("show_egg_groups_in_summary", showEggGroupFeature)
             .append("show_egg_groups_in_pc", showEggGroupsInPC)
             .append("show_egg_group_tooltip_button", showEggGroupsTooltip)
-            .append("pc_egg_group_y-offset", pcEggGroupPanelYOffset);
+            .append("pc_egg_group_y-offset", pcEggGroupPanelYOffset)
+            .append("show_ot_in_pc", showOTInPC);
 
         try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));

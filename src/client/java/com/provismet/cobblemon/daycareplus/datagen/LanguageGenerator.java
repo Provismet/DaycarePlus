@@ -156,8 +156,12 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("category.daycareplus.general", "General");
         translationBuilder.add("entry.daycareplus.display.feature", "Display Egg Groups In Summary");
         translationBuilder.add("entry.daycareplus.display.tooltip", "Show Egg Group Icon In Summary");
-        translationBuilder.add("entry.daycareplus.display.pc", "Display Egg Group Panel In PC");
+        translationBuilder.add("entry.daycareplus.display.groups.pc", "Display Egg Group Panel In PC");
         translationBuilder.add("entry.daycareplus.display.pc.offset", "PC Egg Group Panel Y-Offset");
+        translationBuilder.add("entry.daycareplus.display.trainer.pc", "Show Original Trainer In PC");
+
+        // PC
+        translationBuilder.add("daycareplus.ui.original_trainer", "Original Trainer");
     }
 
     private void eggGroup (TranslationBuilder builder, EggGroup group, String name) {
