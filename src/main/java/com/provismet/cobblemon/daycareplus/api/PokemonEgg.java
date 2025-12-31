@@ -128,8 +128,8 @@ public class PokemonEgg {
         Pokemon pokemon = this.pokemonProperties.create(player);
         pokemon.getAbility().setForced$common(false);
         player.sendMessage(Text.translatable("message.overlay.daycareplus.egg.hatch"), true);
+        CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(player, pokemon)); // Do this before giving it to the player due to marks causing a crash with encoding the codec.
         PlayerExtensionsKt.party(player).add(pokemon);
-        CobblemonEvents.HATCH_EGG_POST.emit(new HatchEggEvent.Post(player, pokemon));
         this.hatched = true;
     }
 }
