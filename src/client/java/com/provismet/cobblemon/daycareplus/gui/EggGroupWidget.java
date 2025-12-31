@@ -18,6 +18,7 @@ import net.minecraft.client.sound.SoundManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.Set;
@@ -63,7 +64,7 @@ public class EggGroupWidget extends ClickableWidget {
             context,
             CobblemonResources.INSTANCE.getDEFAULT_LARGE(),
             Text.translatable("daycareplus.ui.egg_group").styled(style -> style.withBold(true)),
-            this.getX() + 34, this.getY() + 2,
+            this.getX() + 32, this.getY() + 2,
             0.8f,
             1f,
             Integer.MAX_VALUE,
@@ -79,7 +80,7 @@ public class EggGroupWidget extends ClickableWidget {
                 context,
                 CobblemonResources.INSTANCE.getDEFAULT_LARGE(),
                 Text.translatable("property.daycareplus.unbreedable"),
-                this.getX() + 34, this.getY() + 15,
+                this.getX() + 32, this.getY() + 15,
                 0.8f,
                 1f,
                 Integer.MAX_VALUE,
@@ -98,7 +99,7 @@ public class EggGroupWidget extends ClickableWidget {
                 context,
                 CobblemonResources.INSTANCE.getDEFAULT_LARGE(),
                 Text.translatable("daycareplus.group." + eggGroup),
-                this.getX() + 34, this.getY() + 15,
+                this.getX() + 32, this.getY() + 15,
                 0.8f,
                 1f,
                 Integer.MAX_VALUE,
@@ -115,7 +116,7 @@ public class EggGroupWidget extends ClickableWidget {
                     context,
                     CobblemonResources.INSTANCE.getDEFAULT_LARGE(),
                     Text.translatable("daycareplus.group." + group.name().toLowerCase(Locale.ROOT)),
-                    this.getX() + 34, this.getY() + offset,
+                    this.getX() + 32, this.getY() + offset,
                     0.8f,
                     1f,
                     Integer.MAX_VALUE,
@@ -139,9 +140,15 @@ public class EggGroupWidget extends ClickableWidget {
         collapsed = !collapsed;
     }
 
-    public void setPokemon (Pokemon pokemon) {
-        this.eggGroups = ClientEggGroup.getGroups(pokemon);
-        this.breedable = BreedableProperty.get(pokemon);
+    public void setPokemon (@Nullable Pokemon pokemon) {
+        if (pokemon == null) {
+            this.eggGroups = Set.of();
+            this.breedable = true;
+        }
+        else {
+            this.eggGroups = ClientEggGroup.getGroups(pokemon);
+            this.breedable = BreedableProperty.get(pokemon);
+        }
     }
 
     @Override
