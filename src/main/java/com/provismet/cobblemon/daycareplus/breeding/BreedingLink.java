@@ -58,4 +58,8 @@ public class BreedingLink {
     public static boolean has (ServerPlayerEntity player, UUID daycareId) {
         return has(player.getUuid(), daycareId);
     }
+
+    public static void clear () {
+        link.clear();
+    }
 }
