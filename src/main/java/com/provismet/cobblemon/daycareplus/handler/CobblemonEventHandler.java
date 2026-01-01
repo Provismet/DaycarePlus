@@ -8,6 +8,7 @@ import com.cobblemon.mod.common.api.mark.Mark;
 import com.cobblemon.mod.common.api.mark.Marks;
 import com.cobblemon.mod.common.api.properties.CustomPokemonProperty;
 import com.cobblemon.mod.common.util.MiscUtilsKt;
+import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
 import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
 import com.provismet.cobblemon.daycareplus.registries.DPStats;
@@ -21,8 +22,10 @@ public abstract class CobblemonEventHandler {
         CobblemonEvents.COLLECT_EGG.subscribe(Priority.NORMAL, CobblemonEventHandler::postCollect);
 
         // How wow look at that, we suggest the marks and apply one in DIFFERENT event triggers at different times instead of dumping into a single molang of all things!
-        CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.HIGHEST, CobblemonEventHandler::suggestPotentialMarks);
-        CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.LOWEST, CobblemonEventHandler::applyPotentialMark);
+        if (DaycarePlusOptions.shouldApplyMarks()) {
+            CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.HIGHEST, CobblemonEventHandler::suggestPotentialMarks);
+            CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.LOWEST, CobblemonEventHandler::applyPotentialMark);
+        }
     }
 
     public static void registerEarly () {
