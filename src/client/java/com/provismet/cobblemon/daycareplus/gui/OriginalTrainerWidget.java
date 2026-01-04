@@ -36,7 +36,7 @@ public class OriginalTrainerWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (trainerName.isEmpty() || !ClientOptions.shouldShowOriginalTrainerInPC()) return;
+        if (this.trainerName == null || this.trainerName.isEmpty() || !ClientOptions.shouldShowOriginalTrainerInPC()) return;
 
         Identifier texture;
         if (this.isHovered()) texture = collapsed ? TEXTURE_COLLAPSED_HOVERED : TEXTURE_HOVERED;
@@ -95,7 +95,7 @@ public class OriginalTrainerWidget extends ClickableWidget {
 
     public void setPokemon (@Nullable Pokemon pokemon) {
         if (pokemon == null) this.trainerName = "";
-        else this.trainerName = pokemon.getOriginalTrainerName();
+        else this.trainerName = this.getOriginalTrainer(pokemon);
     }
 
     @Override
@@ -111,5 +111,11 @@ public class OriginalTrainerWidget extends ClickableWidget {
     @Override
     public boolean isHovered () {
         return super.isHovered() && ClientOptions.shouldShowOriginalTrainerInPC();
+    }
+
+    private String getOriginalTrainer (Pokemon pokemon) {
+        if (pokemon.getOriginalTrainerName() != null) return pokemon.getOriginalTrainerName();
+        if (pokemon.getOriginalTrainer() != null) return pokemon.getOriginalTrainer();
+        return "";
     }
 }
