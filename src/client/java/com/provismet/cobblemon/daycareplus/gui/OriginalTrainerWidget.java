@@ -30,12 +30,12 @@ public class OriginalTrainerWidget extends ClickableWidget {
 
     private String trainerName = "";
 
-    public OriginalTrainerWidget(int x, int y) {
+    public OriginalTrainerWidget (int x, int y) {
         super(x, y, WIDTH, HEIGHT, Text.translatable("daycareplus.ui.original_trainer"));
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    protected void renderWidget (DrawContext context, int mouseX, int mouseY, float delta) {
         if (this.trainerName == null || this.trainerName.isEmpty() || !ClientOptions.shouldShowOriginalTrainerInPC()) return;
 
         Identifier texture;
