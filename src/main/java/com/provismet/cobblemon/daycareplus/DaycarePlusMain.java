@@ -61,7 +61,7 @@ public class DaycarePlusMain implements ModInitializer {
 			}
 		);
 
-        if (DaycarePlusOptions.doCobblemonSizeVariationCompatibility() && FabricLoader.getInstance().isModLoaded("cobblemonsizevariations"))
+        if (DaycarePlusOptions.doCobblemonSizeVariationCompatibility() && FabricLoader.getInstance().isModLoaded("cobblemonsizevariation"))
             DaycarePlusEvents.EGG_PROPERTIES_CREATED.register(new CobblemonSizeVariationCompatibility());
 	}
 }
