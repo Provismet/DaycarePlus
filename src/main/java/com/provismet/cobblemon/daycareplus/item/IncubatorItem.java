@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.block.PastureBlock;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.util.PlayerExtensionsKt;
 import com.provismet.cobblemon.daycareplus.api.EggHelper;
+import com.provismet.cobblemon.daycareplus.breeding.PastureContainer;
 import com.provismet.cobblemon.daycareplus.gui.EggStorageGUI;
 import com.provismet.cobblemon.daycareplus.imixin.IMixinPastureBlockEntity;
 import com.provismet.cobblemon.daycareplus.item.component.IncubatorOwner;
@@ -65,7 +66,7 @@ public class IncubatorItem extends PolymerItem {
             if (result.getType() == HitResult.Type.BLOCK) {
                 BlockPos pos = BlockPos.ofFloored(result.getPos());
                 BlockState state = world.getBlockState(pos);
-                if (state.hasBlockEntity() && world.getBlockEntity(pos) instanceof LockableContainerBlockEntity) {
+                if (state.hasBlockEntity() && (world.getBlockEntity(pos) instanceof LockableContainerBlockEntity || world.getBlockEntity(pos) instanceof PastureContainer)) {
                     return TypedActionResult.success(stack);
                 }
             }
