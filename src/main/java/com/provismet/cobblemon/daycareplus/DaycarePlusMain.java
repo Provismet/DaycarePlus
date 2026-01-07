@@ -4,7 +4,7 @@ import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusInitializer;
 import com.provismet.cobblemon.daycareplus.breeding.BreedingUtils;
 import com.provismet.cobblemon.daycareplus.command.DPCommands;
-import com.provismet.cobblemon.daycareplus.compatibility.CobblemonSizeVariationCompatibility;
+import com.provismet.cobblemon.daycareplus.compatibility.SizeVariationCompatibility;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.config.IncubatorTiers;
 import com.provismet.cobblemon.daycareplus.handler.CobblemonEventHandler;
@@ -61,7 +61,7 @@ public class DaycarePlusMain implements ModInitializer {
 			}
 		);
 
-        if (DaycarePlusOptions.doCobblemonSizeVariationCompatibility() && FabricLoader.getInstance().isModLoaded("cobblemonsizevariation"))
-            DaycarePlusEvents.EGG_PROPERTIES_CREATED.register(new CobblemonSizeVariationCompatibility());
+        if (DaycarePlusOptions.doSizeVariationCompatibility())
+            DaycarePlusEvents.EGG_PROPERTIES_CREATED.register(new SizeVariationCompatibility());
 	}
 }

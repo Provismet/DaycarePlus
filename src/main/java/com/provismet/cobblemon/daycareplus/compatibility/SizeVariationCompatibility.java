@@ -5,7 +5,10 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import net.minecraft.util.math.MathHelper;
 
-public class CobblemonSizeVariationCompatibility implements DaycarePlusEvents.EggPropertiesCreated {
+/**
+ * A generic implementation for size compatibility.
+ */
+public class SizeVariationCompatibility implements DaycarePlusEvents.EggPropertiesCreated {
     @Override
     public void modifyProperties (Pokemon primary, Pokemon secondary, PokemonProperties properties) {
         float scale1 = primary.getScaleModifier();

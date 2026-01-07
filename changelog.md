@@ -5,4 +5,4 @@ Another patch following the previous hotfix. Addresses a couple inconveniences a
 
 ## Bugfixes
 - Prevented Incubator UI from opening from shift-interacting with a Pasture.
-- Fixed CobblemonSizeVariation integration.
+- Fixed CobblemonSizeVariation integration and made it work with generic size mods.

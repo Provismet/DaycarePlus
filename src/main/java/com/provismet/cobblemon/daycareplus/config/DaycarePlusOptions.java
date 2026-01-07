@@ -58,7 +58,7 @@ public class DaycarePlusOptions {
     private static boolean inheritEggMovesFromBothParents = true; // This is true in gen6+
 
     // Mod Compatibility
-    private static boolean cobblemonSizeVariation = true;
+    private static boolean sizeVariation = true;
 
     static {
         load();
@@ -144,8 +144,8 @@ public class DaycarePlusOptions {
         return inheritEggMovesFromBothParents;
     }
 
-    public static boolean doCobblemonSizeVariationCompatibility () {
-        return cobblemonSizeVariation;
+    public static boolean doSizeVariationCompatibility() {
+        return sizeVariation;
     }
 
     public static void save () {
@@ -180,7 +180,7 @@ public class DaycarePlusOptions {
                     .append("show_egg_tooltip", showEggTooltip))
             .append(
                 "compatibility_features", new JsonBuilder()
-                    .append("CobblemonSizeVariation", cobblemonSizeVariation));
+                    .append("CobblemonSizeVariation", sizeVariation));
 
         try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
@@ -232,7 +232,7 @@ public class DaycarePlusOptions {
                 });
 
                 reader.getObjectAsReader("compatibility").ifPresent(compatibility -> {
-                    compatibility.getBoolean("cobblemonsizevariation").ifPresent(val -> cobblemonSizeVariation = val);
+                    compatibility.getBoolean("size_variation").ifPresent(val -> sizeVariation = val);
                 });
             }
         }
