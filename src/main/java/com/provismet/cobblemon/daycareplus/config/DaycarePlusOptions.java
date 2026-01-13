@@ -180,7 +180,7 @@ public class DaycarePlusOptions {
                     .append("show_egg_tooltip", showEggTooltip))
             .append(
                 "compatibility_features", new JsonBuilder()
-                    .append("CobblemonSizeVariation", sizeVariation));
+                    .append("size_variation", sizeVariation));
 
         try (FileWriter writer = new FileWriter(FILE.toFile())) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(builder.getJson()));
