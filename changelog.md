@@ -1,8 +1,4 @@
-Another patch following the previous hotfix. Addresses a couple inconveniences and a bugfix. 
-
-## Changes
-- Running Daycare+ on the client will now enforce the Polymer Server resourcepack (which contains the mod's assets).
+Another hotfix to address a broken config property
 
 ## Bugfixes
-- Prevented Incubator UI from opening from shift-interacting with a Pasture.
-- Fixed CobblemonSizeVariation integration and made it work with generic size mods.
+- Fixed config saving as "CobblemonSizeVariation" instead of the new "size_variation" (which is was trying to read).
