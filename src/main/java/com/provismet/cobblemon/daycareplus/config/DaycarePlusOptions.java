@@ -231,7 +231,7 @@ public class DaycarePlusOptions {
                     breedingRules.getBoolean("show_egg_tooltip").ifPresent(val -> showEggTooltip = val);
                 });
 
-                reader.getObjectAsReader("compatibility").ifPresent(compatibility -> {
+                reader.getObjectAsReader("compatibility_features").ifPresent(compatibility -> {
                     compatibility.getBoolean("size_variation").ifPresent(val -> sizeVariation = val);
                 });
             }
