@@ -109,7 +109,7 @@ publishMods {
     type = STABLE
     modLoaders.add("fabric")
     displayName = project.version.toString()
-    dryRun = providers.environmentVariable("GITHUB_TOKEN").getOrNull() == null || providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+    dryRun = project.snapshot == "true" || providers.environmentVariable("GITHUB_TOKEN").getOrNull() == null || providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
 
     github {
         repository = "Provismet/${project.github_repo}"
