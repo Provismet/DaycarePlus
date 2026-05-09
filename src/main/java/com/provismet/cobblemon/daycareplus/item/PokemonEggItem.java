@@ -9,7 +9,6 @@ import com.provismet.cobblemon.daycareplus.api.PokemonEgg;
 import com.provismet.cobblemon.daycareplus.api.PokemonEggProviderItem;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
-import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
@@ -118,20 +117,27 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
 
     // Exists for mixin convenience.
     private MutableText getTooltipSpeciesName (PokemonProperties properties) {
-        MutableText text = Text.literal(StringFormatting.titleCase(properties.getSpecies())).styled(Styles.WHITE_NO_ITALICS);
-        if (Objects.requireNonNullElse(properties.getShiny(), false)) text.append(Text.literal(" ★").formatted(Formatting.GOLD));
+        MutableText text = Text.translatable("cobblemon.species." + properties.getSpecies() + ".name").styled(Styles.WHITE_NO_ITALICS);
+        if (Objects.requireNonNullElse(properties.getShiny(), false) && DaycarePlusOptions.shouldApplyShinyTexture()) {
+            text.append(Text.literal(" ★").formatted(Formatting.GOLD));
+        }
         return text;
     }
 
     // Exists for mixin convenience.
     private MutableText getTooltipFormName (PokemonProperties properties) {
-        return Text.literal(StringFormatting.titleCase(properties.getForm())).styled(Styles.WHITE_NO_ITALICS);
+        return Text.translatableWithFallback(
+            "cobblemon.ui.pokedex.info.form." + properties.getSpecies() + "-" + properties.getForm(),
+            "form?" //StringFormatting.titleCase(properties.getForm())
+        ).styled(Styles.WHITE_NO_ITALICS);
     }
 
     // Exists for mixin convenience.
     private MutableText getTooltipNatureName (PokemonProperties properties) {
-        assert properties.getNature() != null;
-        return Text.literal(StringFormatting.titleCase(Identifier.of(properties.getNature()).getPath())).styled(Styles.WHITE_NO_ITALICS);
+        if (properties.getNature() == null) return Text.literal("???");
+
+        Identifier nature = Identifier.of(properties.getNature()); // These are id strings.
+        return Text.translatable(nature.getNamespace() + ".nature." + nature.getPath()).styled(Styles.WHITE_NO_ITALICS);
     }
 
     // Exists for mixin convenience.
@@ -150,7 +156,7 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
     @Override
     public int getPolymerCustomModelData (ItemStack stack, @Nullable ServerPlayerEntity player) {
         if (stack.get(DataComponentTypes.CUSTOM_MODEL_DATA) != null) return -1;
-        if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=true")) return this.shiny.value();
+        if (stack.getOrDefault(DPItemDataComponents.POKEMON_PROPERTIES, "").contains("shiny=true") && DaycarePlusOptions.shouldApplyShinyTexture()) return this.shiny.value();
         return super.getPolymerCustomModelData(stack, player);
     }
 

@@ -46,6 +46,7 @@ public class DaycarePlusOptions {
     // Egg Hatching
     private static int pointsPerEggCycle = 200;
     private static boolean showEggTooltip = true;
+    private static boolean useShinyTexture = true;
 
     // Shiny Chance
     private static float shinyChanceMultiplier = 1;
@@ -120,6 +121,10 @@ public class DaycarePlusOptions {
         return showEggTooltip;
     }
 
+    public static boolean shouldApplyShinyTexture () {
+        return useShinyTexture;
+    }
+
     public static boolean shouldUseShinyChanceEvent () {
         return useShinyEvent;
     }
@@ -177,7 +182,8 @@ public class DaycarePlusOptions {
                 "breeding_rules", new JsonBuilder()
                     .append("inherit_moves_from_both_parents", inheritEggMovesFromBothParents)
                     .append("ticks_per_egg_cycle", pointsPerEggCycle)
-                    .append("show_egg_tooltip", showEggTooltip))
+                    .append("show_egg_tooltip", showEggTooltip)
+                    .append("show_shiny_texture", useShinyTexture))
             .append(
                 "compatibility_features", new JsonBuilder()
                     .append("size_variation", sizeVariation));
@@ -229,6 +235,7 @@ public class DaycarePlusOptions {
                     breedingRules.getBoolean("inherit_moves_from_both_parents").ifPresent(val -> inheritEggMovesFromBothParents = val);
                     breedingRules.getInteger("ticks_per_egg_cycle").ifPresent(val -> pointsPerEggCycle = val);
                     breedingRules.getBoolean("show_egg_tooltip").ifPresent(val -> showEggTooltip = val);
+                    breedingRules.getBoolean("show_shiny_texture").ifPresent(val -> useShinyTexture = val);
                 });
 
                 reader.getObjectAsReader("compatibility_features").ifPresent(compatibility -> {
