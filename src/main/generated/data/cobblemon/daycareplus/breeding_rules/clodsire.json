@@ -1,0 +1,14 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "features": {
+            "paldean": true
+          },
+          "species": "wooper"
+        }
+      }
+    ]
+  }
+]

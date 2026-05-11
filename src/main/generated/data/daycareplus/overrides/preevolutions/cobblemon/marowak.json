@@ -1,9 +1,0 @@
-{
-  "form_pre_evolutions": {
-    "alola": {
-      "form_id": "alolabias",
-      "species": "cobblemon:cubone"
-    }
-  },
-  "species": "cobblemon:marowak"
-}

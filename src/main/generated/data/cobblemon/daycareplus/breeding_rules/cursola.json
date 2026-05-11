@@ -1,0 +1,14 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "features": {
+            "galarian": true
+          },
+          "species": "corsola"
+        }
+      }
+    ]
+  }
+]

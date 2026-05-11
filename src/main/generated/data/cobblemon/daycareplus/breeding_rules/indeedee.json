@@ -1,0 +1,18 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "gender": "MALE",
+          "species": "indeedee"
+        }
+      },
+      {
+        "pokemon": {
+          "gender": "FEMALE",
+          "species": "indeedee"
+        }
+      }
+    ]
+  }
+]

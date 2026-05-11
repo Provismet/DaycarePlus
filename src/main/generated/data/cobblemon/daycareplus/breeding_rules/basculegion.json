@@ -1,0 +1,14 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "features": {
+            "fish_stripes": "white"
+          },
+          "species": "basculin"
+        }
+      }
+    ]
+  }
+]
