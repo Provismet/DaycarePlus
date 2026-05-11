@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * @deprecated Use {@link BreedingRulesProvider} instead. Support for this style of pre-evolution override will be dropped in version 2.0.
+ */
+@Deprecated
 public abstract class PreEvolutionFormOverrideProvider implements DataProvider {
     protected final FabricDataOutput output;
     protected final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup;
