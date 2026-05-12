@@ -116,9 +116,9 @@ public record BreedingRules (List<Rule> rules) {
                 totalWeight += potential.weight();
             }
 
-            int roll = random.nextInt(totalWeight);
+            float roll = random.nextFloat(totalWeight);
             for (PotentialOffspring potential : this.offspring) {
-                if (roll <= potential.weight()) return potential.pokemon();
+                if (roll < potential.weight()) return potential.pokemon();
 
                 roll -= potential.weight();
             }
