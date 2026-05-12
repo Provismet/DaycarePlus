@@ -1,0 +1,16 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "species": "nidoranf"
+        }
+      },
+      {
+        "pokemon": {
+          "species": "nidoranm"
+        }
+      }
+    ]
+  }
+]

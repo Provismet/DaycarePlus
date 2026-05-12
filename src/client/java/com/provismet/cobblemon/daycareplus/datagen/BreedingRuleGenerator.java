@@ -22,7 +22,20 @@ public class BreedingRuleGenerator extends BreedingRulesProvider {
         // Generic
         consumer.simple("manaphy", "phione");
 
+        consumer.add("nidoqueen", BreedingRules.of(BreedingRules.Rule.builder()
+            .addOffspring(PokemonSupplier.builder().species("nidoranf"))
+            .addOffspring(PokemonSupplier.builder().species("nidoranm"))));
+        consumer.add("nidorina", BreedingRules.of(BreedingRules.Rule.builder()
+            .addOffspring(PokemonSupplier.builder().species("nidoranf"))
+            .addOffspring(PokemonSupplier.builder().species("nidoranm"))));
         consumer.add("nidoranf", BreedingRules.of(BreedingRules.Rule.builder()
+            .addOffspring(PokemonSupplier.builder().species("nidoranf"))
+            .addOffspring(PokemonSupplier.builder().species("nidoranm"))));
+
+        consumer.add("nidoking", BreedingRules.of(BreedingRules.Rule.builder()
+            .addOffspring(PokemonSupplier.builder().species("nidoranf"))
+            .addOffspring(PokemonSupplier.builder().species("nidoranm"))));
+        consumer.add("nidorino", BreedingRules.of(BreedingRules.Rule.builder()
             .addOffspring(PokemonSupplier.builder().species("nidoranf"))
             .addOffspring(PokemonSupplier.builder().species("nidoranm"))));
         consumer.add("nidoranm", BreedingRules.of(BreedingRules.Rule.builder()
