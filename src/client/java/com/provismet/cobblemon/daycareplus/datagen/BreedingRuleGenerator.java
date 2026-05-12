@@ -23,42 +23,42 @@ public class BreedingRuleGenerator extends BreedingRulesProvider {
         consumer.simple("manaphy", "phione");
 
         consumer.add("nidoranf", BreedingRules.of(BreedingRules.Rule.builder()
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("nidoranf")))
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("nidoranm")))));
+            .addOffspring(PokemonSupplier.builder().species("nidoranf"))
+            .addOffspring(PokemonSupplier.builder().species("nidoranm"))));
         consumer.add("nidoranm", BreedingRules.of(BreedingRules.Rule.builder()
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("nidoranf")))
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("nidoranm")))));
+            .addOffspring(PokemonSupplier.builder().species("nidoranf"))
+            .addOffspring(PokemonSupplier.builder().species("nidoranm"))));
 
         consumer.add("volbeat", BreedingRules.of(BreedingRules.Rule.builder()
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("volbeat")))
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("illumise")))));
+            .addOffspring(PokemonSupplier.builder().species("volbeat"))
+            .addOffspring(PokemonSupplier.builder().species("illumise"))));
         consumer.add("illumise", BreedingRules.of(BreedingRules.Rule.builder()
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("volbeat")))
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder().species("illumise")))));
+            .addOffspring(PokemonSupplier.builder().species("volbeat"))
+            .addOffspring(PokemonSupplier.builder().species("illumise"))));
 
         consumer.add("indeedee", BreedingRules.of(BreedingRules.Rule.builder()
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder()
+            .addOffspring(PokemonSupplier.builder()
                 .species("indeedee")
-                .gender(Gender.MALE)))
-            .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder()
+                .gender(Gender.MALE))
+            .addOffspring(PokemonSupplier.builder()
                 .species("indeedee")
-                .gender(Gender.FEMALE)))));
+                .gender(Gender.FEMALE))));
 
         consumer.add("pikachu", BreedingRules.builder()
             .add(BreedingRules.Rule.builder()
                 .primaryParent(PokemonPredicate.builder()
                     .species("pikachu")
                     .heldItem(CobblemonItems.LIGHT_BALL))
-                .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder()
+                .addOffspring(PokemonSupplier.builder()
                     .species("pichu")
-                    .addMove("volttackle"))))
+                    .addMove("volttackle")))
             .add(BreedingRules.Rule.builder()
                 .secondaryParent(PokemonPredicate.builder()
                     .species("pikachu")
                     .heldItem(CobblemonItems.LIGHT_BALL))
-                .addOffspring(BreedingRules.PotentialOffspring.of(PokemonSupplier.builder()
+                .addOffspring(PokemonSupplier.builder()
                     .species("pichu")
-                    .addMove("volttackle")))));
+                    .addMove("volttackle"))));
 
         // Alola Forms
         consumer.simple("exeggutor", "alola", "exeggcute", FeatureApplicator.single("region_bias", "alola"));

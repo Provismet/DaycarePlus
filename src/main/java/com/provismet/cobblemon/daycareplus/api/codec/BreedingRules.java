@@ -177,6 +177,20 @@ public record BreedingRules (List<Rule> rules) {
                 return this;
             }
 
+            public Builder addOffspring (PokemonSupplier offspring) {
+                if (this.offspring == null) this.offspring = new ArrayList<>();
+
+                this.offspring.add(new PotentialOffspring(offspring));
+                return this;
+            }
+
+            public Builder addOffspring (PokemonSupplier.Builder offspring) {
+                if (this.offspring == null) this.offspring = new ArrayList<>();
+
+                this.offspring.add(new PotentialOffspring(offspring.get()));
+                return this;
+            }
+
             @Override
             public Rule get () {
                 return new Rule(
