@@ -72,6 +72,7 @@ public class PotentialPokemonProperties {
         PokemonProperties properties;
         if (this.offspring == null) {
             properties = PokemonProperties.Companion.parse(BreedingUtils.getFormProperties(this.form), " ", "=");
+            properties.setSpecies(this.form.getSpecies().getResourceIdentifier().getPath());
         }
         else {
             properties = this.offspring.toProperties();
