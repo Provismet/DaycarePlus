@@ -21,6 +21,7 @@ public abstract class DPItemDataComponents {
     public static final ComponentType<IncubatorType> INCUBATOR_TYPE = register("incubator_type", builder -> builder.codec(IncubatorType.CODEC).packetCodec(IncubatorType.PACKET_CODEC));
     public static final ComponentType<Integer> EGGS_HELD = register("eggs_held", builder -> builder.codec(Codecs.NONNEGATIVE_INT).packetCodec(PacketCodecs.INTEGER));
     public static final ComponentType<Integer> BOOST_AMOUNT = register("boost_amount", builder -> builder.codec(Codecs.NONNEGATIVE_INT).packetCodec(PacketCodecs.INTEGER));
+    public static final ComponentType<Boolean> HIDE_DATA = register("hide_data", builder -> builder.codec(Codec.BOOL).packetCodec(PacketCodecs.BOOL));
 
     private static <T> ComponentType<T> register (String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
         ComponentType<T> component = Registry.register(Registries.DATA_COMPONENT_TYPE, DaycarePlusMain.identifier(name), builderOperator.apply(ComponentType.builder()).build());

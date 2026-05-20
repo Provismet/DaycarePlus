@@ -49,7 +49,8 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
             properties,
             this.getRemainingSteps(stack),
             this.getMaxSteps(stack),
-            false
+            false,
+            this.isHidden(stack)
         );
         return Optional.of(egg);
     }
@@ -69,7 +70,7 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
 
             tooltip.add(Text.translatable("tooltip.daycareplus.egg.ticks", minutes + ":" + seconds));
         }
-        if (!DaycarePlusOptions.shouldShowEggTooltip()) return;
+        if (!DaycarePlusOptions.shouldShowEggTooltip() || this.isHidden(stack)) return;
 
         tooltip.add(Text.empty());
         String properties = stack.get(DPItemDataComponents.POKEMON_PROPERTIES);
@@ -151,6 +152,10 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
 
     public int getMaxSteps (ItemStack stack) {
         return stack.getOrDefault(DPItemDataComponents.MAX_EGG_STEPS, PokemonEgg.DEFAULT_STEPS);
+    }
+
+    public boolean isHidden (ItemStack stack) {
+        return stack.getOrDefault(DPItemDataComponents.HIDE_DATA, false);
     }
 
     @Override
