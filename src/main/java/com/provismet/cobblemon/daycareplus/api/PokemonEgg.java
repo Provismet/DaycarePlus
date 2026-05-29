@@ -27,7 +27,8 @@ public class PokemonEgg {
         Codec.STRING.optionalFieldOf("pokemon", "random level=1").forGetter(PokemonEgg::getPropertyString),
         Codec.INT.optionalFieldOf("steps", DEFAULT_STEPS).forGetter(PokemonEgg::getSteps),
         Codec.INT.optionalFieldOf("max_steps", DEFAULT_STEPS).forGetter(PokemonEgg::getMaxSteps),
-        Codec.BOOL.optionalFieldOf("hatched", false).forGetter(PokemonEgg::isHatched)
+        Codec.BOOL.optionalFieldOf("hatched", false).forGetter(PokemonEgg::isHatched),
+        Codec.BOOL.optionalFieldOf("hidden", false).forGetter(PokemonEgg::isHidden)
     ).apply(instance, PokemonEgg::new));
 
     private final String propertyString;
@@ -35,27 +36,31 @@ public class PokemonEgg {
     private int steps;
     private PokemonProperties pokemonProperties;
     private boolean hatched;
+    private final boolean hidden;
 
-    public PokemonEgg (String pokemonProperties, int steps, int maxSteps, boolean hatched) {
+    public PokemonEgg (String pokemonProperties, int steps, int maxSteps, boolean hatched, boolean hidden) {
         this.propertyString = pokemonProperties;
         this.maxSteps = maxSteps;
         this.steps = steps;
         this.hatched = hatched;
+        this.hidden = hidden;
         this.pokemonProperties = null;
     }
 
-    public PokemonEgg (PokemonProperties pokemonProperties, int steps, int maxSteps, boolean hatched) {
+    public PokemonEgg (PokemonProperties pokemonProperties, int steps, int maxSteps, boolean hatched, boolean hidden) {
         this.pokemonProperties = pokemonProperties;
         this.propertyString = pokemonProperties.asString(" ");
         this.maxSteps = maxSteps;
         this.steps = steps;
         this.hatched = hatched;
+        this.hidden = hidden;
     }
 
     public PokemonEgg (PokemonProperties pokemonProperties) {
         this.pokemonProperties = pokemonProperties;
         this.propertyString = pokemonProperties.asString(" ");
         this.hatched = false;
+        this.hidden = false;
 
         if (pokemonProperties.getSpecies() != null) {
             Identifier speciesId = ResourceLocationExtensionsKt.asIdentifierDefaultingNamespace(pokemonProperties.getSpecies(), Cobblemon.MODID);
@@ -91,6 +96,10 @@ public class PokemonEgg {
         return this.hatched;
     }
 
+    public boolean isHidden () {
+        return this.hidden;
+    }
+
     public ItemStack getItem () {
         ItemStack stack = DPItems.POKEMON_EGG.getDefaultStack();
         stack.set(DPItemDataComponents.POKEMON_PROPERTIES, this.getPropertyString());
@@ -102,6 +111,8 @@ public class PokemonEgg {
         stack.set(DPItemDataComponents.EGG_STEPS, this.steps);
         stack.set(DPItemDataComponents.MAX_EGG_STEPS, this.maxSteps);
         if (this.steps < this.maxSteps) stack.setDamage(MathHelper.lerp(1f - ((float)this.steps / this.maxSteps), 1, 100));
+
+        if (this.isHidden()) stack.set(DPItemDataComponents.HIDE_DATA, true);
 
         DaycarePlusEvents.POST_EGG_PRODUCED.invoker().afterItemCreated(stack);
         return stack;

@@ -1,0 +1,21 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "features": {
+            "region_bias": "alola"
+          },
+          "species": "exeggcute"
+        }
+      }
+    ],
+    "primary_parent": {
+      "form_showdown_ids": {
+        "whitelist": [
+          "alola"
+        ]
+      }
+    }
+  }
+]

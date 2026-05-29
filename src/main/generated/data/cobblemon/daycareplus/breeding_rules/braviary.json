@@ -1,0 +1,21 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "features": {
+            "region_bias": "hisui"
+          },
+          "species": "rufflet"
+        }
+      }
+    ],
+    "primary_parent": {
+      "form_showdown_ids": {
+        "whitelist": [
+          "hisui"
+        ]
+      }
+    }
+  }
+]

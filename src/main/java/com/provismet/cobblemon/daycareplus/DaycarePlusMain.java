@@ -10,6 +10,7 @@ import com.provismet.cobblemon.daycareplus.config.IncubatorTiers;
 import com.provismet.cobblemon.daycareplus.handler.CobblemonEventHandler;
 import com.provismet.cobblemon.daycareplus.handler.FabricEventHandler;
 import com.provismet.cobblemon.daycareplus.networking.callback.PacketCallbacksC2S;
+import com.provismet.cobblemon.daycareplus.registries.DPDynamicRegistryKeys;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
 import com.provismet.cobblemon.daycareplus.registries.DPItemGroups;
 import com.provismet.cobblemon.daycareplus.registries.DPItems;
@@ -37,6 +38,7 @@ public class DaycarePlusMain implements ModInitializer {
 		IncubatorTiers.load();
 
 		PolymerResourcePackUtils.addModAssets(MODID);
+		DPDynamicRegistryKeys.register();
 
 		DPItems.init();
 		DPItemDataComponents.init();

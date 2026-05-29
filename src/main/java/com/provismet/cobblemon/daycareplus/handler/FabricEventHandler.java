@@ -1,6 +1,7 @@
 package com.provismet.cobblemon.daycareplus.handler;
 
 import com.provismet.cobblemon.daycareplus.breeding.BreedingLink;
+import com.provismet.cobblemon.daycareplus.registries.DPDynamicRegistries;
 import com.provismet.cobblemon.daycareplus.storage.IncubatorCollection;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -16,6 +17,7 @@ public interface FabricEventHandler {
         ServerPlayConnectionEvents.DISCONNECT.register(FabricEventHandler::onPlayerDisconnect);
         ServerLifecycleEvents.BEFORE_SAVE.register(FabricEventHandler::beforeSave);
         ServerLifecycleEvents.SERVER_STOPPED.register(FabricEventHandler::onServerClose);
+        ServerLifecycleEvents.SERVER_STARTED.register(FabricEventHandler::loadRegistries);
     }
 
     private static void onPlayerJoin (ServerPlayNetworkHandler handler, PacketSender packetSender, MinecraftServer server) {
@@ -33,5 +35,10 @@ public interface FabricEventHandler {
 
     private static void onServerClose (MinecraftServer server) {
         BreedingLink.clear();
+        DPDynamicRegistries.unloadRegistries();
+    }
+
+    private static void loadRegistries (MinecraftServer server) {
+        DPDynamicRegistries.loadRegistries(server.getRegistryManager());
     }
 }

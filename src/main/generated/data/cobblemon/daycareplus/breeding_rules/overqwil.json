@@ -1,0 +1,14 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "features": {
+            "hisuian": true
+          },
+          "species": "qwilfish"
+        }
+      }
+    ]
+  }
+]

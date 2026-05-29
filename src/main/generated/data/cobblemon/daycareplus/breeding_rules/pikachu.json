@@ -1,0 +1,40 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "moves": [
+            "volttackle"
+          ],
+          "species": "pichu"
+        }
+      }
+    ],
+    "primary_parent": {
+      "species_showdown_ids": {
+        "whitelist": [
+          "pikachu"
+        ]
+      }
+    }
+  },
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "moves": [
+            "volttackle"
+          ],
+          "species": "pichu"
+        }
+      }
+    ],
+    "secondary_parent": {
+      "species_showdown_ids": {
+        "whitelist": [
+          "pikachu"
+        ]
+      }
+    }
+  }
+]

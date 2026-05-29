@@ -1,22 +1,22 @@
 package com.provismet.cobblemon.daycareplus.breeding;
 
-import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.egg.EggGroup;
 import com.cobblemon.mod.common.api.pokemon.evolution.PreEvolution;
 import com.cobblemon.mod.common.pokemon.FormData;
 import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.pokemon.Species;
-import com.cobblemon.mod.common.util.MiscUtilsKt;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
+import com.provismet.cobblemon.daycareplus.api.codec.BreedingRules;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.feature.BreedableProperty;
 import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
+import com.provismet.cobblemon.daycareplus.registries.DPDynamicRegistries;
+import com.provismet.cobblemon.lilycobble.pokemon.PokemonSupplier;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -41,18 +41,23 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
             && (!DaycarePlusOptions.doCompetitiveBreeding() || DaycarePlusOptions.shouldAllowBreedingWithoutFertility() || FertilityFeature.get(pokemon) > 0);
     }
 
-    public static boolean canBreed (Pokemon parent1, Pokemon parent2) {
-        if (!isAllowedToBreed(parent1) || !isAllowedToBreed(parent2)) return false;
+    public static boolean isCompatible (Pokemon parent1, Pokemon parent2) {
+        return isCompatibleGender(parent1, parent2) && isCompatibleEggGroup(parent1, parent2);
+    }
 
-        Set<EggGroup> eggGroups1 = parent1.getSpecies().getEggGroups();
-        Set<EggGroup> eggGroups2 = parent2.getSpecies().getEggGroups();
+    public static boolean isCompatibleEggGroup (Pokemon parent1, Pokemon parent2) {
+        Set<EggGroup> eggGroups1 = parent1.getForm().getEggGroups();
+        Set<EggGroup> eggGroups2 = parent2.getForm().getEggGroups();
 
         if (eggGroups1.contains(EggGroup.UNDISCOVERED) || eggGroups2.contains(EggGroup.UNDISCOVERED)) return false;
         if (eggGroups1.contains(EggGroup.DITTO) ^ eggGroups2.contains(EggGroup.DITTO)) return true;
-        if (parent1.getGender() == Gender.GENDERLESS || parent2.getGender() == Gender.GENDERLESS) return false;
-        if (parent1.getGender() == parent2.getGender()) return false;
-
         return eggGroups1.stream().anyMatch(eggGroups2::contains);
+    }
+
+    public static boolean isCompatibleGender (Pokemon parent1, Pokemon parent2) {
+        if (parent1.getForm().getEggGroups().contains(EggGroup.DITTO) || parent2.getForm().getEggGroups().contains(EggGroup.DITTO)) return true;
+        if (parent1.getGender() == Gender.GENDERLESS || parent2.getGender() == Gender.GENDERLESS) return false;
+        return parent1.getGender() != parent2.getGender();
     }
 
     public static Pokemon getMotherOrNonDitto (Pokemon parent1, Pokemon parent2) {
@@ -64,11 +69,16 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
     }
 
     public static Optional<PotentialPokemonProperties> getOffspring (@Nullable Pokemon parent1, @Nullable Pokemon parent2) {
-        if (parent1 == null || parent2 == null || !canBreed(parent1, parent2)) return Optional.empty();
+        if (parent1 == null || parent2 == null) return Optional.empty();
+        if (!isAllowedToBreed(parent1) || !isAllowedToBreed(parent2)) return Optional.empty();
 
         Pokemon primary = getMotherOrNonDitto(parent1, parent2);
         Pokemon secondary = primary == parent1 ? parent2 : parent1;
-        return Optional.of(new PotentialPokemonProperties(primary, secondary));
+
+        if (applyRules(primary, secondary) != null || isCompatible(primary, secondary)) {
+            return Optional.of(new PotentialPokemonProperties(primary, secondary));
+        }
+        return Optional.empty();
     }
 
     public static boolean parentsHaveFertility (Pokemon parent1, Pokemon parent2) {
@@ -81,23 +91,18 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         while ((temp = getPreEvolution(preevo)) != null) {
             preevo = temp;
         }
-
-        // Special edge case for GameFreak not doing the intelligent thing and merging these back when they had the chance.
-        // This would probably be better data-driven, but honestly if you're making a gender-split species then you've already dug your own grave, mate.
-        // TODO: These workarounds are dumb, data-driven overrides needs to be expanded to include stuff like this!
-        if (preevo.getSpecies().showdownId().equals("nidoranf") || preevo.getSpecies().showdownId().equals("nidoranm")) {
-            Species species = getRandomGenderSpeciesSplit(MiscUtilsKt.cobblemonResource("nidoranm"), MiscUtilsKt.cobblemonResource("nidoranf"), 0.5);
-            if (species != null) preevo = PreEvolution.Companion.of(species, species.getFormByShowdownId(preevo.getForm().formOnlyShowdownId()));
-        }
-        else if (preevo.getSpecies().showdownId().equals("volbeat") || preevo.getSpecies().showdownId().equals("illumise")) {
-            Species species = getRandomGenderSpeciesSplit(MiscUtilsKt.cobblemonResource("volbeat"), MiscUtilsKt.cobblemonResource("illumise"), 0.5);
-            if (species != null) preevo = PreEvolution.Companion.of(species, species.getFormByShowdownId(preevo.getForm().formOnlyShowdownId()));
-        }
-        else if (preevo.getSpecies().showdownId().equals("indeedee")) {
-            preevo = Math.random() > 0.5 ? PreEvolution.Companion.of(preevo.getSpecies(), preevo.getSpecies().getForm(Set.of("female"))) : PreEvolution.Companion.of(preevo.getSpecies(), preevo.getSpecies().getForm(Set.of("male")));
-        }
-
         return preevo.getForm();
+    }
+
+    @Nullable
+    public static PokemonSupplier applyRules (Pokemon primary, Pokemon secondary) {
+        if (DPDynamicRegistries.getBreedingRules() != null) {
+            BreedingRules rules = DPDynamicRegistries.getBreedingRules().get(primary.getSpecies().resourceIdentifier);
+            if (rules != null) {
+                return rules.getOffspring(primary, secondary);
+            }
+        }
+        return null;
     }
 
     // Necessary because for some reason the "region-bias-{{choice}}" aspects don't parse directly.
@@ -126,15 +131,6 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
 
         // Pre-evolution exists, try to match the forms.
         return PreEvolution.Companion.of(preEvolution.getSpecies(), preEvolution.getSpecies().getFormByShowdownId(pokemon.getForm().formOnlyShowdownId()));
-    }
-
-    @Nullable
-    private static Species getRandomGenderSpeciesSplit (Identifier male, Identifier female, double maleRatio) {
-        Species maleSpecies = PokemonSpecies.getByIdentifier(male);
-        Species femaleSpecies = PokemonSpecies.getByIdentifier(female);
-
-        if (Math.random() < maleRatio) return maleSpecies;
-        else return femaleSpecies;
     }
 
     @Override

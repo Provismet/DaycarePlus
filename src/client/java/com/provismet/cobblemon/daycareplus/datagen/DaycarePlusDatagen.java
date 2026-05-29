@@ -12,7 +12,7 @@ public class DaycarePlusDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(ModelGenerator::new);
         pack.addProvider(ItemTagGenerator::new);
         pack.addProvider(RecipeGenerator::new);
-        pack.addProvider(CobblemonPreEvolutionGenerator::new);
+        pack.addProvider(BreedingRuleGenerator::new);
         pack.addProvider(CobblemonFormPropertyGenerator::new);
     }
 

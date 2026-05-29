@@ -27,10 +27,13 @@ import com.cobblemon.mod.common.pokemon.abilities.HiddenAbilityType;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.util.MathExtras;
+import com.provismet.cobblemon.lilycobble.pokemon.PokemonStats;
+import com.provismet.cobblemon.lilycobble.pokemon.PokemonSupplier;
 import kotlin.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +48,7 @@ public class PotentialPokemonProperties {
     private final Pokemon primary;
     private final Pokemon secondary;
 
+    private final PokemonSupplier offspring;
     private final FormData form;
 
     /**
@@ -54,12 +58,26 @@ public class PotentialPokemonProperties {
     public PotentialPokemonProperties (Pokemon primary, Pokemon secondary) {
         this.primary = primary;
         this.secondary = secondary;
-        this.form = BreedingUtils.getBabyForm(this.primary);
+        this.offspring = BreedingUtils.applyRules(primary, secondary);
+
+        if (this.offspring != null) {
+            this.form = this.offspring.get().getForm();
+        }
+        else {
+            this.form = BreedingUtils.getBabyForm(primary);
+        }
     }
 
     public PokemonProperties createPokemonProperties () {
-        PokemonProperties properties = PokemonProperties.Companion.parse(BreedingUtils.getFormProperties(this.form), " ", "=");
-        properties.setSpecies(this.form.getSpecies().showdownId());
+        PokemonProperties properties;
+        if (this.offspring == null) {
+            properties = PokemonProperties.Companion.parse(BreedingUtils.getFormProperties(this.form), " ", "=");
+            properties.setSpecies(this.form.getSpecies().getResourceIdentifier().getPath());
+        }
+        else {
+            properties = this.offspring.toProperties();
+        }
+
         properties.setForm(this.form.formOnlyShowdownId()); // This is borderline cosmetic because the form gets overridden by aspects anyway but do it to get the form listed in the properties.
 
         this.setAbility(properties);
@@ -98,6 +116,11 @@ public class PotentialPokemonProperties {
      * @return Possible natures for the offspring, an empty list denotes all natures are valid.
      */
     public List<Nature> getPossibleNatures () {
+        if (this.offspring != null && this.offspring.nature().isPresent()) {
+            Nature nature = Natures.getNature(this.offspring.nature().get());
+            if (nature != null) return List.of(nature);
+        }
+
         List<Nature> natures = new ArrayList<>();
         if (this.primary.getHeldItem$common().isOf(CobblemonItems.EVERSTONE)) natures.add(this.primary.getNature());
         if (this.secondary.getHeldItem$common().isOf(CobblemonItems.EVERSTONE)) natures.add(this.secondary.getNature());
@@ -123,6 +146,11 @@ public class PotentialPokemonProperties {
     }
 
     public List<AbilityTemplate> getPossibleAbilities () {
+        if (this.offspring != null && this.offspring.ability().isPresent()) {
+            AbilityTemplate template = Abilities.get(this.offspring.ability().get());
+            if (template != null) return List.of(template);
+        }
+
         Ability parentAbility = this.primary.getAbility();
         Pair<Priority, Integer> parentAbilityData;
 
@@ -180,12 +208,12 @@ public class PotentialPokemonProperties {
 
     public Map<Stat, PotentialIV> getPossibleIVs () {
         return Map.of(
-            Stats.HP, PotentialIV.fromParents(this.primary, this.secondary, Stats.HP),
-            Stats.ATTACK, PotentialIV.fromParents(this.primary, this.secondary, Stats.ATTACK),
-            Stats.DEFENCE, PotentialIV.fromParents(this.primary, this.secondary, Stats.DEFENCE),
-            Stats.SPECIAL_ATTACK, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPECIAL_ATTACK),
-            Stats.SPECIAL_DEFENCE, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPECIAL_DEFENCE),
-            Stats.SPEED, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPEED)
+            Stats.HP, PotentialIV.fromParents(this.primary, this.secondary, Stats.HP, this.offspring),
+            Stats.ATTACK, PotentialIV.fromParents(this.primary, this.secondary, Stats.ATTACK, this.offspring),
+            Stats.DEFENCE, PotentialIV.fromParents(this.primary, this.secondary, Stats.DEFENCE, this.offspring),
+            Stats.SPECIAL_ATTACK, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPECIAL_ATTACK, this.offspring),
+            Stats.SPECIAL_DEFENCE, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPECIAL_DEFENCE, this.offspring),
+            Stats.SPEED, PotentialIV.fromParents(this.primary, this.secondary, Stats.SPEED, this.offspring)
         );
     }
 
@@ -217,12 +245,6 @@ public class PotentialPokemonProperties {
                     eggMoves.add(move.getName());
                 }
             });
-        }
-
-        // TODO: These workarounds are dumb, data-driven overrides needs to be expanded to include stuff like this!
-        if ((this.primary.getSpecies().showdownId().equals("pikachu") && this.primary.heldItem().isOf(CobblemonItems.LIGHT_BALL))
-        || (this.secondary.getSpecies().showdownId().equals("pikachu") && this.secondary.heldItem().isOf(CobblemonItems.LIGHT_BALL))) {
-            eggMoves.add("volttackle");
         }
 
         return eggMoves;
@@ -257,12 +279,16 @@ public class PotentialPokemonProperties {
     }
 
     private void setGender (PokemonProperties properties) {
+        if (this.offspring != null && this.offspring.gender().isPresent()) return;
+
         if (this.form.getMaleRatio() < 0) properties.setGender(Gender.GENDERLESS);
         else if (Math.random() < this.form.getMaleRatio()) properties.setGender(Gender.MALE);
         else properties.setGender(Gender.FEMALE);
     }
 
     private void setAbility (PokemonProperties properties) {
+        if (this.offspring != null && this.offspring.ability().isPresent()) return;
+
         Ability parentAbility = this.primary.getAbility();
         Pair<Priority, Integer> parentAbilityData;
 
@@ -301,6 +327,8 @@ public class PotentialPokemonProperties {
     }
 
     private void setNature (PokemonProperties properties) {
+        if (this.offspring != null && this.offspring.nature().isPresent()) return;
+
         List<Nature> natures = this.getPossibleNatures();
         if (!natures.isEmpty() && !(DaycarePlusOptions.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary))) {
             // Technically there can be 2 possible natures if both parents hold an everstone.
@@ -313,6 +341,8 @@ public class PotentialPokemonProperties {
     }
 
     private void setShiny (PokemonProperties properties) {
+        if (this.offspring != null && this.offspring.shiny().isPresent()) return;
+
         properties.setShiny(Math.random() < this.getShinyRate());
     }
 
@@ -341,7 +371,7 @@ public class PotentialPokemonProperties {
         remaining.add(Stats.SPECIAL_DEFENCE);
         remaining.add(Stats.SPEED);
 
-        IVs iv = new IVs();
+        IVs iv = this.offspring == null ? new IVs() : this.offspring.ivs().map(PokemonStats::toIVs).orElseGet(IVs::new);
         for (Map.Entry<Stat, PotentialIV> potent : potentials.entrySet()) {
             if (potent.getValue().isForced()) {
                 --forcedIVs;
@@ -357,7 +387,9 @@ public class PotentialPokemonProperties {
         }
 
         for (Stat stat : remaining) {
-            iv.set(stat, MathHelper.clamp((int)(Math.random() * 32), 0, 31));
+            if (iv.get(stat) == null) {
+                iv.set(stat, MathHelper.clamp((int) (Math.random() * 32), 0, 31));
+            }
         }
 
         properties.setIvs(iv);
@@ -367,6 +399,14 @@ public class PotentialPokemonProperties {
         public static final int WILDCARD = -1;
 
         public static PotentialIV fromParents (Pokemon parent1, Pokemon parent2, Stat stat) {
+            return fromParents(parent1, parent2, stat, null);
+        }
+
+        public static PotentialIV fromParents (Pokemon parent1, Pokemon parent2, Stat stat, @Nullable PokemonSupplier offspring) {
+            if (offspring != null && offspring.ivs().isPresent() && offspring.ivs().get().getStat(stat).isPresent()) {
+                return new PotentialIV(true, Set.of(offspring.ivs().get().getStat(stat).get()));
+            }
+
             Item powerItem = switch (stat) {
                 case Stats.HP -> CobblemonItems.POWER_WEIGHT;
                 case Stats.ATTACK -> CobblemonItems.POWER_BRACER;

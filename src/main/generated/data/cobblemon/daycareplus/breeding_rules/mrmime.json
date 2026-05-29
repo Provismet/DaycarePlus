@@ -1,0 +1,21 @@
+[
+  {
+    "offspring": [
+      {
+        "pokemon": {
+          "features": {
+            "region_bias": "galar"
+          },
+          "species": "mimejr"
+        }
+      }
+    ],
+    "primary_parent": {
+      "form_showdown_ids": {
+        "whitelist": [
+          "galar"
+        ]
+      }
+    }
+  }
+]
