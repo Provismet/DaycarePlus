@@ -47,6 +47,7 @@
 		"fabric-api": "*",
 		"cobblemon": "~1.7.0",
         "lilylib": "*",
+		"lilycobble": ">=1.1.0",
         "polymer-core": "*",
         "polymer-common": "*"
 	},
