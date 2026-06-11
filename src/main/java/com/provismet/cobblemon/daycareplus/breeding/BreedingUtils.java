@@ -50,12 +50,14 @@ public class BreedingUtils implements SimpleSynchronousResourceReloadListener {
         Set<EggGroup> eggGroups2 = parent2.getForm().getEggGroups();
 
         if (eggGroups1.contains(EggGroup.UNDISCOVERED) || eggGroups2.contains(EggGroup.UNDISCOVERED)) return false;
-        if (eggGroups1.contains(EggGroup.DITTO) ^ eggGroups2.contains(EggGroup.DITTO)) return true;
+        if (eggGroups1.contains(EggGroup.DITTO) || eggGroups2.contains(EggGroup.DITTO)) {
+            return eggGroups1.contains(EggGroup.DITTO) ^ eggGroups2.contains(EggGroup.DITTO);
+        }
         return eggGroups1.stream().anyMatch(eggGroups2::contains);
     }
 
     public static boolean isCompatibleGender (Pokemon parent1, Pokemon parent2) {
-        if (parent1.getForm().getEggGroups().contains(EggGroup.DITTO) || parent2.getForm().getEggGroups().contains(EggGroup.DITTO)) return true;
+        if (parent1.getForm().getEggGroups().contains(EggGroup.DITTO) ^ parent2.getForm().getEggGroups().contains(EggGroup.DITTO)) return true;
         if (parent1.getGender() == Gender.GENDERLESS || parent2.getGender() == Gender.GENDERLESS) return false;
         return parent1.getGender() != parent2.getGender();
     }
