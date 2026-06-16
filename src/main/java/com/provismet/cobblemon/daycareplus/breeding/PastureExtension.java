@@ -9,7 +9,6 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.feature.IntSpeciesFeature;
 import com.cobblemon.mod.common.block.entity.PokemonPastureBlockEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.provismet.cobblemon.daycareplus.DaycarePlusMain;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.feature.FertilityFeature;
@@ -180,6 +179,8 @@ public class PastureExtension {
             if (this.blockEntity.getOwnerId() != null) {
                 owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
             }
+
+            if (owner == null && !DaycarePlusOptions.shouldProduceForOfflinePlayers()) return;
 
             for (int i = 0; i < eggAttempts; ++i) {
                 if (world.getRandom().nextDouble() > DaycarePlusOptions.getSuccessRatePerEggAttempt()) continue;

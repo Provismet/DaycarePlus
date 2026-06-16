@@ -35,6 +35,7 @@ public class DaycarePlusOptions {
     private static boolean showShinyChance = true;
     private static boolean allowHoppers = true;
     private static boolean applyMarks = false;
+    private static boolean produceForOffline = true;
 
     // Competitive Breeding
     private static boolean competitiveBreeding = false;
