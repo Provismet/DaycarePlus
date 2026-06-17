@@ -18,6 +18,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -232,7 +233,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
 
     @Inject(method = "TICKER$lambda$0", at = @At("HEAD"))
     private static void tick (World world, BlockPos pos, BlockState blockState, PokemonPastureBlockEntity pasture, CallbackInfo info) {
-        if (world.isClient()) return;
+        if (!(world instanceof ServerWorld serverWorld)) return;
 
         IMixinPastureBlockEntity imixin = (IMixinPastureBlockEntity)(Object)pasture;
         if (imixin.shouldBreed()) {
@@ -241,7 +242,7 @@ public abstract class PastureBlockEntityMixin extends BlockEntity implements IMi
             }
 
             if (pasture.getOwnerId() != null && !BreedingLink.has(pasture.getOwnerId(), imixin.getBreederUUID())) {
-                if (!BreedingLink.add(pasture.getOwnerId(), imixin.getBreederUUID())) {
+                if (!BreedingLink.add(pasture.getOwnerId(), imixin.getBreederUUID(), serverWorld)) {
                     imixin.setShouldBreed(false);
                     imixin.setExtension(null);
                     return;

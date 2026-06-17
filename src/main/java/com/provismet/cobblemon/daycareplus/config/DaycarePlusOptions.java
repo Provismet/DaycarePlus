@@ -36,6 +36,7 @@ public class DaycarePlusOptions {
     private static boolean allowHoppers = true;
     private static boolean applyMarks = false;
     private static boolean produceForOffline = true;
+    private static boolean disableBannedPastures = false;
 
     // Competitive Breeding
     private static boolean competitiveBreeding = false;
@@ -92,6 +93,14 @@ public class DaycarePlusOptions {
 
     public static boolean shouldApplyMarks () {
         return applyMarks;
+    }
+
+    public static boolean shouldProduceForOfflinePlayers () {
+        return produceForOffline;
+    }
+
+    public static boolean shouldDisableBannedPastures () {
+        return disableBannedPastures;
     }
 
     public static boolean doCompetitiveBreeding () {
@@ -164,7 +173,9 @@ public class DaycarePlusOptions {
                     .append("max_pastures_per_player", maxPasturesPerPlayer)
                     .append("show_shiny_chance", showShinyChance)
                     .append("allow_hoppers", allowHoppers)
-                    .append("apply_marks", applyMarks))
+                    .append("apply_marks", applyMarks)
+                    .append("produce_for_offline_players", produceForOffline)
+                    .append("disable_daycares_for_banned_players", disableBannedPastures))
             .append(
                 "competitive_mode", new JsonBuilder()
                     .append("use_competitive_mode", competitiveBreeding)
@@ -214,6 +225,8 @@ public class DaycarePlusOptions {
                     eggProduction.getBoolean("show_shiny_chance").ifPresent(val -> showShinyChance = val);
                     eggProduction.getBoolean("allow_hoppers").ifPresent(val -> allowHoppers = val);
                     eggProduction.getBoolean("apply_marks").ifPresent(val -> applyMarks = val);
+                    eggProduction.getBoolean("produce_for_offline_players").ifPresent(val -> produceForOffline = val);
+                    eggProduction.getBoolean("disable_daycares_for_banned_players").ifPresent(val -> disableBannedPastures = val);
                 });
 
                 reader.getObjectAsReader("competitive_mode").ifPresent(competitiveMode -> {

@@ -1,7 +1,10 @@
 package com.provismet.cobblemon.daycareplus.breeding;
 
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
+import net.minecraft.server.BannedPlayerList;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +31,14 @@ public class BreedingLink {
         return isAtLimit(player.getUuid());
     }
 
-    public static boolean add (UUID player, UUID daycareId) {
+    public static boolean add (UUID player, UUID daycareId, @Nullable ServerWorld world) {
+        if (DaycarePlusOptions.shouldDisableBannedPastures() && world != null) {
+            BannedPlayerList bannedPlayers = world.getServer().getPlayerManager().getUserBanList();
+            if (bannedPlayers.values().stream().anyMatch(entry -> entry.getKey() != null && entry.getKey().getId().equals(player))) {
+                return false;
+            }
+        }
+
         if (isAtLimit(player)) return false;
 
         link.computeIfAbsent(player.toString(), playerUuid -> new HashSet<>()).add(daycareId.toString());
@@ -36,7 +46,7 @@ public class BreedingLink {
     }
 
     public static boolean add (ServerPlayerEntity player, UUID daycareId) {
-        return add(player.getUuid(), daycareId);
+        return add(player.getUuid(), daycareId, player.getServerWorld());
     }
 
     public static void remove (UUID player, UUID daycareId) {
