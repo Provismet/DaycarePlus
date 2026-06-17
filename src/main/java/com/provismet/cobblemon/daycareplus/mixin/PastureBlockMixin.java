@@ -70,7 +70,7 @@ public abstract class PastureBlockMixin extends BlockWithEntity {
                     }
                 }
                 else {
-                    player.sendMessage(Text.translatable("message.overlay.daycareplus.not_owner").formatted(Formatting.RED), true);
+                    player.sendMessage(Text.translatable("message.overlay.daycareplus.not_setup").formatted(Formatting.RED), true);
                     cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
                 }
             }

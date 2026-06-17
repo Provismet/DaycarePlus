@@ -28,6 +28,13 @@ public class DaycareSparkItem extends AbstractDaycareModifierItem {
 
     @Override
     protected ActionResult applyToDaycare (ItemUsageContext context, PokemonPastureBlockEntity pasture, IMixinPastureBlockEntity daycare) {
+        if (daycare.count() >= daycare.size()) {
+            if (context.getPlayer() != null) {
+                context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.spark_failure.full").formatted(Formatting.RED), true);
+            }
+            return ActionResult.FAIL;
+        }
+
         Optional<PotentialPokemonProperties> potentialEgg = daycare.getExtension().predictEgg();
         if (potentialEgg.isPresent()) {
             daycare.getExtension().produceEgg(potentialEgg.get());
@@ -40,7 +47,7 @@ public class DaycareSparkItem extends AbstractDaycareModifierItem {
         }
         else {
             if (context.getPlayer() != null) {
-                context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.spark_failure").formatted(Formatting.RED), true);
+                context.getPlayer().sendMessage(Text.translatable("message.overlay.daycareplus.spark_failure.incompatible").formatted(Formatting.RED), true);
             }
             return ActionResult.FAIL;
         }

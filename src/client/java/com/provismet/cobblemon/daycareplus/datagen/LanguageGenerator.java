@@ -37,7 +37,8 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPItems.FERTILITY_CANDY.getTranslationKey() + ".tooltip", "Increases a Pokémon's fertility by 1");
         translationBuilder.add(DPItems.DAYCARE_SPARK, "Daycare Spark");
         translationBuilder.add(DPItems.DAYCARE_SPARK.getTranslationKey() + ".tooltip", "Forces a daycare to immediately produce an egg");
-        translationBuilder.add("message.overlay.daycareplus.spark_failure", "This daycare lacks compatible parents!");
+        translationBuilder.add("message.overlay.daycareplus.spark_failure.incompatible", "This daycare lacks compatible parents!");
+        translationBuilder.add("message.overlay.daycareplus.spark_failure.full", "This daycare's egg storage is full!");
         translationBuilder.add(DPItems.DAYCARE_BOOSTER, "Dizygotic Booster");
         translationBuilder.add(DPItems.DAYCARE_BOOSTER.getTranslationKey() + ".tooltip", "Adds an extra egg to the next %1$s daycare cycles");
         translationBuilder.add("message.overlay.daycareplus.fertility_boosted", "Your %1$s now has %2$s fertility.");
@@ -73,6 +74,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("message.chat.daycareplus.multiple_egg_produced", "Your daycare produced %1$s eggs while you were away.");
         translationBuilder.add("message.chat.daycareplus.move_learnt", "Your %1$s learnt %2$s while in the daycare.");
         translationBuilder.add("message.overlay.daycareplus.not_owner", "This is not your daycare.");
+        translationBuilder.add("message.overlay.daycareplus.not_setup", "This pasture has not been setup by its owner yet.");
         translationBuilder.add("gui.button.daycareplus.twin_boosts_remaining", "Twin Boosts Remaining: %1$s");
         translationBuilder.add("gui.button.daycareplus.twin_boosts_info", "Each cycle produces an extra egg!");
         translationBuilder.add("gui.button.daycareplus.shiny_boosts_remaining", "Shiny Boosts Remaining: %1$s");
