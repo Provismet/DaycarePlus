@@ -111,6 +111,9 @@ public class PastureExtension {
 
     public void produceEgg (PotentialPokemonProperties potentialEgg) {
         PlayerEntity owner = null;
+        PastureContainer container = ((PastureContainer)(Object)this.blockEntity);
+        if (container.count() >= container.size()) return;
+
         if (this.blockEntity.getOwnerId() != null && this.blockEntity.getWorld() != null) {
             owner = this.blockEntity.getWorld().getPlayerByUuid(this.blockEntity.getOwnerId());
         }
@@ -149,7 +152,7 @@ public class PastureExtension {
         ItemStack egg = DPItems.POKEMON_EGG.createEggItem(properties);
         DaycarePlusEvents.POST_EGG_PRODUCED.invoker().afterItemCreated(egg);
 
-        ((PastureContainer)(Object)this.blockEntity).add(egg);
+        container.add(egg);
     }
 
     public void tick () {
@@ -182,6 +185,9 @@ public class PastureExtension {
 
             if (owner == null && !DaycarePlusOptions.shouldProduceForOfflinePlayers()) return;
 
+            PastureContainer container = ((PastureContainer)(Object)this.blockEntity);
+            boolean hasSpace = container.count() < container.size();
+
             for (int i = 0; i < eggAttempts; ++i) {
                 if (world.getRandom().nextDouble() > DaycarePlusOptions.getSuccessRatePerEggAttempt()) continue;
                 applyMirrorHerb = true;
@@ -193,7 +199,7 @@ public class PastureExtension {
                 }
                 for (int j = 0; j < eggsToProduce; ++j) {
                     Optional<PotentialPokemonProperties> optionalEgg = this.predictEgg();
-                    if (optionalEgg.isPresent()) {
+                    if (optionalEgg.isPresent() && hasSpace) {
                         if (owner != null) {
                             if (eggAttempts == 1) owner.sendMessage(Text.translatable("message.chat.daycareplus.egg_produced"));
                             else ++calculatedEggs;
