@@ -4,6 +4,7 @@ import com.provismet.cobblemon.daycareplus.api.FormPropertiesOverrideProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.registry.RegistryWrapper;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class CobblemonFormPropertyGenerator extends FormPropertiesOverrideProvider {
@@ -20,6 +21,9 @@ public class CobblemonFormPropertyGenerator extends FormPropertiesOverrideProvid
         generator.add("bluestriped", "fish_stripes", "blue");
         generator.add("droopy", "tatsugiri_texture", "droopy");
         generator.add("stretchy", "tatsugiri_texture", "stretchy");
+        generator.add("paldeacombat", Map.of("paldean", "true", "bull_breed", "combat"));
+        generator.add("paldeablaze", Map.of("paldean", "true", "bull_breed", "blaze"));
+        generator.add("paldeaaqua", Map.of("paldean", "true", "bull_breed", "aqua"));
 
         // Do not allow mega forms to be inherited.
         generator.add("mega", "mega_evolution", "none");
