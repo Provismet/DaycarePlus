@@ -1,6 +1,5 @@
 package com.provismet.cobblemon.daycareplus.datagen;
 
-import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.pokemon.Gender;
 import com.provismet.cobblemon.daycareplus.api.BreedingRulesProvider;
 import com.provismet.cobblemon.daycareplus.api.codec.BreedingRules;
@@ -61,14 +60,14 @@ public class BreedingRuleGenerator extends BreedingRulesProvider {
             .add(BreedingRules.Rule.builder()
                 .primaryParent(PokemonPredicate.builder()
                     .species("pikachu")
-                    .heldItem(CobblemonItems.LIGHT_BALL))
+                    .heldItem("lightball"))
                 .addOffspring(PokemonSupplier.builder()
                     .species("pichu")
                     .addMove("volttackle")))
             .add(BreedingRules.Rule.builder()
                 .secondaryParent(PokemonPredicate.builder()
                     .species("pikachu")
-                    .heldItem(CobblemonItems.LIGHT_BALL))
+                    .heldItem("lightball"))
                 .addOffspring(PokemonSupplier.builder()
                     .species("pichu")
                     .addMove("volttackle"))));

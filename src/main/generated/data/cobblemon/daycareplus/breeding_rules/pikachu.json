@@ -11,6 +11,11 @@
       }
     ],
     "primary_parent": {
+      "held_item": {
+        "whitelist": [
+          "lightball"
+        ]
+      },
       "species_showdown_ids": {
         "whitelist": [
           "pikachu"
@@ -30,6 +35,11 @@
       }
     ],
     "secondary_parent": {
+      "held_item": {
+        "whitelist": [
+          "lightball"
+        ]
+      },
       "species_showdown_ids": {
         "whitelist": [
           "pikachu"
