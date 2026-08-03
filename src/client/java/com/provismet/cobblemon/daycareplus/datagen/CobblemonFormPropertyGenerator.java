@@ -24,6 +24,7 @@ public class CobblemonFormPropertyGenerator extends FormPropertiesOverrideProvid
         generator.add("paldeacombat", Map.of("paldean", "true", "bull_breed", "combat"));
         generator.add("paldeablaze", Map.of("paldean", "true", "bull_breed", "blaze"));
         generator.add("paldeaaqua", Map.of("paldean", "true", "bull_breed", "aqua"));
+        generator.add("dusk", "wolf_form", "dusk");
 
         // Do not allow mega forms to be inherited.
         generator.add("mega", "mega_evolution", "none");
