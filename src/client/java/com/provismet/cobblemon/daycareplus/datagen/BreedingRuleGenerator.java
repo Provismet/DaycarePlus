@@ -4,7 +4,9 @@ import com.cobblemon.mod.common.pokemon.Gender;
 import com.provismet.cobblemon.daycareplus.api.BreedingRulesProvider;
 import com.provismet.cobblemon.daycareplus.api.codec.BreedingRules;
 import com.provismet.cobblemon.lilycobble.pokemon.FeatureApplicator;
+import com.provismet.cobblemon.lilycobble.pokemon.PokemonInstancePredicate;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonPredicate;
+import com.provismet.cobblemon.lilycobble.pokemon.PokemonSpeciesPredicate;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonSupplier;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.registry.RegistryWrapper;
@@ -59,15 +61,19 @@ public class BreedingRuleGenerator extends BreedingRulesProvider {
         consumer.add("pikachu", BreedingRules.builder()
             .add(BreedingRules.Rule.builder()
                 .primaryParent(PokemonPredicate.builder()
-                    .species("pikachu")
-                    .heldItem("lightball"))
+                    .species(PokemonSpeciesPredicate.builder()
+                        .species("pikachu"))
+                    .instance(PokemonInstancePredicate.builder()
+                        .heldItem("lightball")))
                 .addOffspring(PokemonSupplier.builder()
                     .species("pichu")
                     .addMove("volttackle")))
             .add(BreedingRules.Rule.builder()
                 .secondaryParent(PokemonPredicate.builder()
-                    .species("pikachu")
-                    .heldItem("lightball"))
+                    .species(PokemonSpeciesPredicate.builder()
+                        .species("pikachu"))
+                    .instance(PokemonInstancePredicate.builder()
+                        .heldItem("lightball")))
                 .addOffspring(PokemonSupplier.builder()
                     .species("pichu")
                     .addMove("volttackle"))));

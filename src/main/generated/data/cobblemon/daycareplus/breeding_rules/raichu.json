@@ -11,10 +11,12 @@
       }
     ],
     "primary_parent": {
-      "form_showdown_ids": {
-        "whitelist": [
-          "alola"
-        ]
+      "species": {
+        "form_showdown_ids": {
+          "whitelist": [
+            "alola"
+          ]
+        }
       }
     }
   }

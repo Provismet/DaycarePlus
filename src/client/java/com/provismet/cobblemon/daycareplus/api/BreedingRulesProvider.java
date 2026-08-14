@@ -6,6 +6,7 @@ import com.provismet.cobblemon.daycareplus.api.codec.BreedingRules;
 import com.provismet.cobblemon.daycareplus.registries.DPDynamicRegistryKeys;
 import com.provismet.cobblemon.lilycobble.pokemon.FeatureApplicator;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonPredicate;
+import com.provismet.cobblemon.lilycobble.pokemon.PokemonSpeciesPredicate;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonSupplier;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
@@ -88,7 +89,8 @@ public abstract class BreedingRulesProvider extends FabricDynamicRegistryProvide
             this.add(parentSpecies,
                 BreedingRules.of(BreedingRules.Rule.builder()
                     .primaryParent(PokemonPredicate.builder()
-                        .form(parentForm))
+                        .species(PokemonSpeciesPredicate.builder()
+                            .form(parentForm)))
                     .addOffspring(BreedingRules.PotentialOffspring.builder()
                         .pokemon(PokemonSupplier.builder()
                             .species(childSpecies)
