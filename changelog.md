@@ -1,15 +1,17 @@
-Patch update following the major revamp to sort out a bug and give more control to servers.
+Patch update with more bugfixes and a revision to the new datapack system. There is also now a wiki on [GitHub](https://github.com/Provismet/DaycarePlus/wiki)!
 
 ## Additions
-- Added new config option to not produce eggs for players who are offline.
-  - The pastures still tick and count the time, but they won't create any items until the player logs in.
-- Added new config option to deactivate pastures for banned players.
-  - Deactivation applies on the first load per server session. You may need to reboot your server to see this apply.
+- Breeding Rules can now react to the following:
+  - Abilities
+  - Marks
+  - Base Stats
+  - Types
 
 ## Changes
-- Adjusted daycare error feedback text to clarify when certain actions are illegal.
+- Pokemon Predicates have had their fields split between `species` and `instance` object to accomodate the 16 field limit on codecs.
+  - Datapacks in the 1.4.0 - 1.4.1 format will still work.  
 
 ## Bugfixes
-- Fixed bug where Dittos could breed with each other.
-- Fixed bug where egg production callbacks still triggered when a pasture failed to produce an egg due to being full.
-  - Mostly affected competitive mode due to fertility being reduced.
+- Fixed Rockruff Dusk form breeding.
+- Fixed Paldean Tauros breeding.
+- Fixed Pichu always having Volt Tackle when bred from a Pikachu.
