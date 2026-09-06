@@ -75,7 +75,7 @@ public abstract class CobblemonEventHandler {
     }
 
     private static void applyPotentialMark (HatchEggEvent.Post event) {
-        event.getPokemon().applyPotentialMarks();
+        event.getPokemon().applyPotentialMarks(1);
     }
 
     private static void postCollect (CollectEggEvent event) {
