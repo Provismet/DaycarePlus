@@ -51,6 +51,8 @@ public class PotentialPokemonProperties {
     private final PokemonSupplier offspring;
     private final FormData form;
 
+    private final boolean canInherit;
+
     /**
      * @param primary The mother or non-ditto parent.
      * @param secondary The father or ditto parent.
@@ -66,6 +68,8 @@ public class PotentialPokemonProperties {
         else {
             this.form = BreedingUtils.getBabyForm(primary);
         }
+
+        this.canInherit = !DaycarePlusOptions.doCompetitiveBreeding() || BreedingUtils.parentsHaveFertility(this.primary, this.secondary);
     }
 
     public PokemonProperties createPokemonProperties () {
@@ -330,7 +334,7 @@ public class PotentialPokemonProperties {
         if (this.offspring != null && this.offspring.nature().isPresent()) return;
 
         List<Nature> natures = this.getPossibleNatures();
-        if (!natures.isEmpty() && !(DaycarePlusOptions.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary))) {
+        if (!natures.isEmpty() && this.canInherit) {
             // Technically there can be 2 possible natures if both parents hold an everstone.
             if (Math.random() < 0.5) properties.setNature(natures.getFirst().getName().toString());
             else properties.setNature(natures.getLast().getName().toString());
@@ -355,7 +359,7 @@ public class PotentialPokemonProperties {
 
     private void setIVs (PokemonProperties properties) {
         int forcedIVs = 3;
-        if (DaycarePlusOptions.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary)) {
+        if (!this.canInherit) {
             forcedIVs = 0;
         }
         else if (this.primary.heldItem().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.heldItem().isOf(CobblemonItems.DESTINY_KNOT)) {
