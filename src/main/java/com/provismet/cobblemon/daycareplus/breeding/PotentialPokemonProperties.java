@@ -195,6 +195,10 @@ public class PotentialPokemonProperties {
             else inheritedAbility = abilities.getFirst().getTemplate();
         }
 
+        if (DaycarePlusOptions.doCompetitiveBreeding()) {
+            return List.of(inheritedAbility);
+        }
+
         AbilityTemplate finalAbility = inheritedAbility; // Done purely so the stream plays nice
         List<AbilityTemplate> otherPossibleAbilities = this.form.getAbilities().getMapping().values().stream()
             .flatMap(Collection::stream)
