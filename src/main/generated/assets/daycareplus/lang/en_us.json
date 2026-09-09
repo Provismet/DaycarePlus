@@ -77,6 +77,7 @@
   "item.daycareplus.shiny_booster": "Sparkling Booster",
   "item.daycareplus.shiny_booster.tooltip": "Adds extra shiny odds to the next %1$s daycare cycles",
   "item.daycareplus.take_all": "Deposit All",
+  "message.chat.daycareplus.competitive.breeding_death": "Your %1$s has perished in the daycare from lack of fertility!",
   "message.chat.daycareplus.egg_produced": "Your daycare has produced an egg.",
   "message.chat.daycareplus.move_learnt": "Your %1$s learnt %2$s while in the daycare.",
   "message.chat.daycareplus.multiple_egg_produced": "Your daycare produced %1$s eggs while you were away.",
