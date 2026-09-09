@@ -46,6 +46,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPItems.SHINY_BOOSTER, "Sparkling Booster");
         translationBuilder.add(DPItems.SHINY_BOOSTER.getTranslationKey() + ".tooltip", "Adds extra shiny odds to the next %1$s daycare cycles");
         translationBuilder.add("message.overlay.daycareplus.egg_shiny_boosted", "Your daycare now has %1$s shiny boosts.");
+        translationBuilder.add(DPItems.DIMORPHIC_STABILISER, "Dimorphic Stabilizer");
 
         // Egg Bag
         translationBuilder.add("message.overlay.daycareplus.incubator.collection.singular", "Collected %1$s egg.");
@@ -100,6 +101,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(CobblemonItems.POWER_BRACER.getTranslationKey() + ".breeding", "This parent will pass on its Attack IV to the child.");
         translationBuilder.add(CobblemonItems.POWER_BAND.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Defence IV to the child.");
         translationBuilder.add(CobblemonItems.MIRROR_HERB.getTranslationKey() + ".breeding", "This Pokemon may learn egg moves from its partner.");
+        translationBuilder.add(DPItems.DIMORPHIC_STABILISER.getTranslationKey() + ".breeding", "This parent will pass on its gender onto the child.");
         translationBuilder.add("message.chat.daycareplus.competitive.breeding_death", "Your %1$s has perished in the daycare from lack of fertility!");
 
         // Intro GUI

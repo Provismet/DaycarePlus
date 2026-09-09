@@ -26,6 +26,7 @@ import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.pokemon.abilities.HiddenAbilityType;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
+import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.MathExtras;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonStats;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonSupplier;
@@ -289,8 +290,24 @@ public class PotentialPokemonProperties {
     private void setGender (PokemonProperties properties) {
         if (this.offspring != null && this.offspring.gender().isPresent()) return;
 
-        if (this.form.getMaleRatio() < 0) properties.setGender(Gender.GENDERLESS);
-        else if (Math.random() < this.form.getMaleRatio()) properties.setGender(Gender.MALE);
+        if (this.form.getMaleRatio() < 0) {
+            properties.setGender(Gender.GENDERLESS);
+            return;
+        }
+
+        // Only apply the item for forms that actually have alt-genders (rip Indeedee, you won't be missed)
+        if (DaycarePlusOptions.doCompetitiveBreeding() && this.form.getMaleRatio() != 1 && this.form.getMaleRatio() != 0) {
+            if (this.primary.heldItem().isOf(DPItems.DIMORPHIC_STABILISER) && this.primary.getGender() != Gender.GENDERLESS) {
+                properties.setGender(this.primary.getGender());
+                return;
+            }
+            if (this.secondary.heldItem().isOf(DPItems.DIMORPHIC_STABILISER) && this.secondary.getGender() != Gender.GENDERLESS) {
+                properties.setGender(this.secondary.getGender());
+                return;
+            }
+        }
+
+        if (Math.random() < this.form.getMaleRatio()) properties.setGender(Gender.MALE);
         else properties.setGender(Gender.FEMALE);
     }
 

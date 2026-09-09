@@ -65,6 +65,8 @@
   "item.daycareplus.daycare_spark": "Daycare Spark",
   "item.daycareplus.daycare_spark.tooltip": "Forces a daycare to immediately produce an egg",
   "item.daycareplus.diamond_incubator": "Diamond Incubator",
+  "item.daycareplus.dimorphic_stabiliser": "Dimorphic Stabilizer",
+  "item.daycareplus.dimorphic_stabiliser.breeding": "This parent will pass on its gender onto the child.",
   "item.daycareplus.fertility_candy": "Fertility Candy",
   "item.daycareplus.fertility_candy.tooltip": "Increases a Pokémon's fertility by 1",
   "item.daycareplus.gold_incubator": "Gold Incubator",
