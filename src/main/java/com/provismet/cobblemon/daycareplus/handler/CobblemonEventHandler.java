@@ -21,7 +21,7 @@ public abstract class CobblemonEventHandler {
         CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.NORMAL, CobblemonEventHandler::incrementHatchStat);
         CobblemonEvents.COLLECT_EGG.subscribe(Priority.NORMAL, CobblemonEventHandler::postCollect);
 
-        // How wow look at that, we suggest the marks and apply one in DIFFERENT event triggers at different times instead of dumping into a single molang of all things!
+        // Hey wow look at that, we suggest the marks and apply one in DIFFERENT event triggers at different times instead of dumping into a single molang of all things!
         if (DaycarePlusOptions.shouldApplyMarks()) {
             CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.HIGHEST, CobblemonEventHandler::suggestPotentialMarks);
             CobblemonEvents.HATCH_EGG_POST.subscribe(Priority.LOWEST, CobblemonEventHandler::applyPotentialMark);
