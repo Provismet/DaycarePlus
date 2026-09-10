@@ -9,6 +9,7 @@ import com.provismet.cobblemon.daycareplus.api.PokemonEgg;
 import com.provismet.cobblemon.daycareplus.api.PokemonEggProviderItem;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
 import com.provismet.cobblemon.daycareplus.registries.DPItemDataComponents;
+import com.provismet.cobblemon.daycareplus.util.StringFormatting;
 import com.provismet.cobblemon.daycareplus.util.Styles;
 import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import net.minecraft.component.DataComponentTypes;
@@ -129,7 +130,7 @@ public class PokemonEggItem extends PolymerItem implements PokemonEggProviderIte
     private MutableText getTooltipFormName (PokemonProperties properties) {
         return Text.translatableWithFallback(
             "cobblemon.ui.pokedex.info.form." + properties.getSpecies() + "-" + properties.getForm(),
-            "form?" //StringFormatting.titleCase(properties.getForm())
+            StringFormatting.titleCase(properties.getForm())
         ).styled(Styles.WHITE_NO_ITALICS);
     }
 
