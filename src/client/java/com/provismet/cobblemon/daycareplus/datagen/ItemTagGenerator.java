@@ -31,7 +31,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
             .add(CobblemonItems.MIRROR_HERB);
 
         this.getOrCreateTagBuilder(DPItemTags.COMPETITIVE_BREEDING)
-            .addOptionalTag(DPItemTags.BREEDING_ITEM);
+            .addOptionalTag(DPItemTags.BREEDING_ITEM)
+            .add(DPItems.DIMORPHIC_STABILISER);
 
         this.getOrCreateTagBuilder(DPItemTags.NONCOMPETITIVE_BREEDING)
             .addOptionalTag(DPItemTags.BREEDING_ITEM)

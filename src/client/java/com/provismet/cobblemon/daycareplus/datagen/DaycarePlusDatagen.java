@@ -9,6 +9,7 @@ public class DaycarePlusDatagen implements DataGeneratorEntrypoint {
     public void onInitializeDataGenerator (FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(LanguageGenerator::new);
+        pack.addProvider(LanguageGeneratorUK::new);
         pack.addProvider(ModelGenerator::new);
         pack.addProvider(ItemTagGenerator::new);
         pack.addProvider(RecipeGenerator::new);

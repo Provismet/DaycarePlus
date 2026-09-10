@@ -26,6 +26,7 @@ import com.cobblemon.mod.common.pokemon.Species;
 import com.cobblemon.mod.common.pokemon.abilities.HiddenAbilityType;
 import com.provismet.cobblemon.daycareplus.api.DaycarePlusEvents;
 import com.provismet.cobblemon.daycareplus.config.DaycarePlusOptions;
+import com.provismet.cobblemon.daycareplus.registries.DPItems;
 import com.provismet.cobblemon.daycareplus.util.MathExtras;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonStats;
 import com.provismet.cobblemon.lilycobble.pokemon.PokemonSupplier;
@@ -45,11 +46,16 @@ import java.util.Optional;
 import java.util.Set;
 
 public class PotentialPokemonProperties {
+    private static final Priority COMMON_ABILITY_PRIORITY = Priority.LOWEST;
+    private static final Priority HIDDEN_ABILITY_PRIORITY = Priority.LOW;
+
     private final Pokemon primary;
     private final Pokemon secondary;
 
     private final PokemonSupplier offspring;
     private final FormData form;
+
+    private final boolean canInherit;
 
     /**
      * @param primary The mother or non-ditto parent.
@@ -66,6 +72,8 @@ public class PotentialPokemonProperties {
         else {
             this.form = BreedingUtils.getBabyForm(primary);
         }
+
+        this.canInherit = !DaycarePlusOptions.doCompetitiveBreeding() || BreedingUtils.parentsHaveFertility(this.primary, this.secondary);
     }
 
     public PokemonProperties createPokemonProperties () {
@@ -170,7 +178,7 @@ public class PotentialPokemonProperties {
                 priorityListEntry.getKey(),
                 priorityListEntry.getValue().stream().map(PotentialAbility::getTemplate).toList().indexOf(parentAbility.getTemplate())
             )).orElseGet(
-                () -> new Pair<>(Priority.LOWEST, 0)
+                () -> new Pair<>(COMMON_ABILITY_PRIORITY, 0)
             );
         }
 
@@ -186,21 +194,25 @@ public class PotentialPokemonProperties {
         }
 
         if (inheritedAbility == null) {
-            List<PotentialAbility> abilities = this.form.getAbilities().getMapping().get(Priority.LOWEST);
+            List<PotentialAbility> abilities = this.form.getAbilities().getMapping().get(COMMON_ABILITY_PRIORITY);
             if (abilities == null || abilities.isEmpty()) inheritedAbility = Abilities.INSTANCE.getDUMMY();
             else inheritedAbility = abilities.getFirst().getTemplate();
+        }
+
+        if (DaycarePlusOptions.doCompetitiveBreeding() && this.canInherit) {
+            return List.of(inheritedAbility);
         }
 
         AbilityTemplate finalAbility = inheritedAbility; // Done purely so the stream plays nice
         List<AbilityTemplate> otherPossibleAbilities = this.form.getAbilities().getMapping().values().stream()
             .flatMap(Collection::stream)
-            .filter(other -> other.getType() instanceof CommonAbilityType || (other.getType() instanceof HiddenAbilityType && parentAbility.getPriority() == Priority.LOW))
+            .filter(other -> other.getType() instanceof CommonAbilityType || (this.canInherit && other.getType() instanceof HiddenAbilityType && parentAbility.getPriority() == HIDDEN_ABILITY_PRIORITY))
             .map(PotentialAbility::getTemplate)
-            .filter(other -> other != finalAbility)
+            .distinct()
             .toList();
 
         List<AbilityTemplate> potentials = new ArrayList<>();
-        potentials.add(inheritedAbility);
+        if (this.canInherit) potentials.add(inheritedAbility);
         potentials.addAll(otherPossibleAbilities);
 
         return potentials;
@@ -281,21 +293,41 @@ public class PotentialPokemonProperties {
     private void setGender (PokemonProperties properties) {
         if (this.offspring != null && this.offspring.gender().isPresent()) return;
 
-        if (this.form.getMaleRatio() < 0) properties.setGender(Gender.GENDERLESS);
-        else if (Math.random() < this.form.getMaleRatio()) properties.setGender(Gender.MALE);
+        if (this.form.getMaleRatio() < 0) {
+            properties.setGender(Gender.GENDERLESS);
+            return;
+        }
+
+        // Only apply the item for forms that actually have alt-genders (rip Indeedee, you won't be missed)
+        if (DaycarePlusOptions.doCompetitiveBreeding() && this.form.getMaleRatio() != 1 && this.form.getMaleRatio() != 0) {
+            if (this.primary.heldItem().isOf(DPItems.DIMORPHIC_STABILISER) && this.primary.getGender() != Gender.GENDERLESS) {
+                properties.setGender(this.primary.getGender());
+                return;
+            }
+            if (this.secondary.heldItem().isOf(DPItems.DIMORPHIC_STABILISER) && this.secondary.getGender() != Gender.GENDERLESS) {
+                properties.setGender(this.secondary.getGender());
+                return;
+            }
+        }
+
+        if (Math.random() < this.form.getMaleRatio()) properties.setGender(Gender.MALE);
         else properties.setGender(Gender.FEMALE);
     }
 
     private void setAbility (PokemonProperties properties) {
         if (this.offspring != null && this.offspring.ability().isPresent()) return;
 
+        // Abilities are handled in a dumb way with priorities and coordinates, need to go through some hoops just to get the ability data of the parent
         Ability parentAbility = this.primary.getAbility();
         Pair<Priority, Integer> parentAbilityData;
 
-        if (parentAbility.getIndex() >= 0) { // Should pass under normal circumstances (valid ability)
+        if (!this.canInherit) {
+            parentAbilityData = new Pair<>(COMMON_ABILITY_PRIORITY, 0);
+        }
+        else if (parentAbility.getIndex() >= 0) { // Should pass under normal circumstances (valid ability)
             parentAbilityData = new Pair<>(parentAbility.getPriority(), parentAbility.getIndex());
         }
-        else { // Into the weird territory we go...
+        else { // The parent's ability does not have a valid index, try matching the template against whatever the form usually has
             Optional<Map.Entry<Priority, List<PotentialAbility>>> abilities = this.primary.getForm().getAbilities().getMapping().entrySet()
                 .stream()
                 .filter(entry -> entry.getValue()
@@ -308,14 +340,16 @@ public class PotentialPokemonProperties {
                 priorityListEntry.getKey(),
                 priorityListEntry.getValue().stream().map(PotentialAbility::getTemplate).toList().indexOf(parentAbility.getTemplate())
             )).orElseGet(
-                () -> new Pair<>(Priority.LOWEST, 0) // Nothing matched, just go with a default value.
+                () -> new Pair<>(COMMON_ABILITY_PRIORITY, 0) // Nothing matched so we don't care anymore, just take an arbitrary default value
             );
         }
+        // All of the above was PURELY to figure out if the parent had a hidden ability, wtf are we even doing?
+        double keepCurrentAbility = parentAbilityData.getFirst() == HIDDEN_ABILITY_PRIORITY ? 0.6 : 0.8;
+        if (!this.canInherit) keepCurrentAbility = 0.5;
 
-        // The inherited ability will always the first index of this list
+        // The inherited ability will always be the first index of this list
         List<AbilityTemplate> potentials = this.getPossibleAbilities();
 
-        double keepCurrentAbility = parentAbilityData.getFirst() == Priority.LOW ? 0.6 : 0.8;
         if (potentials.size() == 1 || Math.random() < keepCurrentAbility) {
             properties.setAbility(potentials.getFirst().getName());
         }
@@ -330,7 +364,7 @@ public class PotentialPokemonProperties {
         if (this.offspring != null && this.offspring.nature().isPresent()) return;
 
         List<Nature> natures = this.getPossibleNatures();
-        if (!natures.isEmpty() && !(DaycarePlusOptions.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary))) {
+        if (!natures.isEmpty() && this.canInherit) {
             // Technically there can be 2 possible natures if both parents hold an everstone.
             if (Math.random() < 0.5) properties.setNature(natures.getFirst().getName().toString());
             else properties.setNature(natures.getLast().getName().toString());
@@ -355,7 +389,7 @@ public class PotentialPokemonProperties {
 
     private void setIVs (PokemonProperties properties) {
         int forcedIVs = 3;
-        if (DaycarePlusOptions.doCompetitiveBreeding() && !BreedingUtils.parentsHaveFertility(this.primary, this.secondary)) {
+        if (!this.canInherit) {
             forcedIVs = 0;
         }
         else if (this.primary.heldItem().isOf(CobblemonItems.DESTINY_KNOT) || this.secondary.heldItem().isOf(CobblemonItems.DESTINY_KNOT)) {

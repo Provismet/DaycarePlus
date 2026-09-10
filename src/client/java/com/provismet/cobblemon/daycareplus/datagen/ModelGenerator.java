@@ -48,6 +48,7 @@ public class ModelGenerator extends FabricModelProvider {
         generated.accept(DPItems.DAYCARE_SPARK);
         generated.accept(DPItems.DAYCARE_BOOSTER);
         generated.accept(DPItems.SHINY_BOOSTER);
+        generated.accept(DPItems.DIMORPHIC_STABILISER);
 
         incubator.accept(DPItems.COPPER_INCUBATOR);
         incubator.accept(DPItems.IRON_INCUBATOR);

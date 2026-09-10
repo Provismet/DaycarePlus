@@ -46,6 +46,7 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add(DPItems.SHINY_BOOSTER, "Sparkling Booster");
         translationBuilder.add(DPItems.SHINY_BOOSTER.getTranslationKey() + ".tooltip", "Adds extra shiny odds to the next %1$s daycare cycles");
         translationBuilder.add("message.overlay.daycareplus.egg_shiny_boosted", "Your daycare now has %1$s shiny boosts.");
+        translationBuilder.add(DPItems.DIMORPHIC_STABILISER, "Dimorphic Stabilizer");
 
         // Egg Bag
         translationBuilder.add("message.overlay.daycareplus.incubator.collection.singular", "Collected %1$s egg.");
@@ -91,15 +92,17 @@ public class LanguageGenerator extends LilyLanguageProvider {
         translationBuilder.add("gui.button.daycareplus.offspring.empty.tooltip", "Select two compatible Pokémon to view the preview.");
         translationBuilder.add("gui.button.daycareplus.parent", "Parent");
         translationBuilder.add("gui.button.daycareplus.no_item", "No breeding item held.");
-        translationBuilder.add(CobblemonItems.EVERSTONE.getTranslationKey() + ".breeding", "This parent will pass on its nature to the child.");
+        translationBuilder.add(CobblemonItems.EVERSTONE.getTranslationKey() + ".breeding", "This parent will pass on its nature onto the child.");
         translationBuilder.add(CobblemonItems.DESTINY_KNOT.getTranslationKey() + ".breeding", "5 IVs are passed down from either parent instead of 3.");
-        translationBuilder.add(CobblemonItems.POWER_LENS.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Attack IV to the child.");
-        translationBuilder.add(CobblemonItems.POWER_ANKLET.getTranslationKey() + ".breeding", "This parent will pass on its Speed IV to the child.");
-        translationBuilder.add(CobblemonItems.POWER_BELT.getTranslationKey() + ".breeding", "This parent will pass on its Defence IV to the child.");
-        translationBuilder.add(CobblemonItems.POWER_WEIGHT.getTranslationKey() + ".breeding", "This parent will pass on its HP IV to the child.");
-        translationBuilder.add(CobblemonItems.POWER_BRACER.getTranslationKey() + ".breeding", "This parent will pass on its Attack IV to the child.");
-        translationBuilder.add(CobblemonItems.POWER_BAND.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Defence IV to the child.");
+        translationBuilder.add(CobblemonItems.POWER_LENS.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Attack IV onto the child.");
+        translationBuilder.add(CobblemonItems.POWER_ANKLET.getTranslationKey() + ".breeding", "This parent will pass on its Speed IV onto the child.");
+        translationBuilder.add(CobblemonItems.POWER_BELT.getTranslationKey() + ".breeding", "This parent will pass on its Defence IV onto the child.");
+        translationBuilder.add(CobblemonItems.POWER_WEIGHT.getTranslationKey() + ".breeding", "This parent will pass on its HP IV onto the child.");
+        translationBuilder.add(CobblemonItems.POWER_BRACER.getTranslationKey() + ".breeding", "This parent will pass on its Attack IV onto the child.");
+        translationBuilder.add(CobblemonItems.POWER_BAND.getTranslationKey() + ".breeding", "This parent will pass on its Sp.Defence IV onto the child.");
         translationBuilder.add(CobblemonItems.MIRROR_HERB.getTranslationKey() + ".breeding", "This Pokemon may learn egg moves from its partner.");
+        translationBuilder.add(DPItems.DIMORPHIC_STABILISER.getTranslationKey() + ".breeding", "This parent will pass on its gender onto the child.");
+        translationBuilder.add("message.chat.daycareplus.competitive.breeding_death", "Your %1$s has perished in the daycare from lack of fertility!");
 
         // Intro GUI
         translationBuilder.add("gui.title.daycareplus.intro", "Daycare Setup");

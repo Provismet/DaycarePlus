@@ -1,5 +1,6 @@
 package com.provismet.cobblemon.daycareplus.breeding;
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.cobblemon.mod.common.api.events.pokemon.CollectEggEvent;
@@ -142,6 +143,15 @@ public class PastureExtension {
                     FertilityFeature.getMax();
 
             properties.getCustomProperties().add(new IntSpeciesFeature(FertilityFeature.KEY, eggFertility));
+
+            // Optionally kill infertile parents
+            ServerPlayerEntity player = potentialEgg.getPrimary().getOwnerPlayer();
+            if (this.removeInfertilePokemon(potentialEgg.getPrimary())) {
+                if (player != null) player.sendMessage(Text.translatable("message.chat.daycareplus.competitive.breeding_death", potentialEgg.getPrimary().getDisplayName(false)));
+            }
+            if (this.removeInfertilePokemon(potentialEgg.getSecondary())) {
+                if (player != null) player.sendMessage(Text.translatable("message.chat.daycareplus.competitive.breeding_death", potentialEgg.getSecondary().getDisplayName(false)));
+            }
         }
 
         if (owner instanceof ServerPlayerEntity serverPlayer) {
@@ -225,5 +235,16 @@ public class PastureExtension {
                 else owner.sendMessage(Text.translatable("message.chat.daycareplus.multiple_egg_produced", calculatedEggs));
             }
         }
+    }
+
+    private boolean removeInfertilePokemon (Pokemon pokemon) {
+        if (!DaycarePlusOptions.doCompetitiveBreeding() || !DaycarePlusOptions.shouldKillInfertileParents()) return false;
+        if (FertilityFeature.get(pokemon) > 0) return false;
+        if (this.blockEntity.getWorld() == null) return false;
+
+        UUID owner = pokemon.getOwnerUUID();
+        if (owner == null) return false;
+
+        return Cobblemon.INSTANCE.getStorage().getPC(owner, this.blockEntity.getWorld().getRegistryManager()).remove(pokemon);
     }
 }

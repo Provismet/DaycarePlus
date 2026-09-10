@@ -3,6 +3,7 @@
     {
       "id": "#daycareplus:breeding",
       "required": false
-    }
+    },
+    "daycareplus:dimorphic_stabiliser"
   ]
 }
