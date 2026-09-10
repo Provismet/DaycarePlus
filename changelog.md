@@ -1,22 +1,13 @@
-Patch update with more bugfixes and a revision to the new datapack system.
-
-Many individuals have requested a more comprehensive wiki to explain how the mod works, what the recipes are, and how to make datapacks.
-As of 1.4.2, there is now an in-depth wiki covering everything you may want to know about Daycare+.  
-
-You can view the wiki on [GitHub](https://github.com/Provismet/DaycarePlus/wiki)!
+Minor update to bring the mod onto Cobblemon 1.8.0 and improve Competitive Mode.
 
 ## Additions
-- Breeding Rules can now react to the following:
-  - Abilities
-  - Marks
-  - Base Stats
-  - Types
+- Added a new item, Dimorphic Stabiliser that forces the Pokémon to inherit the holder's gender, if valid.
+- Added a new setting to Competitive Mode, `kill_infertile_parents`, that allows infertile Pokémon to die in childbirth.
+  - This mirrors PokeMMO's breeding mechanic.
 
 ## Changes
-- Pokemon Predicates have had their fields split between new `species` and `instance` objects to accomodate the 16 field limit on codecs.
-  - Datapacks in the 1.4.0 - 1.4.1 format will still work.  
+- Abilities no longer have RNG in Competitive Mode with fertile parents. The ability of the primary parent (if valid) will always be inherited.
+- Minor grammar adjustments for some breeding tooltips.
 
 ## Bugfixes
-- Fixed Rockruff Dusk form breeding.
-- Fixed Paldean Tauros breeding.
-- Fixed Pichu always having Volt Tackle when bred from a Pikachu.
+- Fixed issue where forms lacking a translation key will appear as "form?" in the egg tooltip.
